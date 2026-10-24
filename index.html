@@ -774,5 +774,422 @@
 
     console.log("✅ Ancient Life Epic Story & Imperial Decree Patch V.37 Loaded Successfully!");
 </script>
+<script>
+    /* ==========================================
+       ANCIENT LIFE: ALL-IN-ONE MASTER EXTENSION PATCH (V.50)
+       - รวมครบถ้วน 21 หัวข้อระบบเชิงลึกในก้อนเดียว
+       - จัดระเบียบด้วยระบบเมนูซ้อนชั้น (Nested Sub-menus) แยก 3 หมวดหลัก
+       - ระบบเศรษฐกิจสมดุล: บ่อนการพนัน, ซื้อขายที่ดิน/จวน/ทาส, ลาภลอย & ริบสมบัติ
+       ========================================== */
+
+    if (typeof player !== 'undefined') {
+        player.skills = player.skills || { scholarship: 10, martial: 10, business: 10, art: 10 };
+        player.harem = player.harem || [];
+        player.familyTreasury = player.familyTreasury || 150;
+        player.properties = player.properties || { land: 5, mansions: 1, slaves: 2 };
+        player.dynastyName = player.dynastyName || "ราชวงศ์ต้าถัง (รัชศกหย่งle)";
+        player.originalSurname = player.originalSurname || player.surname || "มู่หรง";
+        player.lineageHistory = player.lineageHistory || [];
+        player.lastAncestralPrayAge = player.lastAncestralPrayAge || -1;
+        player.skillActionsThisYear = player.skillActionsThisYear || {};
+        player.skillMasteryLevels = player.skillMasteryLevels || {};
+        player.connectionNews = player.connectionNews || [];
+        player.lastSaveTimestamp = player.lastSaveTimestamp || Date.now();
+        player.willSettings = player.willSettings || { heir: "ทายาทคนโต", splitRatio: 100 };
+        player.children = player.children || [ { name: "ปัณณวิชญ์ (ทายาทสายตรง)", age: 12, gender: "ชาย", potential: "สูง" } ];
+        player.innerCourtRank = player.innerCourtRank || "สามัญชน / ไร้บรรดาศักดิ์";
+        player.engagementStatus = player.engagementStatus || "โสด";
+        player.officialCareer = player.officialCareer || { type: "ยังไม่รับราชการ", rank: "ไพร่พลทั่วไป", salary: 0 };
+    }
+
+    // ==========================================
+    // 🏛️ หมวดที่ 1: ศูนย์กลางราชสำนัก, ขุนนาง, สอบจอหงวน & ข่าวสารแผ่นดิน (ข้อ 3, 16, 17, 18, 19, 20)
+    // ==========================================
+    window.openGovernmentHubModal = function() {
+        if (!window.player) return;
+        document.getElementById('res-icon').innerText = "🏛️";
+        document.getElementById('res-title').innerText = "🏛️ ศูนย์กลางราชสำนัก & กิจการแผ่นดิน";
+        document.getElementById('res-desc').innerText = `สถานะ: ${player.officialCareer.type} | ตำแหน่ง: ${player.officialCareer.rank} | คลังตระกูล: ${player.familyTreasury} ตำลึง\n\nเลือกหมวดหมู่ย่อยในราชสำนัก:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="openCivilExamModal()">📚 [สายบุ๋น] สำนักสอบจอหงวน & ไต่เต้าขุนนาง</button>
+            <button class="choice-btn" onclick="openMilitaryCareerModal()">⚔️ [สายบู๋] กองทัพหลวง & ยศแม่ทัพชายแดน</button>
+            <button class="choice-btn" onclick="openMinistryDutiesModal()">📜 [กรมกอง] ปฏิบัติราชการ 6 กรม & รับเบี้ยหวัด</button>
+            <button class="choice-btn" onclick="checkImperialDecreesAndGazette()">📜 [ข่าวสาร] ราชโองการฮ่องเต้ & ข่าวกรองแคว้น</button>
+            <button class="choice-btn" onclick="openMainActionHub()">🔙 กลับสู่เมนูหลัก</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.openCivilExamModal = function() {
+        document.getElementById('res-icon').innerText = "📖";
+        document.getElementById('res-title').innerText = "📖 สำนักสอบจอหงวน (สายบุ๋น)";
+        document.getElementById('res-desc').innerText = `ความรู้ตำราปัจจุบัน: ${player.skills.scholarship || 10} แต้ม\nเลือกประเภทการสอบ:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="takeExamStep('ซิ่วไฉ')">📝 สอบระดับท้องถิ่น (ซิ่วไฉ - ต้องการ 30)</button>
+            <button class="choice-btn" onclick="takeExamStep('จิ๋วเหริน')">📜 สอบระดับมณฑล (จิ๋วเหริน - ต้องการ 60)</button>
+            <button class="choice-btn" onclick="takeExamStep('จอหงวน')">👑 สอบรอบสุดท้ายหน้าพระพักตร์ (จอหงวน - ต้องการ 90)</button>
+            <button class="choice-btn" onclick="openGovernmentHubModal()">🔙 กลับหน้าหลักราชสำนัก</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.takeExamStep = function(level) {
+        let req = level === 'ซิ่วไฉ' ? 30 : (level === 'จิ๋วเหริน' ? 60 : 90);
+        if ((player.skills.scholarship || 10) < req) {
+            alert(`⚠️ ความรู้สายปราชญ์ของท่านยังไม่ถึงเกณฑ์! (ต้องการ ${req} แต้ม)`);
+            return;
+        }
+        player.officialCareer = { type: "ขุนนางสายบุ๋น", rank: `ขุนนางบัณฑิต (${level})`, salary: level === 'จอหงวน' ? 200 : 80 };
+        player.repu += 30;
+        addTimeline(`📚 สอบผ่านระดับ '${level}'`, `ได้รับการแต่งตั้งเป็น '${player.officialCareer.rank}'`, "good");
+        showModal(`🎉 ยินดีด้วย!`, `ท่านสอบผ่านการคัดเลือกเป็น '${player.officialCareer.rank}' สำเร็จ!`, "🌟");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.openMilitaryCareerModal = function() {
+        document.getElementById('res-icon').innerText = "🛡️";
+        document.getElementById('res-title').innerText = "🛡️ ค่ายทหารหลวง (สายบู๋)";
+        document.getElementById('res-desc').innerText = `ทักษะยุทธ์ปัจจุบัน: ${player.skills.martial || 10} แต้ม\nเลือกตำแหน่งกองทัพ:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="takeMilitaryRank('พลทหารกล้า')">⚔️ พลทหารแนวหน้า (ต้องการยุทธ์ 20)</button>
+            <button class="choice-btn" onclick="takeMilitaryRank('นายกองค่ายทหาร')">🗡️ นายกองคุมกำลัง (ต้องการยุทธ์ 50)</button>
+            <button class="choice-btn" onclick="takeMilitaryRank('แม่ทัพพิทักษ์ชายแดน')">🛡️ แม่ทัพใหญ่ (ต้องการยุทธ์ 85)</button>
+            <button class="choice-btn" onclick="openGovernmentHubModal()">🔙 กลับหน้าหลักราชสำนัก</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.takeMilitaryRank = function(rankName) {
+        let req = rankName === 'พลทหารกล้า' ? 20 : (rankName === 'นายกองค่ายทหาร' ? 50 : 85);
+        if ((player.skills.martial || 10) < req) {
+            alert(`⚠️ ทักษะยุทธ์ยังไม่ถึงเกณฑ์! (ต้องการ ${req} แต้ม)`);
+            return;
+        }
+        player.officialCareer = { type: "ขุนนางสายบู๋", rank: rankName, salary: rankName === 'แม่ทัพพิทักษ์ชายแดน' ? 250 : 100 };
+        player.skills.martial += 10;
+        addTimeline(`🛡️ เลื่อนยศทหาร: '${rankName}'`, `ได้รับพระราชทานยศ '${rankName}'`, "good");
+        showModal(`⚔️ เกียรติยศนักรบ`, `ท่านได้รับแต่งตั้งเป็น '${rankName}' แล้ว!`, "🔥");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.openMinistryDutiesModal = function() {
+        document.getElementById('res-icon').innerText = "📜";
+        document.getElementById('res-title').innerText = "📜 ปฏิบัติราชการ 6 กรมหลัก";
+        document.getElementById('res-desc').innerText = `สังกัด: ${player.officialCareer.rank} | เบี้ยหวัด: ${player.officialCareer.salary} ตำลึง\nเลือกกรมกอง:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="workInMinistry('กรมคลัง')">💰 ทำงานกรมคลัง (รับเบี้ยหวัดหลวง)</button>
+            <button class="choice-btn" onclick="workInMinistry('กรมโยธา')">🏗️ ทำงานกรมโยธา (เพิ่มชื่อเสียง)</button>
+            <button class="choice-btn" onclick="workInMinistry('กรมพิธีการ')">🏮 ทำงานกรมพิธีการ (เพิ่มสายสัมพันธ์)</button>
+            <button class="choice-btn" onclick="openGovernmentHubModal()">🔙 กลับหน้าหลักราชสำนัก</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.workInMinistry = function(ministryName) {
+        if (player.officialCareer.type === "ยังไม่รับราชการ") {
+            alert("⚠️ ท่านยังไม่ได้เข้ารับราชการ!");
+            return;
+        }
+        let earned = player.officialCareer.salary || 50;
+        player.familyTreasury += earned;
+        player.stress = Math.min(100, (player.stress || 0) + 5);
+        addTimeline(`📜 ปฏิบัติราชการ '${ministryName}'`, `ได้รับเบี้ยหวัดเข้าคลังตระกูล (+${earned} ตำลึง)`, "good");
+        showModal(`💰 เบี้ยหวัดหลวงออกแล้ว`, `รับเงินเข้าคลังตระกูล ${earned} ตำลึง`, "📈");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.checkImperialDecreesAndGazette = function() {
+        let pool = [
+            "📜 ราชโองการ: ฮ่องเต้โปรดเกล้าฯ ตรวจสอบบัญชีทรัพย์สินขุนนาง ชื่อเสียงตระกูลขยับขึ้น",
+            "📜 ราชโองการศึก: ระดมพลรับมือชนเผ่าเร่ร่อนชายแดน",
+            "🏮 ข่าวกรองการค้า: เส้นทางไหมเปิดทำการ กำไรค้าขายพุ่งสูงขึ้น!",
+            "🕵️ ข่าวลือราชสำนัก: ขุนนางฝ่ายบุ๋นและฝ่ายบู๋กำลังแย่งชิงอำนาจ"
+        ];
+        let news = pool[Math.floor(Math.random() * pool.length)];
+        addTimeline("📜 ข่าวสารราชสำนัก", news, "good");
+        showModal("📜 ราชโองการ & ข่าวสารแผ่นดิน", news, "📢");
+    };
+
+
+    // ==========================================
+    // 💰 หมวดที่ 2: คลังสมบัติ, เศรษฐกิจ, บ่อนการพนัน & ซื้อขายที่ดิน/จวน (เศรษฐกิจสมดุล)
+    // ==========================================
+    window.openEconomyAndAssetsModal = function() {
+        if (!window.player) return;
+        document.getElementById('res-icon').innerText = "💰";
+        document.getElementById('res-title').innerText = "💰 คลังสมบัติ, เศรษฐกิจ & ทรัพย์สิน";
+        document.getElementById('res-desc').innerText = `คลังตระกูล: ${player.familyTreasury} ตำลึง | จวน: ${player.properties.mansions} หลัง | ที่ดิน: ${player.properties.land} ไร่ | ทาส: ${player.properties.slaves} คน\n\nเลือกจัดการการเงินหรือลงทุน:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="openGamblingHouseModal()">🎲 เสี่ยงโชคบ่อนการพนัน (ได้-เสียเงิน)</button>
+            <button class="choice-btn" onclick="manageAssetPurchase('land')">🌾 กว้านซื้อที่ดิน (50 ตำลึง / 2 ไร่)</button>
+            <button class="choice-btn" onclick="manageAssetPurchase('mansion')">🏡 ขยายจวนตระกูล (200 ตำลึง)</button>
+            <button class="choice-btn" onclick="manageAssetPurchase('slave')">👥 ซื้อทาสรับใช้เข้าจวน (30 ตำลึง)</button>
+            <button class="choice-btn" onclick="triggerRandomWealthEvent()">⚡ สุ่มเหตุการณ์เศรษฐกิจ (ลาภลอย / ริบสมบัติ)</button>
+            <button class="choice-btn" onclick="openMainActionHub()">🔙 กลับสู่เมนูหลัก</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.openGamblingHouseModal = function() {
+        if (player.familyTreasury < 20) { alert("⚠️ เงินในคลังไม่พอวางเดิมพัน (ต้องการอย่างน้อย 20 ตำลึง)"); return; }
+        player.familyTreasury -= 20;
+        let isWin = Math.random() > 0.45;
+        if (isWin) {
+            let reward = Math.floor(Math.random() * 50) + 30;
+            player.familyTreasury += reward;
+            addTimeline("🎲 เสี่ยงโชคบ่อนการพนัน", `เล่นพนันชนะ ได้กำไรก้อนโต (+${reward} ตำลึง)`, "good");
+            showModal("🎲 เฮงสุดขีด!", `เล่นพนันชนะรับเงินรางวัล ${reward} ตำลึง!`, "💰");
+        } else {
+            addTimeline("🎲 เสี่ยงโชคบ่อนการพนัน", `พ่ายแพ้ เสียเงินเดิมพัน (-20 ตำลึง)`, "bad");
+            showModal("🎲 พ่ายแพ้ย่อยยับ!", `เจ้ามือทอยเต๋าแพ้ เสียเงินเดิมพัน 20 ตำลึง!`, "💸");
+        }
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.manageAssetPurchase = function(type) {
+        let cost = type === 'land' ? 50 : (type === 'mansion' ? 200 : 30);
+        if (player.familyTreasury < cost) { alert(`⚠️ เงินคลังไม่พอ! (ต้องการ ${cost} ตำลึง)`); return; }
+        player.familyTreasury -= cost;
+        if (type === 'land') { player.properties.land += 2; addTimeline("🌾 ซื้อที่ดิน", "ซื้อที่ดินเพิ่ม 2 ไร่", "good"); showModal("🌾 ซื้อที่ดินสำเร็จ", "ผลผลิตงอกเงย เพิ่มมูลค่าตระกูล", "📈"); }
+        else if (type === 'mansion') { player.properties.mansions += 1; addTimeline("🏡 ขยายจวน", "สร้างเรือนพักเพิ่มขึ้น", "good"); showModal("🏡 จวนโอ่อ่า", "บารมีตระกูลพุ่งสูงขึ้น", "✨"); }
+        else if (type === 'slave') { player.properties.slaves += 1; addTimeline("👥 ซื้อทาส", "รับบ่าวรับใช้เข้าจวนเพิ่ม", "good"); showModal("👥 บ่าวพร้อมหน้า", "ช่วยแบ่งเบาภาระในเรือน", "🏠"); }
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.triggerRandomWealthEvent = function() {
+        let events = [
+            { title: "🌟 ค้าขายรุ่งเรือง", desc: "เรือสินค้าเทียบท่าปลอดภัย ขายสินค้าได้กำไรมหาศาล!", effect: () => { player.familyTreasury += 100; }, type: "good" },
+            { title: "🌾 ภัยแล้งข้าวยากหมากแพง", desc: "ผลผลิตเสียหาย ต้องเสียเงินเยียวยาราษฎร", effect: () => { player.familyTreasury = Math.max(0, player.familyTreasury - 60); }, type: "bad" },
+            { title: "⚖️ ถูกขุนนางกังฉินกลั่นแกล้ง", desc: "ถูกกล่าวหาว่าซุกซอมอาวุธ โดนราชสำนักปรับและริบทรัพย์!", effect: () => { player.familyTreasury = Math.max(0, player.familyTreasury - 120); }, type: "bad" },
+            { title: "🎁 ผู้มีพระคุณตอบแทน", desc: "ช่วยเหลือชาวบ้านเฒ่า ได้รับมอบทองคำแท่งตอบแทน", effect: () => { player.familyTreasury += 150; }, type: "good" }
+        ];
+        let ev = events[Math.floor(Math.random() * events.length)];
+        ev.effect();
+        addTimeline(ev.title, ev.desc, ev.type);
+        showModal(ev.title, ev.desc, ev.type === 'good' ? "💰" : "⚠️");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+
+    // ==========================================
+    // 👑 หมวดที่ 3: วังหลัง, ครอบครัว, ความรัก, งานเลี้ยง, หมั้นหมาย & ลูกหลาน (ข้อ 1, 4, 5, 11, 13, 14, 15, 21)
+    // ==========================================
+    window.openFamilyAndHaremModal = function() {
+        if (typeof player === 'undefined') return;
+        let haremList = player.harem.length > 0 ? player.harem.map((h, i) => `\n[${i+1}] ${h.name} (ความสัมพันธ์: ${h.affection}%)`).join('') : "\n- ยังไม่มีอนุภรรยา";
+        let childrenList = player.children.length > 0 ? player.children.map((c, i) => `\n[${i+1}] ${c.name} (อายุ: ${c.age} ปี, พรสวรรค์: ${c.potential})`).join('') : "\n- ยังไม่มีบุตรทายาท";
+
+        document.getElementById('res-icon').innerText = "👑";
+        document.getElementById('res-title').innerText = "👑 วังหลัง, ครอบครัว & ส่งเสริมทายาท";
+        document.getElementById('res-desc').innerText = `สถานะ: ${player.maritalStatus || 'โสด'} | บรรดาศักดิ์: ${player.innerCourtRank}\nรายชื่ออนุ:${haremList}\nรายชื่อบุตร:${childrenList}\n\nเลือกจัดการเรื่องเรือน:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="addNewConubine()">🌸 รับอนุภรรยาเข้าจวน (100 ตำลึง)</button>
+            <button class="choice-btn" onclick="openGrandBanquetsModal()">🍷 จัดงานเลี้ยง & ชุมนุมกวี (40 ตำลึง)</button>
+            <button class="choice-btn" onclick="openMatchmakingModal()">💌 ดูตัว & หมั้นหมายบุตรหลาน (50 ตำลึง)</button>
+            <button class="choice-btn" onclick="investInChildEducation()">📚 ส่งเสริมการศึกษาให้บุตรหลาน (40 ตำลึง)</button>
+            <button class="choice-btn" onclick="openImperialCourtModal()">👑 เข้าเฝ้า / บรรดาศักดิ์ราชสำนัก</button>
+            <button class="choice-btn" onclick="openWillModal()">📜 พินัยกรรม & มรดกตระกูล</button>
+            <button class="choice-btn" onclick="openMainActionHub()">🔙 กลับสู่เมนูหลัก</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.addNewConubine = function() {
+        if (player.familyTreasury < 100) { alert("⚠️ เงินคลังตระกูลไม่พอรับอนุ (ต้องการ 100 ตำลึง)!"); return; }
+        player.familyTreasury -= 100;
+        let names = ["อิงฮวา", "ลี่มี่", "ชิงชิง", "เหมยฮัว"];
+        let name = names[Math.floor(Math.random() * names.length)] + " (อนุ)";
+        player.harem.push({ name: name, affection: 70, jealousy: 30 });
+        addTimeline("🌸 รับอนุภรรยาเข้าจวน", `ตบแต่ง ${name} เข้าเรือนเรียบร้อย`, "good");
+        showModal("🌸 รับอนุสำเร็จ", `ตบแต่ง ${name} เข้าจวนเรียบร้อย`, "💖");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.openGrandBanquetsModal = function() {
+        if (player.familyTreasury < 40) { alert("⚠️ เงินคลังตระกูลไม่พอจัดงานเลี้ยง (ต้องการ 40 ตำลึง)"); return; }
+        player.familyTreasury -= 40;
+        player.repu += 15;
+        player.happy = Math.min(100, (player.happy || 50) + 10);
+        addTimeline("🍷 จัดงานชุมนุมกวี & รับรองแขก", "เปิดจวนต้อนรับแขกผู้มีเกียรติ สร้างชื่อเสียงขจรไกล", "good");
+        showModal("🎉 งานเลี้ยงรื่นรมย์", "แขกเหรื่อชื่นชม บารมีตระกูลเพิ่มขึ้น (+15 ชื่อเสียง)", "🌸");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.investInChildEducation = function() {
+        if (player.familyTreasury < 40) { alert("⚠️ เงินคลังตระกูลไม่พอเป็นค่าเล่าเรียน (ต้องการ 40 ตำลึง)"); return; }
+        if (player.children.length === 0) { alert("⚠️ ท่านยังไม่มีบุตรทายาท"); return; }
+        player.familyTreasury -= 40;
+        player.children[0].potential = "อัจฉริยะโดดเด่น";
+        addTimeline("📚 อบรมสั่งสอนบุตรหลาน", `ว่าจ้างสำนักบัณฑิตสอนหนังสือให้ ${player.children[0].name}`, "good");
+        showModal("📚 ทายาทเติบใหญ่", `บุตรทายาท ${player.children[0].name} พรสวรรค์ยกระดับเป็น 'อัจฉริยะโดดเด่น'!`, "🌟");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.openMatchmakingModal = function() {
+        document.getElementById('res-icon').innerText = "💌";
+        document.getElementById('res-title').innerText = "💌 หอชมจันทร์ & จัดการงานหมั้นหมาย";
+        document.getElementById('res-desc').innerText = `สถานะหัวใจ: ${player.engagementStatus} | บรรดาศักดิ์: ${player.innerCourtRank}\nเลือกบริการแม่สื่อ:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="triggerBlindDate()">🌸 จ้างแม่สื่อดูตัวตระกูลใหญ่ (50 ตำลึง)</button>
+            <button class="choice-btn" onclick="triggerGrandWedding()">🏮 จัดพิธีมงคลสมรสใหญ่ (เกี้ยวเจ้าสาว)</button>
+            <button class="choice-btn" onclick="openFamilyAndHaremModal()">🔙 กลับหน้าวังหลัง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.triggerBlindDate = function() {
+        if (player.familyTreasury < 50) { alert("⚠️ เงินคลังไม่พอจ้างแม่สื่อ (ต้องการ 50 ตำลึง)"); return; }
+        player.familyTreasury -= 50;
+        player.engagementStatus = "หมั้นหมายแล้ว (ตระกูลขุนนางใหญ่)";
+        addTimeline("💌 นัดดูตัวผ่านแม่สื่อ", "แลกป้ายหยกหมั้นหมายกับทายาทตระกูลดังสำเร็จ", "good");
+        showModal("💌 หมั้นหมายสำเร็จ!", "ท่านได้คู่หมั้นคู่หมายที่มีชาติตระกูลดีพร้อม", "💖");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.triggerGrandWedding = function() {
+        if (player.engagementStatus === "โสด") { alert("⚠️ ท่านยังไม่มีคู่หมั้น!"); return; }
+        player.maritalStatus = "สมรสแล้ว";
+        player.happy = Math.min(100, (player.happy || 50) + 25);
+        addTimeline("🏮 พิธีมงคลสมรสใหญ่", "เกี้ยวเจ้าสาวสีแดงสด คำนับฟ้าดินตามธรรมเนียมโบราณ", "good");
+        showModal("🏮 เข้าห้องหอสมรส", "พิธีแต่งงานผ่านพ้นไปอย่างชื่นมื่น (ความสุข +25)", "✨");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.openImperialCourtModal = function() {
+        document.getElementById('res-icon').innerText = "👑";
+        document.getElementById('res-title').innerText = "👑 ราชสำนัก วังหลวง & เชื้อพระวงศ์";
+        document.getElementById('res-desc').innerText = `บรรดาศักดิ์ปัจจุบัน: ${player.innerCourtRank}\nเลือกกิจการในวังหลวง:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="promoteImperialRank('สนมเอก / ขุนนางขั้น 4')">🌸 เลื่อนขั้นเป็น 'สนมเอก / ขุนนางขั้น 4'</button>
+            <button class="choice-btn" onclick="interactWithRoyalty('องค์ชายใหญ่ / ท่านอ๋อง')">🏛️ เข้าเฝ้ารับใช้ 'องค์ชายใหญ่ / ท่านอ๋อง'</button>
+            <button class="choice-btn" onclick="claimRoyalConsort()">✨ หมายปองตำแหน่ง 'ราชบุตรเขย / พระชายาเอก'</button>
+            <button class="choice-btn" onclick="openFamilyAndHaremModal()">🔙 กลับหน้าวังหลัง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.promoteImperialRank = function(newRank) {
+        player.innerCourtRank = newRank;
+        player.repu = (player.repu || 10) + 20;
+        addTimeline("👑 เลื่อนขั้นตำแหน่งราชสำนัก", `แต่งตั้งเป็น '${newRank}' อำนาจพุ่งสูงขึ้น`, "good");
+        showModal("👑 เลื่อนยศสำเร็จ", `ท่านได้รับการแต่งตั้งเป็น '${newRank}' แล้ว`, "🎉");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.interactWithRoyalty = function(royaltyName) {
+        player.stress = (player.stress || 10) + 10;
+        player.familyTreasury += 80;
+        addTimeline("🏛️ เข้าเฝ้าเชื้อพระวงศ์", `ถวายงานแด่ '${royaltyName}' ได้รับรางวัล`, "good");
+        showModal("🏛️ สร้างความประทับใจ", `ได้รับเบี้ยหวัดรางวัล (+80 ตำลึงเข้าคลัง)`, "💰");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.claimRoyalConsort = function() {
+        player.innerCourtRank = "ราชบุตรเขย / พระชายาเอกองค์ชาย";
+        player.repu += 40;
+        addTimeline("✨ อภิเษกสมรสกับเชื้อพระวงศ์", `ขึ้นแท่นเป็น '${player.innerCourtRank}' เกียรติยศสูงสุด`, "good");
+        showModal("✨ ก่อร่างสร้างตำนานหลวง", `ท่านได้อภิเษกกับเชื้อพระวงศ์แล้ว!`, "🌟");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.openWillModal = function() {
+        document.getElementById('res-icon').innerText = "📜";
+        document.getElementById('res-title').innerText = "📜 ห้องพินัยกรรม & มรดกตระกูล";
+        document.getElementById('res-desc').innerText = `ทรัพย์สินคลังตระกูล: ${player.familyTreasury} ตำลึง\nทายาทผู้รับมรดก: ${player.willSettings.heir}`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="updateWillHeir('ทายาทสายตรงคนโต')">👑 ยกมรดก 100% ให้ทายาทคนโต</button>
+            <button class="choice-btn" onclick="updateWillHeir('แบ่งให้บุตรและอนุภรรยาเท่าๆ กัน')">⚖️ แบ่งให้บุตรและอนุภรรยาเท่าๆ กัน</button>
+            <button class="choice-btn" onclick="openFamilyAndHaremModal()">🔙 กลับหน้าวังหลัง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.updateWillHeir = function(strategy) {
+        player.willSettings.heir = strategy;
+        addTimeline("📜 ร่างพินัยกรรมตระกูล", `กำหนดแนวทางมรดก: ${strategy}`, "good");
+        showModal("📜 บันทึกพินัยกรรม", "พินัยกรรมถูกจัดเก็บเรียบร้อย", "✨");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+
+    // ==========================================
+    // 🏮 ศูนย์กลางเมนูหลัก (Hub Menu) เชื่อมโยงทุกหมวดหมู่อย่างไร้รอยต่อ
+    // ==========================================
+    window.openMainActionHub = function() {
+        if (!window.player) return;
+        document.getElementById('res-icon').innerText = "🏮";
+        document.getElementById('res-title').innerText = "🏮 ศูนย์กลางจัดการจวนตระกูล & ชีวิต";
+        document.getElementById('res-desc').innerText = `ท่าน ${player.surname} (อายุ ${player.age} ปี) | คลังตระกูล: ${player.familyTreasury} ตำลึง\nกรุณาเลือกหมวดหมู่หลักที่ต้องการจัดการ:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="openGovernmentHubModal()">🏛️ 1. ราชสำนัก, สอบขุนนาง & กรมกอง</button>
+            <button class="choice-btn" onclick="openEconomyAndAssetsModal()">💰 2. คลังสมบัติ, บ่อนการพนัน & ซื้อที่ดิน/จวน</button>
+            <button class="choice-btn" onclick="openFamilyAndHaremModal()">👑 3. วังหลัง, ครอบครัว, ความรัก & ลูกหลาน</button>
+            <button class="choice-btn" style="color:#d9534f;" onclick="triggerDeathAndSuccessionModal()">🪦 4. สิ้นอายุขัย & สืบสกุลข้ามรุ่น</button>
+            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    // ผูกเมนูลัดเข้ากับปุ่มวังหลังเดิม
+    window.openAdvancedHaremModal = function() {
+        openMainActionHub();
+    };
+
+    // ระบบสืบทอดข้ามรุ่น (ข้อ 12) & ออฟไลน์ (ข้อ 10)
+    window.triggerDeathAndSuccessionModal = function() {
+        document.getElementById('res-icon').innerText = "🪦";
+        document.getElementById('res-title').innerText = "🪦 สิ้นอายุขัย & สืบสกุลข้ามรุ่น";
+        document.getElementById('res-desc').innerText = `ตัวละครหลัก '${player.surname}' สิ้นสุดชีวิตลงแล้ว... เลือกเส้นทางต่อไป:`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="succeedToHeir()">👑 สวมบทบาทเล่นเป็นทายาทในตระกูลต่อ</button>
+            <button class="choice-btn" onclick="startNewLifeFresh()">🎲 เริ่มต้นชีวิตใหม่เป็นสามัญชนจากศูนย์</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.succeedToHeir = function() {
+        if (player.children.length === 0) { startNewLifeFresh(); return; }
+        let heir = player.children[0];
+        player.surname = player.originalSurname;
+        player.age = heir.age;
+        player.familyTreasury += 100;
+        addTimeline("👑 สืบทอดวงศ์ตระกูลข้ามรุ่น", `สวมบทบาทเป็น '${heir.name}' ทายาทรุ่นถัดไป`, "good");
+        showModal("👑 สืบทอดสกุลสำเร็จ", `เริ่มต้นชีวิตใหม่ในร่างของ ${heir.name}`, "✨");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.startNewLifeFresh = function() {
+        player.age = 1;
+        player.familyTreasury = 50;
+        player.health = 100;
+        addTimeline("🎲 เริ่มต้นชีวิตใหม่", "เกิดใหม่เป็นทารกเพื่อสร้างตำนานบทใหม่", "good");
+        showModal("🎲 กลับชาติมาเกิดใหม่", "เริ่มต้นเส้นทางชีวิตใหม่แล้ว!", "🌅");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.checkOfflineStatusOnLoad = function() {
+        if (!window.player) return;
+        let now = Date.now();
+        let elapsedMinutes = Math.floor((now - player.lastSaveTimestamp) / (1000 * 60));
+        if (elapsedMinutes >= 5) {
+            setTimeout(() => {
+                showModal("🏮 ยินดีต้อนรับกลับสู่จวน", `เวลาในเกมถูกแช่แข็งไว้ขณะออฟไลน์ ทุกสิ่งทุกอย่างหยุดนิ่งรอท่านตัดสินใจเช่นเดิมขอรับ`, "📜");
+            }, 1000);
+        }
+        player.lastSaveTimestamp = now;
+    };
+
+    const masterAgeUp = window.ageUp;
+    window.ageUp = function() {
+        if (typeof masterAgeUp === 'function') masterAgeUp();
+        player.lastSaveTimestamp = Date.now();
+    };
+
+    window.addEventListener('load', function() {
+        checkOfflineStatusOnLoad();
+    });
+
+    console.log("✅ Ancient Life Masterpiece Master Patch V.50 Loaded Successfully!");
+</script>
 </body>
 </html>
