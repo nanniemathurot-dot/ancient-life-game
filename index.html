@@ -18,89 +18,90 @@
             --success-green: #1e8449;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg-main); color: var(--text-dark); display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; position: fixed; }
+        body { background: var(--bg-main); color: var(--text-dark); display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; position: fixed; font-size: 14px; }
 
-        /* --- CHARACTER CREATION & ERA SETUP SCREEN --- */
+        /* --- CHARACTER CREATION SETUP SCREEN --- */
         #setup-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             z-index: 1000; display: flex; justify-content: center; align-items: center; padding: 16px; overflow-y: auto;
         }
         .setup-card {
-            background: #fff; width: 100%; max-width: 420px; border-radius: 16px; padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 5px solid var(--gold); text-align: center; max-height: 90vh; overflow-y: auto;
+            background: #fff; width: 100%; max-width: 440px; border-radius: 18px; padding: 24px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.5); border-top: 6px solid var(--gold); text-align: center; max-height: 90vh; overflow-y: auto;
         }
-        .setup-card h2 { color: var(--primary); margin-bottom: 6px; font-size: 18px; font-weight: bold; }
-        .setup-card p { font-size: 11px; color: #666; margin-bottom: 12px; }
-        .form-group { text-align: left; margin-bottom: 10px; }
-        .form-group label { display: block; font-size: 11px; font-weight: bold; color: var(--primary); margin-bottom: 3px; }
-        .form-control { width: 100%; padding: 9px 10px; border: 1.5px solid var(--border-color); border-radius: 8px; font-size: 12px; outline: none; background: #fff; }
-        .random-box { background: #faf8f2; padding: 8px; border-radius: 8px; border: 1px dashed var(--gold); margin-bottom: 10px; font-size: 11px; text-align: left; line-height: 1.4; }
-        .btn-random { background: #555; color: #fff; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 10px; margin-top: 4px; }
+        .setup-card h2 { color: var(--primary); margin-bottom: 8px; font-size: 20px; font-weight: bold; }
+        .setup-card p { font-size: 13px; color: #666; margin-bottom: 16px; }
+        .form-group { text-align: left; margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; color: var(--primary); margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 11px 12px; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 14px; outline: none; background: #fff; }
+        .random-box { background: #faf8f2; padding: 10px; border-radius: 10px; border: 1px dashed var(--gold); margin-bottom: 14px; font-size: 13px; text-align: left; line-height: 1.5; }
+        .btn-random { background: #555; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 6px; }
         .btn-start {
             width: 100%; background: linear-gradient(135deg, var(--gold), #9a7b38); color: #fff;
-            border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(197,160,89,0.4); margin-top: 8px;
+            border: none; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 16px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(197,160,89,0.4); margin-top: 10px;
         }
 
-        /* --- STICKY HEADER --- */
+        /* --- STICKY HEADER (One More Life Style) --- */
         header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: var(--gold-light); padding: 8px 12px; display: flex; align-items: center;
-            justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 25;
-            border-bottom: 2px solid var(--gold); height: 50px; flex-shrink: 0;
+            color: var(--gold-light); padding: 10px 14px; display: flex; align-items: center;
+            justify-content: space-between; box-shadow: 0 3px 12px rgba(0,0,0,0.3); z-index: 25;
+            border-bottom: 2px solid var(--gold); height: 56px; flex-shrink: 0;
         }
-        .header-left { display: flex; align-items: center; gap: 8px; }
-        .menu-btn { background: none; border: none; color: var(--gold); font-size: 22px; cursor: pointer; }
-        .avatar-box { font-size: 22px; background: rgba(255,255,255,0.15); padding: 2px 6px; border-radius: 6px; border: 1px solid var(--gold); }
-        .header-info h1 { font-size: 12px; color: var(--gold); font-weight: bold; }
-        .header-info p { font-size: 9px; color: #fff; opacity: 0.9; }
-        .header-right { text-align: right; font-size: 9px; color: var(--gold-light); line-height: 1.2; }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .menu-btn { background: none; border: none; color: var(--gold); font-size: 26px; cursor: pointer; }
+        .avatar-box { font-size: 26px; background: rgba(255,255,255,0.15); padding: 3px 8px; border-radius: 8px; border: 1px solid var(--gold); }
+        .header-info h1 { font-size: 14px; color: var(--gold); font-weight: bold; }
+        .header-info p { font-size: 11px; color: #fff; opacity: 0.95; }
+        .header-right { text-align: right; font-size: 11px; color: var(--gold-light); line-height: 1.3; }
 
         /* MINI STATS BAR */
         .mini-stats-bar {
-            background: #fff; padding: 6px 10px; display: flex; justify-content: space-around;
-            border-bottom: 1px solid var(--border-color); font-size: 10px; font-weight: bold; color: #444; z-index: 24; flex-shrink: 0;
+            background: #fff; padding: 8px 12px; display: flex; justify-content: space-around;
+            border-bottom: 1px solid var(--border-color); font-size: 12px; font-weight: bold; color: #333; z-index: 24; flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
         }
-        .mini-stat { display: flex; align-items: center; gap: 3px; }
+        .mini-stat { display: flex; align-items: center; gap: 4px; }
 
         /* --- LEFT DRAWER --- */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; display: none; backdrop-filter: blur(2px); }
         .drawer-overlay.active { display: block; }
-        .left-drawer { position: fixed; top: 0; left: -260px; width: 260px; height: 100%; background: #fff; z-index: 101; box-shadow: 5px 0 20px rgba(0,0,0,0.4); transition: left 0.3s ease; display: flex; flex-direction: column; }
+        .left-drawer { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 101; box-shadow: 6px 0 25px rgba(0,0,0,0.4); transition: left 0.3s ease; display: flex; flex-direction: column; }
         .left-drawer.active { left: 0; }
-        .drawer-header { background: var(--primary); color: var(--gold); padding: 14px; font-weight: bold; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .drawer-body { padding: 12px; flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .drawer-btn { background: #fdfbf7; border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; text-align: left; font-size: 11px; display: flex; align-items: center; gap: 8px; }
+        .drawer-header { background: var(--primary); color: var(--gold); padding: 16px; font-weight: bold; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-body { padding: 14px; flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .drawer-btn { background: #fdfbf7; border: 1px solid var(--border-color); padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; text-align: left; font-size: 13px; display: flex; align-items: center; gap: 10px; }
         .drawer-btn:hover { background: var(--gold-light); color: var(--primary); border-color: var(--gold); }
 
         /* --- MAIN CONTAINER --- */
-        main { flex-grow: 1; padding: 10px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-bottom: 120px; width: 100%; }
-        .card { background: var(--card-bg); border-radius: 10px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border-left: 4px solid var(--primary); border: 1px solid #e8e2d0; }
-        .card h3 { font-size: 13px; color: var(--primary); margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+        main { flex-grow: 1; padding: 12px 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 130px; width: 100%; }
+        .card { background: var(--card-bg); border-radius: 12px; padding: 14px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); border: 1px solid #e8e2d0; }
+        .card h3 { font-size: 15px; color: var(--primary); margin-bottom: 10px; border-bottom: 1.5px solid #eee; padding-bottom: 6px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
         
-        .action-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-top: 4px; }
-        .btn-action { background: #fff; border: 1px solid var(--primary); color: var(--primary); padding: 9px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-align: left; font-size: 11px; display: flex; align-items: center; gap: 8px; transition: 0.15s; }
+        .action-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 6px; }
+        .btn-action { background: #fff; border: 1.5px solid var(--primary); color: var(--primary); padding: 12px 14px; border-radius: 10px; font-weight: bold; cursor: pointer; text-align: left; font-size: 13px; display: flex; align-items: center; gap: 10px; transition: 0.15s; }
         .btn-action:hover { background: var(--primary); color: #fff; }
 
         /* --- ADVANCE YEAR BUTTON --- */
-        .advance-container { position: fixed; bottom: 52px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 15; pointer-events: none; padding: 4px 0; background: linear-gradient(to top, rgba(244,241,234,0.9), transparent); }
-        .btn-advance { pointer-events: auto; background: linear-gradient(135deg, var(--gold), #9a7b38); color: #fff; border: none; padding: 10px 30px; border-radius: 25px; font-weight: bold; font-size: 13px; box-shadow: 0 4px 15px rgba(197,160,89,0.5); cursor: pointer; border: 1px solid #fff; }
+        .advance-container { position: fixed; bottom: 60px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 15; pointer-events: none; padding: 6px 0; background: linear-gradient(to top, rgba(244,241,234,0.95), transparent); }
+        .btn-advance { pointer-events: auto; background: linear-gradient(135deg, var(--gold), #9a7b38); color: #fff; border: none; padding: 12px 36px; border-radius: 30px; font-weight: bold; font-size: 15px; box-shadow: 0 5px 18px rgba(197,160,89,0.5); cursor: pointer; border: 1.5px solid #fff; }
         .btn-advance:active { transform: scale(0.95); }
 
         /* --- BOTTOM NAVIGATION --- */
-        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 52px; background: #fff; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 20; flex-shrink: 0; }
-        .nav-item { background: none; border: none; font-size: 9px; color: #666; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 1px; flex-grow: 1; padding: 3px 0; font-weight: 600; }
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 58px; background: #fff; border-top: 1.5px solid var(--border-color); display: flex; justify-content: space-around; align-items: center; z-index: 20; flex-shrink: 0; }
+        .nav-item { background: none; border: none; font-size: 11px; color: #666; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; flex-grow: 1; padding: 4px 0; font-weight: 600; }
         .nav-item.active { color: var(--primary); font-weight: bold; }
-        .nav-icon { font-size: 16px; }
+        .nav-icon { font-size: 20px; }
 
         /* --- MODAL --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(2px); padding: 16px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75); z-index: 200; display: none; justify-content: center; align-items: center; backdrop-filter: blur(3px); padding: 16px; }
         .modal-overlay.active { display: flex; }
-        .modal-box { background: #fff; width: 100%; max-width: 380px; border-radius: 12px; padding: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.4); text-align: center; border-top: 5px solid var(--primary); max-height: 85vh; overflow-y: auto; }
-        .modal-box h2 { color: var(--primary); margin-bottom: 8px; font-size: 15px; font-weight: bold; }
-        .modal-box p { font-size: 11px; margin-bottom: 14px; color: #333; line-height: 1.5; text-align: left; }
-        .btn-primary { background: var(--primary); color: #fff; border: none; padding: 8px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 11px; }
+        .modal-box { background: #fff; width: 100%; max-width: 400px; border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-align: center; border-top: 6px solid var(--primary); max-height: 85vh; overflow-y: auto; }
+        .modal-box h2 { color: var(--primary); margin-bottom: 10px; font-size: 18px; font-weight: bold; }
+        .modal-box p { font-size: 13px; margin-bottom: 16px; color: #333; line-height: 1.6; text-align: left; }
+        .btn-primary { background: var(--primary); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -169,7 +170,7 @@
     <div class="left-drawer" id="left-drawer">
         <div class="drawer-header">
             <span>🏛️ จัดการตระกูล & พงศาวดาร</span>
-            <span style="cursor:pointer; font-size:15px;" onclick="toggleDrawer(false)">✕</span>
+            <span style="cursor:pointer; font-size:18px;" onclick="toggleDrawer(false)">✕</span>
         </div>
         <div class="drawer-body">
             <button class="drawer-btn" onclick="openChronicleModal()">📖 บันทึกพงศาวดารมหภาค (อ่านย้อนหลัง)</button>
@@ -229,43 +230,36 @@
             stats: { intelligence: 10, combat: 5, charm: 10, prestige: 0 },
             trainUsedThisYear: false,
             family: {
-                father: "มู่หรงจิ้น (ขุนนางผู้น้อยกรมคลัง)",
-                mother: "คุณหญิงหลินซื่อ",
-                siblings: "พี่ชาย (มู่หรงเฉิน - กำลังเตรียมสอบ)",
+                father: "มู่หรงจิ้น (ขุนนางผู้น้อยกรมคลัง - อารมณ์เคร่งขรึมเข้มงวด)",
+                mother: "คุณหญิงหลินซื่อ (มารดาผู้โอบอ้อมอารีรักลูก)",
+                siblings: "พี่ชาย (มู่หรงเฉิน - กำลังเตรียมตัวสอบจอหงวนหลวง)",
                 spouse: "โสด",
                 concubines: [],
-                friends: ["อาหลิน (สหายวัยเด็ก)"],
+                friends: ["อาหลิน (สหายวัยเด็กผู้ร่วมเติบโตมาด้วยกัน)"],
                 heirs: []
             },
             chronicleMasterLog: [
-                { year: 1, type: "personal", text: "อายุ 0 ปี: ถือกำเนิดลืมตาดูโลกในจวนตระกูลมู่หรง ท่ามกลางความยินดีของบิดามารดา" },
-                { year: 1, type: "royal", text: "ข่าวราชสำนัก: ฮ่องเต้ทรงประกาศปฏิรูปภาษีเกลือและเสบียงทั่วราชอาณาจักร" },
-                { year: 1, type: "rumor", text: "ข่าวชาวบ้าน: ชาวเมืองวิพากษ์วิจารณ์เรื่องฝนแล้งทางตอนเหนือ ปีนี้ราคาข้าวอาจพุ่งสูงขึ้น" }
+                { year: 1, type: "personal", text: "อายุ 0 ปี: ถือกำเนิดลืมตาดูโลกในจวนตระกูลมู่หรง ท่ามกลางเสียงถอนหายใจของบิดาและรอยยิ้มอบอุ่นของมารดา" },
+                { year: 1, type: "royal", text: "ข่าวราชสำนัก: ฮ่องเต้ทรงประกาศปฏิรูปภาษีเกลือและเสบียงทั่วราชอาณาจักร ขุนนางต่างตื่นตัว" },
+                { year: 1, type: "rumor", text: "ข่าวชาวบ้าน: ชาวเมืองวิพากษ์วิจารณ์เรื่องภัยแล้งทางตอนเหนือ ปีนี้ราคาข้าวอาจพุ่งสูงขึ้นเท่าตัว" }
             ],
             currentTab: "life"
         };
 
-        // --- AUTO-SAVE & LOAD SYSTEM ---
         function saveGame() {
-            try {
-                localStorage.setItem('dynasty_game_autosave_v3', JSON.stringify(game));
-            } catch(e) {
-                console.error("Save failed", e);
-            }
+            try { localStorage.setItem('dynasty_game_autosave_v4', JSON.stringify(game)); } catch(e) {}
         }
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('dynasty_game_autosave_v3');
+                let saved = localStorage.getItem('dynasty_game_autosave_v4');
                 if(saved) {
                     game = JSON.parse(saved);
                     document.getElementById('setup-screen').style.display = 'none';
                     updateScreen();
                     return true;
                 }
-            } catch(e) {
-                console.error("Load failed", e);
-            }
+            } catch(e) {}
             return false;
         }
 
@@ -276,7 +270,7 @@
 
         function resetGame() {
             if(confirm("ท่านต้องการเริ่มเกมใหม่ทั้งหมดจริงหรือ? ข้อมูลเดิมทั้งหมดจะหายไป")) {
-                localStorage.removeItem('dynasty_game_autosave_v3');
+                localStorage.removeItem('dynasty_game_autosave_v4');
                 location.reload();
             }
         }
@@ -327,11 +321,11 @@
             container.innerHTML = "";
 
             if (game.currentTab === 'life') {
-                let ageInfo = game.age < 6 ? "วัยเยาว์แบเบาะ (เรียนรู้สิ่งรอบตัว)" : (game.age < 16 ? "วัยศึกษาเล่าเรียน (เตรียมตัวสอบและฝึกฝน)" : "วัยผู้ใหญ่ (สร้างตัว แต่งงาน รับราชการ ค้าขาย)");
+                let ageInfo = game.age < 6 ? "วัยเยาว์แบเบาะ (เรียนรู้สิ่งรอบตัวและสร้างพัฒนาการ)" : (game.age < 16 ? "วัยศึกษาเล่าเรียน (เตรียมตัวสอบและฝึกฝนวิชา)" : "วัยผู้ใหญ่ (สร้างเนื้อสร้างตัว แต่งงาน รับราชการ ค้าขาย)");
                 container.innerHTML = `
                     <div class="card">
-                        <h3>📖 สถานะชีวิต & ภาพรวม</h3>
-                        <div style="font-size: 11px; line-height: 1.5;">
+                        <h3>📖 สถานะชีวิต & ภาพรวมตัวละคร</h3>
+                        <div style="font-size: 13px; line-height: 1.6;">
                             <b>ยศ/อาชีพ:</b> ${game.career} (${game.title})<br>
                             <b>ช่วงวัย:</b> ${ageInfo}<br>
                             <b>ความฝัน:</b> ${game.dream}<br>
@@ -339,17 +333,17 @@
                         </div>
                     </div>
                     <div class="card">
-                        <h3>⚡ ไทม์ไลน์เหตุการณ์ล่าสุด (Real-time)</h3>
-                        <div style="font-size: 10px; color: #555; display: flex; flex-direction: column; gap: 4px; max-height: 180px; overflow-y: auto;">
-                            ${game.chronicleMasterLog.slice(-5).reverse().map(item => `<div>• <b>[ปีที่ ${item.year}]</b> ${item.text}</div>`).join('')}
+                        <h3>⚡ ไทม์ไลน์เหตุการณ์ล่าสุด (Real-time Detailed)</h3>
+                        <div style="font-size: 12px; color: #444; display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;">
+                            ${game.chronicleMasterLog.slice(-6).reverse().map(item => `<div style="border-bottom:1px dashed #eee; padding-bottom:4px;">• <b>[ปีที่ ${item.year}]</b> ${item.text}</div>`).join('')}
                         </div>
-                        <button class="btn-action" onclick="openChronicleModal()" style="margin-top: 8px; justify-content: center; text-align: center;">📜 เปิดดูพงศาวดารมหภาคทั้งหมด</button>
+                        <button class="btn-action" onclick="openChronicleModal()" style="margin-top: 10px; justify-content: center; text-align: center;">📜 เปิดอ่านบันทึกพงศาวดารมหภาคทั้งหมด</button>
                     </div>
                 `;
             } else if (game.currentTab === 'court') {
                 let courtContent = "";
                 if(game.age < 16) {
-                    courtContent = `<p style="font-size: 11px; color: var(--danger-red);">อายุยังไม่ถึง 16 ปี ยังไม่สามารถเข้ารับราชการ ค้าขาย หรือเข้าวังหลังได้! จงเติบโตและฝึกฝนตนเองก่อน</p>`;
+                    courtContent = `<p style="font-size: 13px; color: var(--danger-red); line-height: 1.6;">อายุยังไม่ถึง 16 ปี ท่านยังเป็นเพียงเด็กน้อยในจวน ไม่สามารถเข้ารับราชการ ค้าขายใหญ่ หรือเข้าวังหลังได้! จงเติบโตและฝึกฝนตนเองให้พร้อมก่อน</p>`;
                 } else {
                     courtContent = `
                         <div class="action-grid">
@@ -362,7 +356,7 @@
                 }
                 container.innerHTML = `
                     <div class="card">
-                        <h3>🏛️ ราชสำนัก & เส้นทางอาชีพ</h3>
+                        <h3>🏛️ ราชสำนัก & เส้นทางอาชีพขุนนาง</h3>
                         ${courtContent}
                     </div>
                 `;
@@ -370,9 +364,9 @@
                 container.innerHTML = `
                     <div class="card">
                         <h3>🏠 จวนตระกูล & รายละเอียดครอบครัว</h3>
-                        <div style="font-size: 11px; margin-bottom: 8px; line-height: 1.4;">
-                            <div><b>บิดา:</b> ${game.family.father}</div>
-                            <div><b>มารดา:</b> ${game.family.mother}</div>
+                        <div style="font-size: 13px; margin-bottom: 12px; line-height: 1.6;">
+                            <div><b>บิดา:</b> ${game.family.father} <button onclick="talkToFamily('father')" style="padding:2px 6px; font-size:11px; cursor:pointer; margin-left:6px;">พูดคุย</button></div>
+                            <div><b>มารดา:</b> ${game.family.mother} <button onclick="talkToFamily('mother')" style="padding:2px 6px; font-size:11px; cursor:pointer; margin-left:6px;">พูดคุย</button></div>
                             <div><b>พี่น้อง:</b> ${game.family.siblings}</div>
                             <div><b>คู่ครอง:</b> ${game.family.spouse}</div>
                             <div><b>อนุภรรยา:</b> ${game.family.concubines.length > 0 ? game.family.concubines.join(', ') : 'ไม่มี'}</div>
@@ -380,17 +374,17 @@
                             <div><b>ทายาท:</b> ${game.family.heirs.length} คน</div>
                         </div>
                         ${game.age >= 16 ? `
-                            <button class="btn-action" onclick="arrangeMarriage()">💍 สู่ขอแต่งงาน / รับฮูหยินหรืออนุ</button>
-                            <button class="btn-action" onclick="haveChild()" style="margin-top:4px;">🐣 ให้กำเนิดทายาทสืบสกุล</button>
-                        ` : `<p style="font-size:10px; color:#666;">(ต้องอายุ 16 ปีขึ้นไปจึงจะสามารถแต่งงานและมีครอบครัวได้)</p>`}
+                            <button class="btn-action" onclick="arrangeMarriage()">💍 สู่ขอแต่งงาน / รับฮูหยินหรืออนุภรรยา</button>
+                            <button class="btn-action" onclick="haveChild()" style="margin-top:6px;">🐣 ให้กำเนิดทายาทสืบสกุลตระกูล</button>
+                        ` : `<p style="font-size:12px; color:#666;">(ต้องอายุ 16 ปีขึ้นไปจึงจะสามารถแต่งงานและมีครอบครัวได้)</p>`}
                     </div>
                 `;
             } else if (game.currentTab === 'training') {
                 container.innerHTML = `
                     <div class="card">
                         <h3>🏮 ฝึกทักษะ & ท่องเที่ยวเมืองหลวง</h3>
-                        <p style="font-size: 10px; color: ${game.trainUsedThisYear ? 'var(--danger-red)' : 'var(--success-green)'}; margin-bottom: 6px;">
-                            สถานะการฝึกปีนี้: <b>${game.trainUsedThisYear ? 'ใช้งานแล้ว (รอผ่านปี)' : 'พร้อมใช้งาน'}</b>
+                        <p style="font-size: 12px; color: ${game.trainUsedThisYear ? 'var(--danger-red)' : 'var(--success-green)'}; margin-bottom: 8px;">
+                            สถานะการฝึกปีนี้: <b>${game.trainUsedThisYear ? 'ใช้งานโควตาแล้ว (รอผ่านปี)' : 'พร้อมใช้งาน'}</b>
                         </p>
                         <div class="action-grid">
                             <button class="btn-action" onclick="doTraining('study')">📖 ศึกษาตำราปราชญ์ (+สติปัญญา)</button>
@@ -421,18 +415,62 @@
             game.money -= cost;
             if(game.money < 0) game.money = 0;
 
-            game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `อายุ ${game.age} ปี (${game.seasons[game.seasonIndex]}): ผ่านพ้นไป 1 ปี หักค่าใช้จ่ายในจวน ${cost} ตำลึง` });
+            game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `อายุ ${game.age} ปี (${game.seasons[game.seasonIndex]}): ผ่านพ้นไปอีก 1 ปี หักค่าใช้จ่ายในจวนตระกูล ${cost} ตำลึง ชีวิตดำเนินต่อไปอย่างเรียบง่าย` });
 
-            let worldEvents = [
-                { type: "royal", text: `ข่าวราชสำนัก: ขุนนางกรมปาฐกทูลถวายรายงานสถานการณ์ชายแดนสงบเรียบร้อย ฮ่องเต้ทรงพระสำราญ` },
-                { type: "rumor", text: `ข่าวชาวบ้าน: มีข่าวลือหนาหูว่าตระกูลขุนนางใหญ่กำลังซ่องสุมกำลังพลและเตรียมกวาดล้างคู่แข่ง` },
-                { type: "royal", text: `ข่าวราชสำนัก: เกิดอุทกภัยเล็กน้อยที่มณฑลใต้ ฮ่องเต้โปรดให้เปิดคลังหลวงแจกเสบียงบรรเทาทุกข์` },
-                { type: "rumor", text: `ข่าวชาวบ้าน: โรงเตี๊ยมกลางเมืองลือสนั่นเรื่องคุณชายตระกูลใหญ่แอบหลงรักสตรีสามัญชน` }
+            // สุ่มป๊อปอัปอีเวนต์เทศกาลและประเพณีวัฒนธรรมสำคัญ
+            checkAndTriggerFestivalOrEvent();
+
+            saveGame();
+            updateScreen();
+        }
+
+        // ระบบ Pop-up อีเวนต์เทศกาลและค่านิยมประเพณีสำคัญ
+        function checkAndTriggerFestivalOrEvent() {
+            let festivals = [
+                { title: "🧧 เทศกาลตรุษจีนหลวง", desc: "ถึงเทศกาลตรุษจีน สมาชิกในตระกูลมารวมตัวไหว้บรรพบุรุษ ท่านจะทำอย่างไร?", choices: [
+                    { text: "กราบไหว้ขอพรผู้ใหญ่และแจกอั่งเป่า (+ชื่อเสียง, +เสน่ห์)", action: () => { game.stats.prestige += 15; game.stats.charm += 10; showModal("ตรุษจีนสุขสันต์", "ผู้ใหญ่ในตระกูลเอ็นดูและชื่นชมท่าน ชื่อเสียงเพิ่มขึ้น!"); } },
+                    { text: "เก็บตัวอ่านตำราเงียบๆ ไม่สนใจงานฉลอง (+สติปัญญา)", action: () => { game.stats.intelligence += 20; showModal("ขยันขันแข็ง", "ท่านได้ความรู้จากตำราเพิ่มขึ้นอย่างมาก!"); } }
+                ]},
+                { title: "🏮 เทศกาลโคมไฟหยวนเซียว", desc: "ในคืนงานเทศกาลโคมไฟ ถนนหนทางประดับประดาด้วยโคมไฟงดงาม ท่านเดินเที่ยวชมงานและพบปะผู้คน", choices: [
+                    { text: "เข้าร่วมทายปริศนาโคมไฟชิงรางวัล (+เงิน, +สติปัญญา)", action: () => { game.money += 200; game.stats.intelligence += 15; showModal("ชนะการทายปริศนา", "ท่านตอบปริศนาโคมไฟได้เฉียบขาด ได้รับรางวัลเงินสด 200 ตำลึง!"); } },
+                    { text: "เดินชมงานชมสาวงาม/หนุ่มรูปงามริมน้ำ (+เสน่ห์)", action: () => { game.stats.charm += 15; showModal("ต้องตาต้องใจ", "เสน่ห์และอารมณ์สุนทรียะของท่านเพิ่มสูงขึ้น"); } }
+                ]},
+                { title: "🥮 เทศกาลไหว้พระจันทร์", desc: "คืนวันเพ็ญเดือนสิบเอ็ด ครอบครัวร่วมกันจิบสุราชมจันทร์และกินขนมเปี๊ยะ", choices: [
+                    { text: "ร้อยกรองบทกลอนชมจันทร์ขับกล่อมครอบครัว (+ชื่อเสียง)", action: () => { game.stats.prestige += 20; showModal("บทกลอนลือลั่น", "บทกลอนของท่านไพเราะซาบซึ้งจนคนในจวนต่างชื่นชม"); } }
+                ]}
             ];
-            let ev = worldEvents[Math.floor(Math.random() * worldEvents.length)];
-            game.chronicleMasterLog.push({ year: game.year, type: ev.type, text: ev.text });
 
-            saveGame(); // เซฟออโต้ทุกครั้งที่ผ่านปี
+            // สุ่มโอกาสเกิดอีเวนต์ 50% ทุกๆ ปี
+            if(Math.random() < 0.6) {
+                let fest = festivals[Math.floor(Math.random() * festivals.length)];
+                showFestivalModal(fest);
+            }
+        }
+
+        function showFestivalModal(fest) {
+            let choiceHtml = fest.choices.map((c, i) => `<button class="btn-action" onclick="executeFestivalChoice(${i})" style="margin-top:6px;">${c.text}</button>`).join('');
+            window.currentFestivalChoices = fest.choices;
+            showModal(`🎆 ${fest.title}`, `${fest.desc}<br><br><b>โปรดเลือกการกระทำของท่าน:</b><br>${choiceHtml}`);
+        }
+
+        window.executeFestivalChoice = function(index) {
+            if(window.currentFestivalChoices && window.currentFestivalChoices[index]) {
+                window.currentFestivalChoices[index].action();
+                game.chronicleMasterLog.push({ year: game.year, type: "rumor", text: `[เทศกาล] ท่านเข้าร่วมกิจกรรมประจำฤดูกาลและตัดสินใจเลือกแนวทางดำเนินชีวิต` });
+                saveGame();
+                updateScreen();
+            }
+        }
+
+        function talkToFamily(target) {
+            if(target === 'father') {
+                game.stats.intelligence += 5;
+                showModal("สนทนากับบิดา", "บิดาตักเตือนให้ท่านตั้งใจศึกษาเล่าเรียนและประพฤติตนอยู่ในกรอบคุณธรรม ได้รับสติปัญญา +5");
+            } else if(target === 'mother') {
+                game.stats.charm += 5;
+                showModal("สนทนากับมารดา", "มารดาโอบกอดด้วยความรักความอบอุ่น ปรุงอาหารบำรุงร่างกายให้ท่าน ได้รับเสน่ห์/ความสุข +5");
+            }
+            saveGame();
             updateScreen();
         }
 
@@ -465,30 +503,30 @@
 
             if(loc === 'teahouse') {
                 game.stats.charm += 5;
-                game.money += 20;
+                game.money += 30;
                 showModal("โรงน้ำชา", "ท่านจิบชาฟังข่าวสาร แลกเปลี่ยนบทกวีกับบัณฑิต ได้รับเสน่ห์ +5 และเบี้ยหวัดเล็กน้อย");
             } else if(loc === 'tavern') {
-                game.stats.combat += 5;
-                showModal("โรงเตี๊ยม", "ท่านพบปะเหล่าจอมยุทธ์เร้นกาย ฝึกฝนการต่อสู้เบื้องต้น ได้รับพลังยุทธ์ +5");
+                game.stats.combat += 8;
+                showModal("โรงเตี๊ยม", "ท่านพบปะเหล่าจอมยุทธ์เร้นกาย ฝึกฝนการต่อสู้เบื้องต้น ได้รับพลังยุทธ์ +8");
             } else if(loc === 'gambling') {
                 let win = Math.random() > 0.5;
                 if(win) {
-                    game.money += 300;
-                    showModal("บ่อนการพนัน", "เฮงสุดๆ! ท่านทายเต็งไฮโลถูก ได้รับเงินรางวัล +300 ตำลึง");
+                    game.money += 350;
+                    showModal("บ่อนการพนัน", "เฮงสุดๆ! ท่านทายเต็งไฮโลถูก ได้รับเงินรางวัล +350 ตำลึง");
                 } else {
-                    game.money -= 150;
+                    game.money -= 180;
                     if(game.money < 0) game.money = 0;
-                    showModal("บ่อนการพนัน", "เคราะห์ร้าย! ท่านแทงผิดฝั่ง เสียเงินไป 150 ตำลึง");
+                    showModal("บ่อนการพนัน", "เคราะห์ร้าย! ท่านแทงผิดฝั่ง เสียเงินไป 180 ตำลึง");
                 }
             } else if(loc === 'brothel') {
-                game.stats.charm += 10;
-                game.money -= 100;
+                game.stats.charm += 12;
+                game.money -= 120;
                 if(game.money < 0) game.money = 0;
-                showModal("โรงคณิกา", "ท่านดื่มด่ำกับบทเพลงและสุนทรียะ เสพความสำราญ ได้รับเสน่ห์ +10 แต่เสียค่าใช้จ่ายไป 100 ตำลึง");
+                showModal("โรงคณิกา", "ท่านดื่มด่ำกับบทเพลงและสุนทรียะ เสพความสำราญ ได้รับเสน่ห์ +12 แต่เสียค่าใช้จ่ายไป 120 ตำลึง");
             } else if(loc === 'hospital') {
-                game.money -= 50;
+                game.money -= 60;
                 if(game.money < 0) game.money = 0;
-                showModal("โรงหมอ", "ท่านมาตรวจสุขภาพและซื้อยาสมุนไพรบำรุงร่างกาย จ่ายค่ารักษา 50 ตำลึง");
+                showModal("โรงหมอ", "ท่านมาตรวจสุขภาพและซื้อยาสมุนไพรบำรุงร่างกาย จ่ายค่ารักษา 60 ตำลึง");
             }
             saveGame();
             updateScreen();
@@ -497,10 +535,10 @@
         function takeExam() {
             if(game.stats.intelligence >= 80) {
                 game.career = "จอหงวนเอกแห่งราชสำนัก";
-                game.money += 1200;
-                game.stats.prestige += 50;
+                game.money += 1500;
+                game.stats.prestige += 60;
                 game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `สอบผ่านจอหงวนหลวง ได้รับแต่งตั้งเป็นขุนนางใหญ่กรมราชสำนัก!` });
-                showModal("สอบผ่านจอหงวน!", "ท่านทำคะแนนสอบหน้าพระพักตร์เป็นเลิศ ได้รับแต่งตั้งเป็นจอหงวนหลวง พร้อมรางวัล 1,200 ตำลึง!");
+                showModal("สอบผ่านจอหงวน!", "ท่านทำคะแนนสอบหน้าพระพักตร์เป็นเลิศ ได้รับแต่งตั้งเป็นจอหงวนหลวง พร้อมรางวัล 1,500 ตำลึง!");
             } else {
                 showModal("สอบไม่ผ่าน", "สติปัญหายังไม่ถึง 80 ไปศึกษาตำราเพิ่ม!");
             }
@@ -511,7 +549,7 @@
         function joinMilitary() {
             if(game.stats.combat >= 70) {
                 game.career = "แม่ทัพใหญ่คุมกำลังพล";
-                game.stats.prestige += 60;
+                game.stats.prestige += 70;
                 game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `นำทัพออกศึกชายแดนชนะข้าศึก ได้รับบรรดาศักดิ์แม่ทัพใหญ่!` });
                 showModal("ชัยชนะเกริกไกร", "ท่านออกศึกปราบกบฏชายแดนราบคาบ ได้รับบรรดาศักดิ์แม่ทัพใหญ่!");
             } else {
@@ -523,7 +561,7 @@
 
         function openMerchantBusiness() {
             game.career = "มหาเศรษฐีเจ้าสำนักค้า";
-            game.money += 1800;
+            game.money += 2000;
             game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `เปิดหอการค้าและกิจการโรงเตี๊ยมทั่วเมือง ทำกำไรมหาศาล!` });
             showModal("กิจการรุ่งเรือง", "ท่านขยายเครือข่ายการค้า สร้างความมั่งคั่งมหาศาลเข้าตระกูล!");
             saveGame();
@@ -532,7 +570,7 @@
 
         function enterHaremPalace() {
             game.career = "พระสนมเอกวังหลัง";
-            game.stats.charm += 35;
+            game.stats.charm += 40;
             game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `เข้าคัดเลือกนางใน เป็นที่โปรดปรานในวังหลัง` });
             showModal("เข้าสู่วังหลวง", "ท่านผ่านการคัดเลือกนางใน เป็นที่โปรดปรานและเริ่มกุมอำนาจในวังหลัง!");
             saveGame();
@@ -541,7 +579,7 @@
 
         function becomePrinceOrLord() {
             game.career = "ท่านอ๋องผู้ทรงอำนาจ";
-            game.stats.prestige += 75;
+            game.stats.prestige += 85;
             game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `ได้รับพระราชทานฐานันดรศักดิ์เป็นท่านอ๋อง` });
             showModal("แต่งตั้งท่านอ๋อง", "ฮ่องเต้พระราชทานบรรดาศักดิ์ท่านอ๋องครองเมือง มีอำนาจล้นพ้น!");
             saveGame();
@@ -572,17 +610,17 @@
         function openChronicleModal() {
             toggleDrawer(false);
             let logsHtml = game.chronicleMasterLog.slice().reverse().map(item => {
-                let color = item.type === 'royal' ? 'blue' : (item.type === 'rumor' ? 'purple' : 'black');
-                return `<div style="margin-bottom: 6px; color: ${color};">• <b>[ปีที่ ${item.year}]</b> ${item.text}</div>`;
+                let color = item.type === 'royal' ? '#1b4f72' : (item.type === 'rumor' ? '#7d3c98' : '#2c2c2c');
+                return `<div style="margin-bottom: 8px; color: ${color}; border-bottom:1px solid #f0ece1; padding-bottom:6px;">• <b>[ปีที่ ${item.year}]</b> ${item.text}</div>`;
             }).join('');
-            showModal("📖 บันทึกพงศาวดารมหภาค", `<div style="max-height: 300px; overflow-y: auto; font-size: 11px;">${logsHtml}</div>`);
+            showModal("📖 บันทึกพงศาวดารมหภาค", `<div style="max-height: 320px; overflow-y: auto; font-size: 13px; text-align: left;">${logsHtml}</div>`);
         }
 
         function openFamilyTreeModal() {
             toggleDrawer(false);
             let heirsHtml = game.family.heirs.length > 0 
-                ? game.family.heirs.map((h, idx) => `• ${h.name} (พรสวรรค์: ${h.talent}) <button onclick="switchCharacter(${idx})" style="padding:2px 6px; font-size:9px; cursor:pointer;">เล่นเป็นตัวนี้</button>`).join('<br>')
-                : "ยังไม่มีทายาท";
+                ? game.family.heirs.map((h, idx) => `• ${h.name} (พรสวรรค์: ${h.talent}) <button onclick="switchCharacter(${idx})" style="padding:3px 8px; font-size:11px; cursor:pointer; margin-left:6px;">เล่นเป็นตัวนี้</button>`).join('<br>')
+                : "ยังไม่มีทายาทในจวน";
             showModal("🌳 ผังตระกูล & สลับตัวละคร", `
                 <b>ตัวละครปัจจุบัน:</b> ${game.surname} ${game.firstname} (อายุ ${game.age} ปี)<br><br>
                 <b>รายชื่อทายาท:</b><br>${heirsHtml}
@@ -626,7 +664,6 @@
         }
 
         window.onload = function() {
-            // โหลดเซฟออโต้ทันทีเมื่อเข้าเกม
             if(loadGame()) {
                 console.log("Auto-loaded successfully!");
             } else {
