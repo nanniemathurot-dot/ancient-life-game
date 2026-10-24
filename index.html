@@ -2128,5 +2128,123 @@
         }
     };
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 25 (IMPERIAL GAZETTE & FAMILY DOWNFALL ARC) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบข่าวสารราชสำนักประจำปี (Imperial Gazette)
+    // ---------------------------------------------------------
+    if (typeof player !== 'undefined') {
+        player.politicalFaction = player.politicalFaction || "เป็นกลาง (วางตัวสงบ)";
+        player.isExile = player.isExile || false; // สถานะถูกเนรเทศ/ตกอับ
+    }
+
+    const imperialGazettes = [
+        "📜 ข่าวราชสำนัก: ฮ่องเต้ทรงพระสำราญ มีรับสั่งให้จัดการคัดเลือกสนมสาวเข้าวังหลวงครั้งใหญ่",
+        "⚔️ ข่าวชายแดน: กองทัพแคว้นเหนือเคลื่อนพลประชิดชายแดน ขุนนางฝ่ายบู๊ถูกเรียกตัวเข้าเฝ้าด่วน",
+        "⚖️ ข่าวการเมือง: 2 ขุนนางใหญ่เปิดฉากห้ำหั่นกันในท้องพระโรง ข้อหาทุจริตคลังหลวงสั่นคลอนไปทั่ว",
+        "🏮 ข่าวเมืองหลวง: เกิดเหตุเพลิงไหม้ครั้งใหญ่ย่านการค้า ส่งผลให้ราคาข้าวของพุ่งสูงขึ้นชั่วคราว",
+        "👑 ข่าวรัชทายาท: องค์รัชทายาททรงประกอบพิธีบวงสรวงฟ้าดิน ขอให้แผ่นดินร่มเย็นเป็นสุข"
+    ];
+
+    // ---------------------------------------------------------
+    // 2. ผูกเหตุการณ์ข่าวสาร และสุ่มวิกฤตตระกูลล่มสลายเข้ากับปุ่ม ageUp
+    // ---------------------------------------------------------
+    let originalAgeUpPatch25 = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUpPatch25 === 'function') originalAgeUpPatch25();
+
+        if (typeof player !== 'undefined') {
+            // สุ่มข่าวประจำปี
+            let currentGazette = imperialGazettes[Math.floor(Math.random() * imperialGazettes.length)];
+            
+            // สุ่มเหตุการณ์วิกฤตตระกูล (หากอายุถึงช่วง 18-25 ปี และยังเป็นขุนนาง)
+            if (player.age >= 18 && player.age <= 25 && !player.isExile && Math.random() < 0.25) {
+                triggerFamilyDownfallCrisis();
+            } else {
+                if (typeof addTimeline === 'function') {
+                    addTimeline(`📰 บันทึกเหตุการณ์แผ่นดิน (ปีที่ ${player.eraYear})`, currentGazette, "neutral");
+                }
+            }
+        }
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 3. ฟังก์ชันอีเวนต์วิกฤต: โดนใส่ร้ายเป็นกบฏ & ตระกูลล่มสลาย
+    // ---------------------------------------------------------
+    function triggerFamilyDownfallCrisis() {
+        player.isExile = true;
+        let oldMoney = player.money;
+        player.money = 5; // ทรัพย์สินถูกยึดเหลือ 5 ตำลึง
+        player.repu = -20;
+        player.activeTitle = "🌪️ สามัญชนผู้ไร้ราก (อดีตคุณชาย/คุณหญิงตกอับ)";
+
+        let crisisDesc = `⚡ ภัยพิบัติแห่งจวนตระกูล!\n\n`;
+        crisisDesc += `ยามวิกาล ราชองครักษ์เสื้อแพรบุกเข้าปิดล้อมจวนตระกูลของท่านอย่างไร้ความปรานี บิดามารดาถูกคุมตัวเข้าคุกหลวงด้วยข้อหาสมรู้ร่วมคิดเป็นกบฏแผ่นดิน!\n`;
+        crisisDesc += `ทรัพย์สินเงินทอง ${oldMoney} ตำลึงถูกริบเข้าท้องคลังหลวงทั้งหมด ท่านหนีตายออกมาได้ด้วยสภาพเนื้อตัวมอมแมม กลายเป็นสามัญชนเร่ร่อนไร้หนทาง...`;
+
+        if (typeof addTimeline === 'function') {
+            addTimeline("⚡ วิกฤตตระกูลล่มสลาย", "จวนตระกูลถูกข้อหากบฏกวาดล้าง ทรัพย์สินถูกยึด กลายเป็นสามัญชนเร่ร่อนไร้ที่พึ่ง", "bad");
+        }
+
+        showModal("🌪️ ตระกูลล่มสลาย & โทษกบฏ", crisisDesc, "⚖️");
+
+        // เปลี่ยนปุ่มช้อยส์ให้ผู้เล่นต้องเลือกว่าจะสู้ชีวิตต่ออย่างไร
+        setTimeout(() => {
+            let resChoices = document.getElementById('res-choices');
+            if (resChoices) {
+                resChoices.innerHTML = `
+                    <button class="choice-btn" onclick="rebuildLifePath('hardwork')">⛏️ กัดฟันทำงานรับจ้าง เริ่มต้นสร้างตัวจากศูนย์ใหม่ด้วยลำแข้งตนเอง</button>
+                    <button class="choice-btn" onclick="rebuildLifePath('revenge')">🗡️ สะสมความแค้น ฝึกฝนฝีมือเพื่อรอวันกลับมาล้างมลทินให้ตระกูล</button>
+                `;
+            }
+        }, 500);
+
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    window.rebuildLifePath = function(path) {
+        if (path === 'hardwork') {
+            player.intel += 10; player.money += 20;
+            addTimeline("⛏️ เส้นทางสร้างตัวใหม่", "อดทนทำงานหนักและค้าขายเล็กๆ น้อยๆ เพื่อสะสมทุนทรัพย์เริ่มต้นชีวิตใหม่", "good");
+            showModal("⛏️ เริ่มต้นใหม่", "ท่านตั้งสติและเริ่มต้นทำงานหาเงินสร้างเนื้อสร้างตัวอีกครั้ง!", "💪");
+        } else if (path === 'revenge') {
+            player.charm += 10; player.repu += 5;
+            addTimeline("🗡️ เส้นทางล้างมลทิน", "กัดฟันซ่อนความแค้น คบหากับชาวยุทธ์เพื่อหาทางสืบหาหลักฐานพลิกคดีให้ตระกูล", "good");
+            showModal("🗡️ เส้นทางแห่งการแก้แค้น", "ความแค้นหล่อหลอมให้ท่านแกร่งขึ้น พร้อมทวงคืนความยุติธรรม!", "🔥");
+        }
+        if (typeof closeModal === 'function') closeModal();
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 4. อัปเดตแถบ HUD ให้แสดงข่าวสารแผ่นดินล่าสุด
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let statusContainer = document.querySelector('.status-box') || document.getElementById('page-status') || document.body;
+            if (statusContainer && !document.getElementById('gazette-hud')) {
+                let gazetteDiv = document.createElement('div');
+                gazetteDiv.id = 'gazette-hud';
+                gazetteDiv.style.cssText = "background: linear-gradient(135deg, #fce8e6, #fad2d0); border: 1px solid #d93025; padding: 10px 15px; border-radius: 8px; margin-bottom: 12px; text-align: center; font-weight: 600; color: #a51d24; box-shadow: 0 2px 6px rgba(0,0,0,0.05); font-size: 13px;";
+                
+                window.updateGazetteHUD = function() {
+                    gazetteDiv.innerHTML = `📰 ข่าวราชสำนัก: ${imperialGazettes[Math.floor(Math.random() * imperialGazettes.length)]}`;
+                };
+                updateGazetteHUD();
+                statusContainer.insertBefore(gazetteDiv, statusContainer.firstChild);
+            }
+
+            let oldUpdateUIPatch25 = window.updateUI;
+            window.updateUI = function() {
+                if (typeof oldUpdateUIPatch25 === 'function') oldUpdateUIPatch25();
+                if (typeof window.updateGazetteHUD === 'function') window.updateGazetteHUD();
+            };
+        }, 1400);
+    });
+</script>
 </body>
 </html>
