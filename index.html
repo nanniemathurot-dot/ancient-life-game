@@ -120,7 +120,7 @@
         }
         .modal-box h3 { font-family: 'Kanit', sans-serif; color: var(--primary-red); font-size: 18px; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; }
         .modal-box p { font-size: 13px; line-height: 1.6; color: var(--text-dark); margin-bottom: 16px; }
-        .choice-btn { width: 100%; padding: 11px 14px; margin-bottom: 8px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; text-align: left; font-size: 13px; cursor: pointer; color: var(--text-dark); font-family: 'Sarabun', sans-serif; }
+        .choice-btn { width: 100%; padding: 11px 14px; margin-bottom: 8px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; text-align: left; font-size: 13px; cursor: pointer; color: var(--text-dark); font-family: 'Sarabun', sans-serif; display: block; }
         .choice-btn:hover { background: #fdf2df; border-color: var(--secondary-gold); color: var(--primary-red); }
 
         .setup-form { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
@@ -418,6 +418,22 @@
         `).join('');
     }
 
+    const studyTexts = [
+        "ตั้งใจศึกษาตำราขงจื๊อและปรัชญาโบราณ ได้รับความรู้แตกฉาน",
+        "นัังท่องบทกวีปราชญ์ใต้ม่านหลิว สติปัญญาแจ่มแจ้งยิ่งขึ้น",
+        "ศึกษาค่ายกลและยุทธศาสตร์การเมืองในตำราพิชัยสงคราม"
+    ];
+    const trainTexts = [
+        "ฝึกฝนวิทยายุทธ์หมัดมวยและรำกระบี่ใต้ต้นเหมย สุขภาพแข็งแกร่ง",
+        "เดินปราณรวบรวมลมปราณและฝึกยิงธนู ร่างกายกระปรี้กระเปร่า",
+        "ออกกำลังกายบำรุงธาตุและฝึกกำลังภายใน"
+    ];
+    const socialTexts = [
+        "เข้าร่วมงานเลี้ยงจิบชาและประชันบทกวีกับเหล่าปัญญาชน",
+        "ออกงานเทศกาลแลกเปลี่ยนกิริยามารยาท เสน่ห์เป็นที่เลื่องลือ",
+        "ผูกสหายร่วมดื่มสุราแลกเปลี่ยนข่าวสารในเมืองหลวง"
+    ];
+
     function doActivity(type) {
         if (player.age < 4) { alert("คุณยังเยาว์วัยเกินไป รอให้อายุถึง 4 ปีเสียก่อน!"); return; }
         if (player.energy <= 0) { alert("พลังงานประจำปีหมดแล้ว! โปรดกด 'เพิ่มอายุ +1 ปี'"); return; }
@@ -427,13 +443,16 @@
 
         if (type === 'study') {
             let g = Math.floor(Math.random() * 4) + 3; player.intel += g;
-            addTimeline(`ตั้งใจศึกษาตำราปราชญ์โบราณ (สติปัญญา +${g})`);
+            let msg = studyTexts[Math.floor(Math.random() * studyTexts.length)];
+            addTimeline(`${msg} (สติปัญญา +${g})`);
         } else if (type === 'train') {
             let g = Math.floor(Math.random() * 4) + 2; player.health = Math.min(100, player.health + g);
-            addTimeline(`ฝึกฝนวิทยายุทธ์และร่างกาย (สุขภาพ +${g})`);
+            let msg = trainTexts[Math.floor(Math.random() * trainTexts.length)];
+            addTimeline(`${msg} (สุขภาพ +${g})`);
         } else if (type === 'social') {
             let g = Math.floor(Math.random() * 4) + 2; player.charm += g;
-            addTimeline(`เข้าร่วมงานพบปะสหายปัญญาชน (เสน่ห์ +${g})`);
+            let msg = socialTexts[Math.floor(Math.random() * socialTexts.length)];
+            addTimeline(`${msg} (เสน่ห์ +${g})`);
         }
         updateUI();
     }
@@ -467,19 +486,63 @@
         }
 
         if (player.age >= 6 && Math.random() < 0.5) {
-            let evs = [
-                { title: "เทศกาลโคมไฟ", desc: "พบนักพรตยื่นคำทำนายมงคลให้", act: () => { player.moral += 5; addTimeline("รับคำทำนายมงคลในงานเทศกาลโคมไฟ"); } },
-                { title: "โอกาสลงทุน", desc: "ชวนลงทุนค้าผ้าแพรไหม (ใช้ 50 ตำลึง)", act: () => { if(player.money>=50){ player.money+=80; addTimeline("ลงทุนค้าขายได้กำไรก้อนโต!"); } else { addTimeline("เงินไม่พอลงทุน"); } } }
-            ];
-            let ev = evs[Math.floor(Math.random() * evs.length)];
-            document.getElementById('modal-title').innerText = ev.title;
-            document.getElementById('modal-desc').innerText = ev.desc;
-            document.getElementById('modal-choices').innerHTML = `<button class='choice-btn' onclick='evalEvent(${JSON.stringify(ev.act.toString())})'>ตกลงรับผล</button>`;
-            document.getElementById('event-modal').classList.add('active');
+            triggerRandomEvent();
         }
 
         updateUI();
         saveGame(false);
+    }
+
+    const randomEventsList = [
+        {
+            title: "เทศกาลโคมไฟเมืองหลวง",
+            desc: "มีการจัดงานเฉลิมฉลองโคมไฟอย่างยิ่งใหญ่ มีนักพรตปริศนายื่นคำทำนายให้คุณ",
+            choices: [
+                { text: "ทำบุญและฟังคำทำนาย (+คุณธรรม, +ชื่อเสียง)", effect: () => { player.moral += 5; player.repu += 3; addTimeline("ทำบุญบริจาคทานและรับคำทำนายมงคลในงานเทศกาล"); } },
+                { text: "เดินชมงานเทศกาลต่ออย่างเพลิดเพลิน (+เสน่ห์)", effect: () => { player.charm += 3; addTimeline("เที่ยวชมงานเทศกาลโคมไฟตระการตา"); } }
+            ]
+        },
+        {
+            title: "โอกาสทางธุรกิจผ้าไหม",
+            desc: "สหายสนิทมาชักชวนร่วมลงทุนทำการค้าผ้าไหมทางภาคใต้ ต้องใช้เงิน 50 ตำลึง",
+            choices: [
+                { text: "ร่วมลงทุนด้วยเงิน 50 ตำลึง", effect: () => {
+                    if(player.money >= 50){ player.money += 80; addTimeline("การค้าขายประสบความสำเร็จ ได้รับกำไรก้อนโต 130 ตำลึง!"); }
+                    else { addTimeline("เงินไม่พอร่วมลงทุน พลาดโอกาสทองทางการค้า"); }
+                }},
+                { text: "ปฏิเสธความเสี่ยง", effect: () => { addTimeline("ปฏิเสธคำชวนลงทุน ใช้ชีวิตเรียบง่าย"); } }
+            ]
+        },
+        {
+            title: "ข่าวลือในราชสำนัก",
+            desc: "เกิดการเปลี่ยนแปลงขั้วอำนาจในราชสำนัก ขุนนางฝ่ายตรงข้ามเริ่มแผ่อิทธิพล",
+            choices: [
+                { text: "วางตัวเป็นกลาง ทำงานเงียบๆ (+สติปัญญา)", effect: () => { player.intel += 4; addTimeline("วางตัวเป็นกลาง รอดพ้นจากมรสุมการเมืองอย่างปลอดภัย"); } },
+                { text: "หาพันธมิตรเพื่อความมั่นคง (+ชื่อเสียง)", effect: () => { player.repu += 5; addTimeline("สร้างเครือข่ายพันธมิตรในราชสำนักสำเร็จ"); } }
+            ]
+        }
+    ];
+
+    function triggerRandomEvent() {
+        let ev = randomEventsList[Math.floor(Math.random() * randomEventsList.length)];
+        document.getElementById('modal-title').innerText = ev.title;
+        document.getElementById('modal-desc').innerText = ev.desc;
+        let cBox = document.getElementById('modal-choices');
+        cBox.innerHTML = "";
+
+        ev.choices.forEach(ch => {
+            let btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerText = ch.text;
+            btn.onclick = () => {
+                ch.effect();
+                document.getElementById('event-modal').classList.remove('active');
+                updateUI();
+            };
+            cBox.appendChild(btn);
+        });
+
+        document.getElementById('event-modal').classList.add('active');
     }
 
     function takeCareerAction() {
@@ -518,8 +581,21 @@
     function saveGame(n=true) { localStorage.setItem('ANCIENT_LIFE_FINAL_SAVE', JSON.stringify(player)); if(n) alert("💾 บันทึกเกมสำเร็จ!"); }
     function loadGame(n=true) {
         let d = localStorage.getItem('ANCIENT_LIFE_FINAL_SAVE');
-        if(d) { player = JSON.parse(d); document.getElementById('page-setup').style.display='none'; document.getElementById('game-view').style.display='flex'; document.getElementById('main-nav').style.display='flex'; document.getElementById('timeline-feed').innerHTML=""; player.timeline.forEach(t=>{ let el=document.createElement('div'); el.className='timeline-item'; el.innerHTML=`<div class='timeline-age'>[อายุ ${t.age} ปี]</div><div class='timeline-desc'>${t.text}</div>`; document.getElementById('timeline-feed').appendChild(el); }); updateUI(); if(n) alert("📂 โหลดเกมสำเร็จ!"); }
-        else if(n) alert("ไม่พบเซฟเกม");
+        if(d) { 
+            player = JSON.parse(d); 
+            document.getElementById('page-setup').style.display='none'; 
+            document.getElementById('game-view').style.display='flex'; 
+            document.getElementById('main-nav').style.display='flex'; 
+            document.getElementById('timeline-feed').innerHTML=""; 
+            player.timeline.forEach(t=>{ 
+                let el=document.createElement('div'); 
+                el.className='timeline-item'; 
+                el.innerHTML=`<div class='timeline-age'>[อายุ ${t.age} ปี]</div><div class='timeline-desc'>${t.text}</div>`; 
+                document.getElementById('timeline-feed').appendChild(el); 
+            }); 
+            updateUI(); 
+            if(n) alert("📂 โหลดเกมสำเร็จ!"); 
+        } else if(n) alert("ไม่พบเซฟเกม");
     }
     function exportSaveFile() {
         let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(player));
