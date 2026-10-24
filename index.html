@@ -773,65 +773,63 @@
     };
 
     console.log("✅ Ancient Life Epic Story & Imperial Decree Patch V.37 Loaded Successfully!");
-</script>
-<!-- ==========================================
-     PATCH COMPLETE MODULES (PART 1 + PART 2 + PART 3)
-     ========================================== -->
 <script>
     /* ==========================================
-       PATCH PART 1: IDENTITY & SYSTEM HEADER FIX
+       ANCIENT LIFE: MASTERPIECE ULTRA CLEAN PATCH
+       - แก้ไขหน้าจอมืด / ปุ่มเบี้ยว 100%
+       - เปลี่ยนช่องนามสกุลหน้าแรกเป็นช่องพิมพ์อิสระ
+       - แถบรัชศก ฤดูกาล แสดงผลด้านบน
+       - เมนูลัดจวนตระกูลรวมลงแถบล่าง
+       - ไทม์ไลน์เด้ง Real-Time ไม่ค้าง
        ========================================== */
 
-    // 1. เปลี่ยน Dropdown นามสกุลหน้าแรกให้เป็นช่อง Input พิมพ์อิสระ
-    function unlockSurnameInput() {
+    // 1. ระบบปลดล็อกนามสกุลพิมพ์อิสระหน้าแรก
+    function unlockCustomSurname() {
         let selects = document.querySelectorAll('select');
         selects.forEach(sel => {
-            if (sel.innerHTML.includes('มู่หรง') || sel.innerHTML.includes('เชียว')) {
+            if (sel.innerHTML.includes('มู่หรง') || sel.innerHTML.includes('เชียว') || sel.id === 'surname-select') {
                 let input = document.createElement('input');
                 input.type = 'text';
                 input.id = sel.id || 'custom-surname-input';
                 input.className = sel.className;
-                input.value = 'มู่หรง';
-                input.placeholder = 'พิมพ์นามสกุลที่ต้องการ...';
-                input.style.cssText = 'width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; color: #333; background: #fff;';
+                input.value = sel.value || 'มู่หรง';
+                input.placeholder = 'พิมพ์นามสกุลอิสระ...';
+                input.style.cssText = 'width: 90%; padding: 8px 10px; border: 1px solid #c5a059; border-radius: 6px; font-size: 14px; color: #333; background: #fff8dc; font-weight: bold; margin: 4px 0;';
                 
-                sel.parentNode.replaceChild(input, sel);
+                input.oninput = function() {
+                    if (window.player) player.surname = this.value;
+                };
+
+                if (sel.parentNode) {
+                    sel.parentNode.replaceChild(input, sel);
+                }
             }
         });
     }
 
-    // 2. อัปเดตแถบรัชศก ราชวงศ์ และฤดูกาล Real-time ด้านบน
-    window.updateEraAndSeasonHeader = function() {
+    // 2. แสดงผลแถบรัชศก ราชวงศ์ และฤดูกาลด้านบนสุด
+    window.updateHeaderInfo = function() {
         if (!window.player) return;
         
-        player.dynastyName = player.dynastyName || "ราชวงศ์ต้าเฉิง";
-        player.eraName = player.eraName || "หย่งเล่อ";
-        player.currentSeason = player.currentSeason || "ฤดูใบไม้ผลิ";
+        let dynasty = player.dynastyName || "ราชวงศ์ต้าเฉิง";
+        let era = player.eraName || "หย่งเล่อ";
+        let season = player.currentSeason || "ฤดูใบไม้ผลิ";
+        let surname = player.surname || player.lastName || "มู่หรง";
+        let age = player.age || 1;
 
-        let headerEl = document.getElementById('era-season-header');
-        if (!headerEl) {
-            headerEl = document.createElement('div');
-            headerEl.id = 'era-season-header';
-            headerEl.style.cssText = 'background: #5c0606; color: #ffd700; text-align: center; padding: 6px 10px; font-size: 13px; font-weight: bold; border-bottom: 1px solid #ffd700;';
-            document.body.insertBefore(headerEl, document.body.firstChild);
+        let header = document.getElementById('ancient-header-bar');
+        if (!header) {
+            header = document.createElement('div');
+            header.id = 'ancient-header-bar';
+            header.style.cssText = 'background: linear-gradient(180deg, #700b0b 0%, #4a0404 100%); color: #ffd700; text-align: center; padding: 6px 12px; font-size: 12px; font-weight: bold; border-bottom: 2px solid #d4af37; box-shadow: 0 2px 5px rgba(0,0,0,0.4); text-shadow: 1px 1px 2px #000;';
+            document.body.insertBefore(header, document.body.firstChild);
         }
 
-        let pSurname = player.surname || player.lastName || "มู่หรง";
-        headerEl.innerHTML = `📜 ${player.dynastyName} (รัชศก${player.eraName} ปีที่ ${player.age || 1}) | 🌸 ${player.currentSeason} | 🏛️ สกุล${pSurname}`;
+        header.innerHTML = `📜 ${dynasty} (รัชศก${era} ปีที่ ${age}) &nbsp;|&nbsp; 🌸 ${season} &nbsp;|&nbsp; 🏛️ สกุล${surname}`;
     };
 
-    window.addEventListener('DOMContentLoaded', unlockSurnameInput);
-    window.addEventListener('load', function() {
-        unlockSurnameInput();
-        setInterval(updateEraAndSeasonHeader, 500);
-    });
-
-    /* ==========================================
-       PATCH PART 2: REAL-TIME TIMELINE & BOTTOM NAV
-       ========================================== */
-
-    // สั่งอัปเดตไทม์ไลน์และ UI ทันทีแบบ Real-time
-    window.triggerRealtimeEvent = function(title, desc, type) {
+    // 3. ระบบส่งอีเวนต์เข้าไทม์ไลน์และอัปเดตหน้าจอทันที Real-time
+    window.triggerRealtimeAction = function(title, desc, type) {
         if (typeof addTimeline === 'function') {
             addTimeline(title, desc, type || 'good');
         }
@@ -840,57 +838,34 @@
         }
     };
 
-    // ฝังปุ่ม "จวนตระกูล" ลงในแถบเมนูด้านล่าง
-    function integrateIntoBottomNav() {
-        let navContainer = document.querySelector('.bottom-nav') || document.querySelector('footer') || document.querySelector('.nav-tabs');
-        if (navContainer && !document.getElementById('nav-family-hub')) {
-            let tab = document.createElement('div');
-            tab.id = 'nav-family-hub';
-            tab.className = 'nav-item';
-            tab.style.cssText = 'flex: 1; text-align: center; cursor: pointer; padding: 5px 0; color: #ffd700; font-size: 11px; font-weight: bold;';
-            tab.innerHTML = '🏮<br>จวนตระกูล';
-            tab.onclick = function() {
-                if (typeof openMainActionHub === 'function') openMainActionHub();
-            };
-            navContainer.appendChild(tab);
-        }
-    }
-
-    // กิจกรรมอัปสกิล/พัฒนาตนเองแบบ Real-time
+    // 4. การ์ดกิจกรรมพัฒนาตนเอง ( Real-time Timeline )
     window.doStudyInLibrary = function() {
         if (!window.player) return;
         player.skills = player.skills || {};
         player.skills.scholarship = (player.skills.scholarship || 10) + 8;
-        triggerRealtimeEvent("📖 ศึกษาตำราในห้องหนังสือ", "ตั้งใจศึกษาตำราปราชญ์ในจวน สติปัญญาเพิ่มขึ้น (+8 ปัญญา)", "good");
+        triggerRealtimeAction("📖 ศึกษาตำราในห้องหนังสือ", "อ่านตำราปราชญ์อย่างเคร่งครัด สติปัญญาเพิ่มขึ้น (+8 ปัญญา)", "good");
     };
 
     window.doTrainMartial = function() {
         if (!window.player) return;
         player.skills = player.skills || {};
         player.skills.martial = (player.skills.martial || 10) + 12;
-        triggerRealtimeEvent("⚔️ ฝึกฝนในลานยุทธ์", "ฝึกซ้อมอาวุธและวิชายุทธ์ ร่างกายแข็งแกร่งขึ้น (+12 พลังต่อสู้)", "good");
+        triggerRealtimeAction("⚔️ ฝึกฝนในลานยุทธ์", "ฝึกซ้อมวิชาต่อสู้และอาวุธ ร่างกายแข็งแกร่งขึ้น (+12 พลัง)", "good");
     };
 
     window.doTravelWorld = function() {
         if (!window.player) return;
         player.money = (player.money || 100) + 30;
-        triggerRealtimeEvent("🗺️ ออกท่องยุทธภพ", "พบเจอมิตรภาพใหม่ๆ และได้รับเงินขวัญถุง (+30 ตำลึง)", "good");
+        triggerRealtimeAction("🗺️ ออกท่องยุทธภพ", "เดินทางพบเจอมิตรภาพต่างเมือง ได้รับเงินขวัญถุง (+30 ตำลึง)", "good");
     };
 
     window.doStrengthenFriendship = function() {
         if (!window.player) return;
         player.repu = (player.repu || 10) + 10;
-        triggerRealtimeEvent("🤝 สานสัมพันธ์สหายสนิท", "ร่ำสุราร่วมกับขุนนางในเมืองหลวง เสน่ห์และบารมีเพิ่มขึ้น (+10 ชื่อเสียง)", "good");
+        triggerRealtimeAction("🤝 สานสัมพันธ์สหายสนิท", "ร่ำสุราร่วมกับขุนนางในเมืองหลวง เสน่ห์บารมีเพิ่มขึ้น (+10 ชื่อเสียง)", "good");
     };
 
-    window.addEventListener('load', function() {
-        setInterval(integrateIntoBottomNav, 1000);
-    });
-
-    /* ==========================================
-       PATCH PART 3: MASTER HUB & SAVE SYSTEM
-       ========================================== */
-
+    // 5. ปุ่มเปิดป๊อปอัปศูนย์กลางจวนตระกูล
     window.openMainActionHub = function() {
         let modal = document.getElementById('result-modal');
         if (!modal) return;
@@ -898,92 +873,70 @@
         let pSurname = (window.player && (player.surname || player.lastName)) ? (player.surname || player.lastName) : 'มู่หรง';
         let pMoney = (window.player && (player.familyTreasury || player.money)) ? (player.familyTreasury || player.money) : 100;
 
-        document.getElementById('res-icon').innerText = "🏮";
-        document.getElementById('res-title').innerText = "🏮 ศูนย์กลางจัดการจวนสกุล " + pSurname;
-        document.getElementById('res-desc').innerText = `คลังตระกูล: ${pMoney} ตำลึง\nเลือกกิจกรรมที่ต้องการดำเนินการ:`;
-        
-        document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="doStudyInLibrary(); closeModal();">📖 1. ห้องหนังสือ: ศึกษาตำรา (+8 ปัญญา)</button>
-            <button class="choice-btn" onclick="doTrainMartial(); closeModal();">⚔️ 2. ลานฝึกยุทธ์: ฝึกฝนอาวุธ (+12 พลัง)</button>
-            <button class="choice-btn" onclick="doTravelWorld(); closeModal();">🗺️ 3. ท่องยุทธภพ / สุ่มเหตุการณ์ (+30 ตำลึง)</button>
-            <button class="choice-btn" onclick="doStrengthenFriendship(); closeModal();">🤝 4. สานสัมพันธ์สหายสนิท (+10 ชื่อเสียง)</button>
-            <button class="choice-btn" onclick="saveGameData()">💾 5. บันทึกเกม (Manual Save)</button>
-            <button class="choice-btn" onclick="loadGameData()">📂 6. โหลดเซฟข้อมูลเดิม (Load Game)</button>
-            <button class="choice-btn" onclick="closeModal()">❌ ปิดหน้าต่าง</button>
-        `;
+        let iconEl = document.getElementById('res-icon');
+        let titleEl = document.getElementById('res-title');
+        let descEl = document.getElementById('res-desc');
+        let choicesEl = document.getElementById('res-choices');
+
+        if (iconEl) iconEl.innerText = "🏮";
+        if (titleEl) titleEl.innerText = "🏮 ศูนย์กลางจัดการจวนสกุล " + pSurname;
+        if (descEl) descEl.innerText = `คลังตระกูล: ${pMoney} ตำลึง\nเลือกกิจกรรมที่ต้องการเล่น (ผลลัพธ์ลงไทม์ไลน์ทันที):`;
+
+        if (choicesEl) {
+            choicesEl.innerHTML = `
+                <button class="choice-btn" onclick="doStudyInLibrary(); closeModal();">📖 1. ห้องหนังสือ: ศึกษาตำรา (+8 ปัญญา)</button>
+                <button class="choice-btn" onclick="doTrainMartial(); closeModal();">⚔️ 2. ลานฝึกยุทธ์: ฝึกฝนอาวุธ (+12 พลัง)</button>
+                <button class="choice-btn" onclick="doTravelWorld(); closeModal();">🗺️ 3. ท่องยุทธภพ / สุ่มเหตุการณ์ (+30 ตำลึง)</button>
+                <button class="choice-btn" onclick="doStrengthenFriendship(); closeModal();">🤝 4. สานสัมพันธ์สหายสนิท (+10 ชื่อเสียง)</button>
+                <button class="choice-btn" onclick="saveGameData();">💾 5. บันทึกเกม (Manual Save)</button>
+                <button class="choice-btn" onclick="loadGameData();">📂 6. โหลดเซฟข้อมูลเดิม (Load Game)</button>
+                <button class="choice-btn" style="background:#6c757d; color:white;" onclick="closeModal();">❌ ปิดหน้าต่าง</button>
+            `;
+        }
+
         modal.classList.add('active');
     };
 
+    // 6. รวมปุ่มลงในแถบเมนูด้านล่าง (Bottom Nav)
+    function attachToBottomNav() {
+        let nav = document.querySelector('.bottom-nav') || document.querySelector('.nav-tabs') || document.querySelector('footer');
+        if (nav && !document.getElementById('bottom-nav-family-hub')) {
+            let item = document.createElement('div');
+            item.id = 'bottom-nav-family-hub';
+            item.style.cssText = 'flex: 1; text-align: center; cursor: pointer; padding: 4px 0; color: #ffd700; font-size: 11px; font-weight: bold;';
+            item.innerHTML = '🏮<br>จวนตระกูล';
+            item.onclick = openMainActionHub;
+            nav.appendChild(item);
+        }
+    }
+
+    // 7. ระบบ Manual Save & Load
     window.saveGameData = function() {
         if (window.player) {
-            localStorage.setItem('ancientLifeCleanSave', JSON.stringify(window.player));
-            if (typeof triggerRealtimeEvent === 'function') {
-                triggerRealtimeEvent("💾 บันทึกเกมสำเร็จ", "บันทึกข้อมูลตระกูลเข้าสู่ระบบเรียบร้อยแล้ว", "good");
-            }
+            localStorage.setItem('ancientLifeMasterCleanSave', JSON.stringify(window.player));
+            triggerRealtimeAction("💾 บันทึกเกมสำเร็จ", "บันทึกข้อมูลตระกูลเรียบร้อยแล้ว", "good");
             alert('💾 บันทึกข้อมูลตระกูลเรียบร้อยแล้ว!');
         }
     };
 
     window.loadGameData = function() {
-        let saved = localStorage.getItem('ancientLifeCleanSave');
+        let saved = localStorage.getItem('ancientLifeMasterCleanSave');
         if (saved) {
             window.player = JSON.parse(saved);
             if (typeof updateUI === 'function') updateUI();
-            if (typeof triggerRealtimeEvent === 'function') {
-                triggerRealtimeEvent("📂 โหลดเซฟสำเร็จ", "ดึงข้อมูลตระกูลเดิมกลับมาเรียบร้อยแล้ว", "good");
-            }
+            triggerRealtimeAction("📂 โหลดเซฟสำเร็จ", "ดึงข้อมูลตระกูลเดิมกลับมาเรียบร้อยแล้ว", "good");
             alert('📂 โหลดข้อมูลตระกูลสำเร็จ!');
         } else {
             alert('⚠️ ไม่พบข้อมูลเซฟ!');
         }
     };
-</script>
-/* ==========================================
-       PATCH NOTIFICATION SYSTEM (UPDATE CHANGELOG)
-       - ระบบหน้าต่างเด้งแจ้งเตือนข่าวสารอัปเดตเกมเมื่อเข้าสู่ระบบ
-       ========================================== */
 
-    const CURRENT_GAME_VERSION = "V.56.0"; // เลขเวอร์ชันอัปเดตล่าสุด
-
-    // รายละเอียดข่าวสารอัปเดตประจำเวอร์ชัน
-    const updateNotesContent = `
-        🎉 <b>ยินดีต้อนรับกลับสู่จวนตระกูล! รายการอัปเดตแพตช์ใหม่ (${CURRENT_GAME_VERSION}):</b><br><br>
-        1. ✏️ <b>ระบบชื่อ-นามสกุลอิสระ:</b> ปลดล็อกช่องพิมพ์นามสกุลตามใจชอบตั้งแต่หน้าแรก<br>
-        2. 📜 <b>แถบราชวงศ์ & ฤดูกาล:</b> แสดงผลรัชศก ฤดูกาล และชื่อตระกูลด้านบนสุดแบบ Real-time<br>
-        3. 🏮 <b>เมนูลัดจวนตระกูล:</b> ย้ายลงไปรวมกับแถบเมนูด้านล่างสุดอย่างเป็นระเบียบ ไม่บังหน้าจอ<br>
-        4. ⚡ <b>ไทม์ไลน์ Real-time:</b> กิจกรรมและช้อยส์พัฒนาตัวละครจะบันทึกเรื่องราวเด้งขึ้นทันทีโดยไม่ค้าง<br>
-        5. 📖 <b>กิจกรรมการ์ดครบครัน:</b> ศึกษาตำรา, ฝึกยุทธ์, ท่องยุทธภพ, สานสัมพันธ์สหาย และสลับธีมสีพาสเทล
-    `;
-
-    window.checkAndShowUpdateModal = function() {
-        let lastSeenVersion = localStorage.getItem('ancientLife_LastSeenVersion');
-
-        // ถ้ายังไม่เคยอ่าน หรือเป็นเวอร์ชันใหม่ ให้แสดงหน้าต่างแจ้งเตือน
-        if (lastSeenVersion !== CURRENT_GAME_VERSION) {
-            setTimeout(() => {
-                let modal = document.getElementById('result-modal');
-                if (!modal) return;
-
-                document.getElementById('res-icon').innerText = "📢";
-                document.getElementById('res-title').innerText = "📢 ประกาศอัปเดตระบบเกม (" + CURRENT_GAME_VERSION + ")";
-                document.getElementById('res-desc').innerHTML = updateNotesContent;
-                
-                document.getElementById('res-choices').innerHTML = `
-                    <button class="choice-btn" style="background:#28a745; color:white;" onclick="confirmUpdateRead()">✨ รับทราบ & เข้าสู่เกม</button>
-                `;
-                modal.classList.add('active');
-            }, 800); // หน่วงเวลาเล็กน้อยให้หน้าจอหลักโหลดเสร็จก่อน
-        }
-    };
-
-    window.confirmUpdateRead = function() {
-        localStorage.setItem('ancientLife_LastSeenVersion', CURRENT_GAME_VERSION);
-        closeModal();
-    };
-
-    // เรียกตรวจสอบทันทีเมื่อโหลดหน้าเว็บสำเร็จ
+    // เรียกทำงานเมื่อโหลดหน้าเว็บ
+    window.addEventListener('DOMContentLoaded', unlockCustomSurname);
     window.addEventListener('load', function() {
-        checkAndShowUpdateModal();
+        unlockCustomSurname();
+        setInterval(updateHeaderInfo, 600);
+        setInterval(attachToBottomNav, 1000);
     });
 </script>
 </body>
