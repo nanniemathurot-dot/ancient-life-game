@@ -684,6 +684,95 @@
     };
 
     console.log("✅ Ancient Life Balance & Story Timeline Patch V.36 Loaded Successfully!");
-</script>    
+</script>
+<script>
+    /* ==========================================
+       ANCIENT LIFE: EPIC STORY & IMPERIAL DECREE PATCH (V.37)
+       - ระบบข่าวสารบ้านเมือง & ราชโองการเปลี่ยนแผ่นดิน
+       - ระบบเส้นทางชีวิต (ทาส ⇄ ขุนนาง ⇄ แม่ทัพ ⇄ ฮ่องเต้ / ตระกูลถูกใส่ร้าย)
+       - ระบบอีเวนต์เลือกช้อยส์เนื้อเรื่องยาวๆ
+       ========================================== */
+
+    if (typeof player !== 'undefined') {
+        player.dynastyName = player.dynastyName || "ราชวงศ์ต้าถัง (รัชศกหย่งle)";
+        player.imperialDecrees = player.imperialDecrees || [];
+        player.lifePathStory = player.lifePathStory || "สามัญชนสู้ชีวิต";
+    }
+
+    // ระบบประกาศข่าวสารบ้านเมืองและราชโองการประจำปี
+    window.checkImperialNews = function() {
+        if (!window.player) return;
+        
+        let newsPool = [
+            { title: "📜 ราชโองการฮ่องเต้", desc: "ประกาศเกณฑ์ทหารทั่วราชอาณาจักรเพื่อรับมือศึกชายแดนทิศเหนือ บัณฑิตและชายฉกรรจ์ต้องเตรียมตัว!" },
+            { title: "💰 ข่าวสารท้องตลาด", desc: "ปีนี้เกิดภัยแล้งเล็กน้อย ราคาข้าวเปลือกในเมืองหลวงพุ่งสูงขึ้น การค้าขายข้าวได้กำไรดี" },
+            { title: "⚖️ ข่าวการเมืองราชสำนัก", desc: "ขุนนางฝ่ายกังฉินเริ่มมีอำนาจในราชสำนัก ฮ่องเต้ออกกฤษฎีกาตรวจสอบข้าราชการทุจริต" },
+            { title: "👑 ข่าวเปลี่ยนแผ่นดิน", desc: "มีเสียงลือหนาหูเรื่ององค์ชายใหญ่ซ่องสุมกำลังพล แผ่นดินทำท่าจะเกิดความเปลี่ยนแปลงครั้งใหญ่" }
+        ];
+
+        // สุ่มข่าวสารประจำปีเข้าไทม์ไลน์
+        if (player.seasonIndex === 0 && Math.random() > 0.4) {
+            let news = newsPool[Math.floor(Math.random() * newsPool.length)];
+            addTimeline(news.title, news.desc, 'bad');
+        }
+    };
+
+    // ระบบอีเวนต์เลือกเส้นทางชีวิต (Choice-driven Epic Events)
+    window.triggerEpicLifeEvent = function() {
+        if (!window.player) return;
+
+        if (player.age === 16 && !player.storyFlags?.epic16) {
+            player.storyFlags = player.storyFlags || {};
+            player.storyFlags.epic16 = true;
+
+            document.getElementById('res-icon').innerText = "🏛️";
+            document.getElementById('res-title').innerText = "⚖️ ทางแยกแห่งชะตากรรม (อายุ 16 ปี)";
+            document.getElementById('res-desc').innerText = `ท่านเติบโตเป็นหนุ่มสาวเต็มตัวแล้ว ท่ามกลางความขัดแย้งในยุทธภพและราชสำนัก ท่านจะเลือกเดินเส้นทางใดเพื่อให้ตระกูล '${player.surname}' รุ่งโรจน์?`;
+            document.getElementById('res-choices').innerHTML = `
+                <button class="choice-btn" onclick="chooseEpicPath('exam')">📚 ตั้งใจสอบจอหงวน ไต่เต้าเป็นขุนนางตงินในราชสำนัก</button>
+                <button class="choice-btn" onclick="chooseEpicPath('military')">🛡️ สมัครเข้ากองทัพ ออกศึกชายแดนสร้างชื่อเสียงเป็นแม่ทัพ</button>
+                <button class="choice-btn" onclick="chooseEpicPath('rebel')">👑 คบหากลุ่มกบฏ เตรียมแผนชิงบัลลังก์แผ่นดิน</button>
+                <button class="choice-btn" onclick="chooseEpicPath('merchant')">💰 ละทิ้งการเมือง มุ่งสู่เส้นทางมหาเศรษฐีอันดับหนึ่ง</button>
+            `;
+            document.getElementById('result-modal').classList.add('active');
+        }
+    };
+
+    window.chooseEpicPath = function(path) {
+        if (path === 'exam') {
+            player.lifePathStory = "ขุนนางบัณฑิต";
+            player.intel += 15;
+            addTimeline("📚 เลือกเส้นทางสายปราชญ์", "มุ่งมั่นท่องตำราสอบจอหงวน หวังฟื้นฟูเกียรติยศตระกูล", "good");
+            showModal("📚 บัณฑิตผู้มุ่งมั่น", "ท่านเลือกเดินสายวิชาการ สติปัญญาพุ่งพรวด (+15)", "📖");
+        } else if (path === 'military') {
+            player.lifePathStory = "ยอดแม่ทัพ";
+            player.health += 15; player.skills = player.skills || {}; player.skills.martial = (player.skills.martial || 10) + 20;
+            addTimeline("🛡️ เลือกเส้นทางสายทหาร", "สมัครเข้ากองทัพชายแดน ฝึกฝนกระบี่และค่ายกล", "good");
+            showModal("🛡️ สู่สนามรบ", "ท่านมุ่งหน้าสู่ชายแดน ค่าวิทยายุทธ์และร่างกายแข็งแกร่งขึ้นมาก!", "⚔️");
+        } else if (path === 'rebel') {
+            player.lifePathStory = "ผู้ชิงบัลลังก์";
+            player.repu += 10; player.stress += 15;
+            addTimeline("👑 เลือกเส้นทางซ่องสุมกำลัง", "ติดต่อฝ่ายกบฏในเงา วางแผนโค่นล้มราชวงศ์เดิม", "bad");
+            showModal("👑 เส้นทางสายเลือด", "ท่านเลือกเดินบนเส้นทางคมดาบและความลับ (ความเครียด +15)", "🔥");
+        } else if (path === 'merchant') {
+            player.lifePathStory = "มหาเศรษฐี";
+            player.money += 150;
+            addTimeline("💰 เลือกเส้นทางพ่อค้าใหญ่", "ทุ่มทุนค้าขายทั่วหล้า สะสมความมั่งคั่งมหาศาล", "good");
+            showModal("💰 มั่งคั่งทั่วหล้า", "ท่านก้าวเข้าสู่โลกธุรกิจการค้า เงินทองไหลมาเทมา (+150 ตำลึง)", "📈");
+        }
+        closeModal();
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    // ผูกเข้ากับระบบ ageUp เดิมให้รันข่าวสารและอีเวนต์อัตโนมัติ
+    const baseAgeUpForEpic = window.ageUp;
+    window.ageUp = function() {
+        if (typeof baseAgeUpForEpic === 'function') baseAgeUpForEpic();
+        checkImperialNews();
+        triggerEpicLifeEvent();
+    };
+
+    console.log("✅ Ancient Life Epic Story & Imperial Decree Patch V.37 Loaded Successfully!");
+</script>
 </body>
 </html>
