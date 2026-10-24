@@ -18,7 +18,6 @@
             --success-green: #1e8449;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; -webkit-tap-highlight-color: transparent; }
-        /* ปลดล็อกให้หน้าจอเลื่อนขึ้นลงได้ธรรมชาติ ไม่แข็งทื่อ */
         body { background: var(--bg-main); color: var(--text-dark); display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto; font-size: 14px; }
 
         /* --- SETUP SCREEN --- */
@@ -113,7 +112,7 @@
     <div id="setup-screen">
         <div class="setup-card">
             <h2>📜 สร้างตัวละคร & สุ่มชะตากรรม</h2>
-            <p>เลือกเส้นทางชีวิตอิสระสำหรับตัวละครชายและหญิง[cite: 1]</p>
+            <p>ระบบอีเวนต์เนื้อเรื่องป๊อปอัพไดนามิก & ฉายาตระกูลสุดอลังการ</p>
             
             <div class="form-group">
                 <label>นามสกุลตระกูล:</label>
@@ -245,6 +244,7 @@
             isEmperor: false,
             era: "รัชศกไท่คัง ปีที่ 1",
             dream: "อยากกุมอำนาจสูงสุดในแผ่นดิน",
+            title: "สามัญชนไร้ชื่อ",
             age: 0,
             year: 1,
             seasonIndex: 0,
@@ -274,12 +274,12 @@
         };
 
         function saveGame() {
-            try { localStorage.setItem('dynasty_game_autosave_v13', JSON.stringify(game)); } catch(e) {}
+            try { localStorage.setItem('dynasty_game_autosave_v14', JSON.stringify(game)); } catch(e) {}
         }
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('dynasty_game_autosave_v13');
+                let saved = localStorage.getItem('dynasty_game_autosave_v14');
                 if(saved) {
                     game = JSON.parse(saved);
                     document.getElementById('setup-screen').style.display = 'none';
@@ -297,7 +297,7 @@
 
         function resetGame() {
             if(confirm("ท่านต้องการเริ่มเกมใหม่ทั้งหมดจริงหรือ? ข้อมูลเดิมทั้งหมดจะหายไป")) {
-                localStorage.removeItem('dynasty_game_autosave_v13');
+                localStorage.removeItem('dynasty_game_autosave_v14');
                 location.reload();
             }
         }
@@ -358,8 +358,9 @@
             if (game.currentTab === 'life') {
                 container.innerHTML = `
                     <div class="card">
-                        <h3>📖 สถานะชีวิต & เส้นทางชะตากรรม</h3>
+                        <h3>📖 สถานะชีวิต & ฉายาตระกูล</h3>
                         <div style="font-size: 13px; line-height: 1.6;">
+                            <b>ฉายาปัจจุบัน:</b> ${game.title}<br>
                             <b>เส้นทางชีวิต:</b> ${game.pathType === 'ทาส' ? 'ทาสรับใช้ (เก็บเงิน 500 ตำลึงเพื่อไถ่ตัว)' : (game.isFramed ? '⚠️ ถูกใส่ร้ายป้ายสี (ต้องสืบคดีล้างมลทิน)' : 'ขุนนาง/สามัญชนอิสระ')}<br>
                             <b>อาชีพหลัก:</b> ${game.career}<br>
                             <b>บรรดาศักดิ์/ยศ:</b> ${game.careerRank}<br>
@@ -483,8 +484,75 @@
 
             game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `อายุ ${game.age} ปี: ผ่านไป 1 ปี หักค่าใช้จ่าย ${cost} ตำลึง` });
 
+            // ระบบสุ่มอีเวนต์ป๊อปอัพไดนามิกขั้นสูง (Dynamic Pop-up Events)
+            checkAndTriggerDynamicEvent();
+
             saveGame();
             updateScreen();
+        }
+
+        function checkAndTriggerDynamicEvent() {
+            let eventsPool = [
+                {
+                    title: "🌪️ วิกฤตภัยแล้ง & ข้าวยากหมากแพง",
+                    desc: "ปีนี้เกิดภัยแล้งทางเหนือ ราษฎรเดือดร้อนหนัก ท่านในฐานะผู้มีชื่อเสียงจะตัดสินใจอย่างไร?",
+                    choices: [
+                        { text: "ควักเงินส่วนตัว 150 ตำลึงช่วยแจกข้าวสาร (-เงิน, +ชื่อเสียงสูง)", action: () => {
+                            if(game.money >= 150) {
+                                game.money -= 150; game.stats.prestige += 35;
+                                game.title = "ขุนนางผู้โอบอ้อมอารี";
+                                showModal("ราษฎรแซ่ซ้อง", "ท่านใจบุญช่วยชีวิตราษฎร ชื่อเสียงพุ่งกระฉูด ได้รับฉายา 'ขุนนางผู้โอบอ้อมอารี'!");
+                            } else {
+                                showModal("เงินไม่พอ", "ท่านอยากช่วยแต่เงินในกระเป๋าไม่พอ");
+                            }
+                        }},
+                        { text: "เพิกเฉยไม่สนใจ ปล่อยให้ทางการจัดการ (-ชื่อเสียง)", action: () => {
+                            game.stats.prestige -= 10;
+                            showModal("เสียงนินทาชาวเมือง", "ชาวบ้านต่างผิดหวัง ชื่อเสียงของท่านลดลงเล็กน้อย");
+                        }}
+                    ]
+                },
+                {
+                    title: "🗡️ การลอบโจมตีของมือสังหารปริศนา",
+                    desc: "ยามดึกในจวน มีเงาดำลึกลับถือกระบี่บุกเข้ามาหมายเอาชีวิตท่าน!",
+                    choices: [
+                        { text: "ใช้เพลงยุทธ์เข้าต่อสู้ป้องกันตัว (วัดดวงพลังต่อสู้ >= 40)", action: () => {
+                            if(game.stats.combat >= 40) {
+                                game.stats.prestige += 20;
+                                game.title = "จอมยุทธ์ผู้ไร้พ่าย";
+                                showModal("ขับไล่มือสังหาร", "ท่านไหวพริบดีใช้กระบี่ซัดมือสังหารหนีไปได้ ชื่อเสียงเลื่องลือ!");
+                            } else {
+                                game.money -= 80;
+                                showModal("ได้รับบาดเจ็บ", "ฝีมือยังอ่อนด้อย ถูกแทงบาดเจ็บ เสียเงินรักษาตัว 80 ตำลึง");
+                            }
+                        }},
+                        { text: "โยนเงินทองล่อใจแล้วหนีออกทางลับ (-เงิน 100 ตำลึง)", action: () => {
+                            game.money = Math.max(0, game.money - 100);
+                            showModal("เอาตัวรอดได้", "ท่านเสียเงินสินบนเพื่อซื้อความปลอดภัยในคืนนี้");
+                        }}
+                    ]
+                }
+            ];
+
+            if(Math.random() < 0.6) {
+                let ev = eventsPool[Math.floor(Math.random() * eventsPool.length)];
+                showPopupChoiceModal(ev);
+            }
+        }
+
+        function showPopupChoiceModal(ev) {
+            let choiceHtml = ev.choices.map((c, i) => `<button class="btn-action" onclick="playClickSound(); executePopupChoice(${i})" style="margin-top:8px;">${c.text}</button>`).join('');
+            window.currentPopupChoices = ev.choices;
+            showModal(`⚡ เหตุการณ์สำคัญ: ${ev.title}`, `${ev.desc}<br><br><b>โปรดตัดสินใจเลือกทางเดินของท่าน:</b><br>${choiceHtml}`);
+        }
+
+        window.executePopupChoice = function(index) {
+            if(window.currentPopupChoices && window.currentPopupChoices[index]) {
+                window.currentPopupChoices[index].action();
+                game.chronicleMasterLog.push({ year: game.year, type: "rumor", text: `[เหตุการณ์สำคัญ] ท่านตัดสินใจเผชิญหน้าและจัดการกับวิกฤตการณ์ในเมืองหลวง` });
+                saveGame();
+                updateScreen();
+            }
         }
 
         function talkFamily(target) {
@@ -526,6 +594,7 @@
             if(game.stats.intelligence >= 60) {
                 game.isFramed = false;
                 game.career = "ขุนนางผู้ได้รับการล้างมลทิน";
+                game.title = "ขุนนางผู้กอบกู้ตระกูล";
                 game.money += 1000;
                 closeModal();
                 showModal("ล้างมลทินสำเร็จ!", "ฮ่องเต้คืนบรรดาศักดิ์และทรัพย์สินให้ตระกูล!");[cite: 1]
@@ -537,6 +606,7 @@
             if(game.stats.combat >= 80 && game.stats.prestige >= 100) {
                 game.isEmperor = true;
                 game.career = "องค์ฮ่องเต้ผู้เกรียงไกร";
+                game.title = "ปฐมกษัตริย์ผู้สร้างราชวงศ์ใหม่";
                 closeModal();
                 showModal("👑 ชัยชนะแห่งบัลลังก์มังกร!", "ท่านสถาปนาตนเองเป็นฮ่องเต้ผู้ครองแผ่นดินแต่เพียงผู้เดียว!");[cite: 1]
                 updateScreen();
@@ -551,6 +621,7 @@
         function selectExam() {
             if(game.stats.intelligence >= 70) {
                 game.career = "ขุนนางหลวงขั้น 7";
+                game.title = "บัณฑิตผู้ทรงภูมิปัญญา";
                 game.salary = 500;
                 closeModal();
                 showModal("สอบผ่าน!", "ได้รับการแต่งตั้งเป็นขุนนางหลวง!");[cite: 1]
@@ -561,6 +632,7 @@
         function openMilitaryModal() {
             if(game.age < 16) { showModal("ยังไม่ถึงเกณฑ์", "🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป"); return; }
             game.career = "แม่ทัพใหญ่";
+            game.title = "แม่ทัพผู้พิชิตแผ่นดิน";
             game.salary = 800;
             showModal("เข้ากองทัพ", "ท่านไต่เต้าเป็นแม่ทัพใหญ่คุมกำลังพล!");[cite: 1]
             updateScreen();
@@ -569,6 +641,7 @@
         function openHaremModal() {
             if(game.age < 16) { showModal("ยังไม่ถึงเกณฑ์", "🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป"); return; }
             game.career = "พระสนมเอก (มุ่งสู่ฮองเฮา)";
+            game.title = "สนมเอกผู้กุมอำนาจวังหลัง";
             game.salary = 900;
             showModal("เข้าวังหลัง", "ไต่เต้าจากนางกำนัลขึ้นเป็นพระสนมเอกผู้ทรงอำนาจ![cite: 1]");
             updateScreen();
@@ -577,6 +650,7 @@
         function openPrinceOrConsortModal() {
             if(game.age < 16) { showModal("ยังไม่ถึงเกณฑ์", "🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป"); return; }
             game.career = "ราชบุตรเขย / ขุนนางทรงอำนาจ";
+            game.title = "ราชนิกุลผู้ทรงอิทธิพล";
             game.salary = 1000;
             showModal("แต่งเข้าวังหลวง", "กลายเป็นราชบุตรเขยผู้มีอิทธิพลในราชสำนัก![cite: 1]");
             updateScreen();
