@@ -124,8 +124,8 @@
                 <label>สถานะเริ่มต้น:</label>
                 <select id="input-status-choice" class="form-control">
                     <option value="ขุนนาง">บุตรขุนนางตระกูลใหญ่</option>
-                    <option value="ทาส">ทาสรับใช้ (เส้นทางไถ่ตัวพลิกชีวิต)[cite: 1]</option>
-                    <option value="ตกอับ">ขุนนางเก่าถูกใส่ร้าย (เส้นทางล้างมลทิน)[cite: 1]</option>
+                    <option value="ทาส">ทาสรับใช้ (เส้นทางไถ่ตัวพลิกชีวิต)</option>
+                    <option value="ตกอับ">ขุนนางเก่าถูกใส่ร้าย (เส้นทางล้างมลทิน)</option>
                 </select>
             </div>
 
@@ -169,10 +169,10 @@
             <span style="cursor:pointer; font-size:18px;" onclick="toggleDrawer(false)">✕</span>
         </div>
         <div class="drawer-body">
-            <button class="drawer-btn" onclick="openMarketModal()">🛒 ตลาดมืด & ลงทุนค้าขายสินค้าโบราณ[cite: 1]</button>
-            <button class="drawer-btn" onclick="openCourtCouncilModal()">🏛️ สภาราชสำนัก & ถวายฎีกา[cite: 1]</button>
+            <button class="drawer-btn" onclick="openMarketModal()">🛒 ตลาดมืด & ลงทุนค้าขายสินค้าโบราณ</button>
+            <button class="drawer-btn" onclick="openCourtCouncilModal()">🏛️ สภาราชสำนัก & ถวายฎีกา</button>
             <button class="drawer-btn" onclick="openHospitalModal()">💊 โรงหมอหลวง & ซื้อยาบำรุงสุขภาพ</button>
-            <button class="drawer-btn" onclick="openVengeanceOrThroneModal()">⚔️ เส้นทางกบฏชิงบัลลังก์ / ล้างมลทิน[cite: 1]</button>
+            <button class="drawer-btn" onclick="openVengeanceOrThroneModal()">⚔️ เส้นทางกบฏชิงบัลลังก์ / ล้างมลทิน</button>
             <button class="drawer-btn" onclick="location.reload()">🔄 รีเฟรชหน้าจอ</button>
             <button class="drawer-btn" onclick="saveGameManually()">💾 บันทึกเกมทันที</button>
             <button class="drawer-btn" onclick="resetGame()" style="color: var(--danger-red);">🔄 ล้างข้อมูล & เริ่มเกมใหม่</button>
@@ -246,12 +246,12 @@
         };
 
         function saveGame() {
-            try { localStorage.setItem('dynasty_game_v27', JSON.stringify(game)); } catch(e) {}
+            try { localStorage.setItem('dynasty_game_v28', JSON.stringify(game)); } catch(e) {}
         }
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('dynasty_game_v27');
+                let saved = localStorage.getItem('dynasty_game_v28');
                 if(saved) {
                     game = JSON.parse(saved);
                     let setupScreen = document.getElementById('setup-screen');
@@ -270,7 +270,7 @@
 
         function resetGame() {
             if(confirm("ท่านต้องการเริ่มเกมใหม่ทั้งหมดจริงหรือ? ข้อมูลเดิมทั้งหมดจะหายไป")) {
-                localStorage.removeItem('dynasty_game_v27');
+                localStorage.removeItem('dynasty_game_v28');
                 location.reload();
             }
         }
@@ -304,12 +304,12 @@
             if(path === 'ทาส') {
                 game.money = 20;
                 game.career = "ทาสรับใช้ในจวนตระกูลใหญ่";
-                game.careerRank = "ชนชั้นล่าง (ต้องเก็บเงินไถ่ตัว)";[cite: 1]
+                game.careerRank = "ชนชั้นล่าง (ต้องเก็บเงินไถ่ตัว)";
             } else if(path === 'ตกอับ') {
                 game.isFramed = true;
                 game.money = 50;
                 game.career = "อดีตทายาทขุนนางตกยาก";
-                game.careerRank = "สามัญชนไร้ยศ";[cite: 1]
+                game.careerRank = "สามัญชนไร้ยศ";
             }
 
             let setupScreen = document.getElementById('setup-screen');
@@ -379,19 +379,19 @@
                         <div class="action-grid">
                             <button class="btn-action" onclick="openExamModal()">
                                 <span>📖 สอบขุนนาง 6 กรมราชสำนัก (สายบุ๋น)</span>
-                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & ปัญญา >= 70[cite: 1]</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & ปัญญา >= 70</span>
                             </button>
                             <button class="btn-action" onclick="openMilitaryModal()">
                                 <span>⚔️ เส้นทางสายทหาร (ไต่เต้าเป็นแม่ทัพใหญ่)</span>
-                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & พลังยุทธ์ >= 50[cite: 1]</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & พลังยุทธ์ >= 50</span>
                             </button>
                             <button class="btn-action" onclick="openHaremModal()">
                                 <span>🌸 เส้นทางวังหลัง & พระสนมเอก (มุ่งสู่ฮองเฮา)</span>
-                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & เสน่ห์ >= 60[cite: 1]</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & เสน่ห์ >= 60</span>
                             </button>
                             <button class="btn-action" onclick="openPrinceOrConsortModal()">
                                 <span>👑 ราชบุตรเขย / ท่านอ๋องผู้ทรงอำนาจ</span>
-                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & ชื่อเสียง >= 50[cite: 1]</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & ชื่อเสียง >= 50</span>
                             </button>
                         </div>
                     </div>
@@ -411,11 +411,11 @@
                         <div class="action-grid">
                             <button class="btn-action" onclick="arrangeMarriage()">
                                 <span>💍 สู่ขอแต่งงาน / รับคู่ครองเข้าจวน</span>
-                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป[cite: 1]</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป</span>
                             </button>
                             <button class="btn-action" onclick="haveChild()">
                                 <span>🐣 ให้กำเนิดทายาทสืบสกุล</span>
-                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & มีคู่ครองแล้ว[cite: 1]</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป & มีคู่ครองแล้ว</span>
                             </button>
                             <button class="btn-action" onclick="hostBanquet()">
                                 <span>🍷 จัดงานเลี้ยงรับรองขุนนางในจวน (+ชื่อเสียง, -เงิน 100)</span>
@@ -457,7 +457,7 @@
 
             if(game.age === 16) {
                 game.avatar = game.gender === 'หญิง' ? '👩' : '🧑';
-                showModal("冠 พิธีปักปิ่น & สวมหมวก (อายุ 16 ปี)", "ท่านเข้าสู่วัยผู้ใหญ่เต็มตัว! ปลดล็อกราชสำนัก วังหลัง และทุกเส้นทางในเกมเรียบร้อย![cite: 1]");
+                showModal("冠 พิธีปักปิ่น & สวมหมวก (อายุ 16 ปี)", "ท่านเข้าสู่วัยผู้ใหญ่เต็มตัว! ปลดล็อกราชสำนัก วังหลัง และทุกเส้นทางในเกมเรียบร้อย!");
             }
 
             if(game.salary > 0 && !game.isEmperor) {
@@ -483,10 +483,10 @@
         function openMarketModal() {
             toggleDrawer(false);
             showModal("🛒 ตลาดมืด & ลงทุนค้าขาย", `
-                เลือกสินค้าเพื่อลงทุนเก็งกำไรในเมืองหลวง[cite: 1]:<br><br>
-                <button class="btn-action" onclick="investMarket('tea')">🍵 ลงทุนใบชาโบราณ (ใช้ 100 ตำลึง)[cite: 1]</button>
-                <button class="btn-action" onclick="investMarket('ginseng')">💊 ลงทุนโสมเขาคุนหลุน (ใช้ 300 ตำลึง)[cite: 1]</button>
-                <button class="btn-action" onclick="investMarket('gem')">💎 ลงทุนอัญมณีราชสำนัก (ใช้ 600 ตำลึง)[cite: 1]</button>
+                เลือกสินค้าเพื่อลงทุนเก็งกำไรในเมืองหลวง:<br><br>
+                <button class="btn-action" onclick="investMarket('tea')">🍵 ลงทุนใบชาโบราณ (ใช้ 100 ตำลึง)</button>
+                <button class="btn-action" onclick="investMarket('ginseng')">💊 ลงทุนโสมเขาคุนหลุน (ใช้ 300 ตำลึง)</button>
+                <button class="btn-action" onclick="investMarket('gem')">💎 ลงทุนอัญมณีราชสำนัก (ใช้ 600 ตำลึง)</button>
             `);
         }
 
@@ -501,9 +501,9 @@
             if(win) {
                 let profit = cost * 2;
                 game.money += profit;
-                showModal("ลงทุนสำเร็จ!", `ราคาตลาดพุ่งสูงขึ้น ท่านได้กำไรมหาศาลได้รับเงินคืน ${profit} ตำลึง![cite: 1]`);
+                showModal("ลงทุนสำเร็จ!", `ราคาตลาดพุ่งสูงขึ้น ท่านได้กำไรมหาศาลได้รับเงินคืน ${profit} ตำลึง!`);
             } else {
-                showModal("ลงทุนขาดทุน", `สถานการณ์พลิกผัน ราคาตกต่ำ ท่านขาดทุนเงินสูญเปล่า![cite: 1]`);
+                showModal("ลงทุนขาดทุน", `สถานการณ์พลิกผัน ราคาตกต่ำ ท่านขาดทุนเงินสูญเปล่า!`);
             }
             saveGame();
             updateScreen();
@@ -516,20 +516,20 @@
                 return;
             }
             showModal("🏛️ สภาราชสำนัก & ถวายฎีกา", `
-                เลือกหัวข้อในการนำเสนอต่อหน้าพระพักตร์ฮ่องเต้[cite: 1]:<br><br>
-                <button class="btn-action" onclick="submitMemorial('tax')">📜 เสนอนโยบายลดภาษีราษฎร (+ชื่อเสียง)[cite: 1]</button>
-                <button class="btn-action" onclick="submitMemorial('military')">⚔️ เสนองบประมาณพัฒนาค่ายทหาร (+พลังต่อสู้)[cite: 1]</button>
+                เลือกหัวข้อในการนำเสนอต่อหน้าพระพักตร์ฮ่องเต้:<br><br>
+                <button class="btn-action" onclick="submitMemorial('tax')">📜 เสนอนโยบายลดภาษีราษฎร (+ชื่อเสียง)</button>
+                <button class="btn-action" onclick="submitMemorial('military')">⚔️ เสนองบประมาณพัฒนาค่ายทหาร (+พลังต่อสู้)</button>
             `);
         }
 
         function submitMemorial(type) {
             if(type === 'tax') {
                 game.stats.prestige += 25;
-                showModal("ถวายฎีกาสำเร็จ", "ฮ่องเต้ทรงเห็นชอบนโยบายลดภาษีราษฎร ชื่อเสียงของท่านในหมู่ประชาชนเพิ่มขึ้น![cite: 1]");
+                showModal("ถวายฎีกาสำเร็จ", "ฮ่องเต้ทรงเห็นชอบนโยบายลดภาษีราษฎร ชื่อเสียงของท่านในหมู่ประชาชนเพิ่มขึ้น!");
             } else {
                 game.stats.combat += 15;
                 game.money -= 200;
-                showModal("ถวายฎีกาสำเร็จ", "งบประมาณถูกส่งไปยังกองทัพ พลังต่อสู้ตระกูลเพิ่มขึ้น (เสียค่าใช้จ่ายส่วนกลาง 200 ตำลึง)[cite: 1]");
+                showModal("ถวายฎีกาสำเร็จ", "งบประมาณถูกส่งไปยังกองทัพ พลังต่อสู้ตระกูลเพิ่มขึ้น (เสียค่าใช้จ่ายส่วนกลาง 200 ตำลึง)");
             }
             saveGame();
             updateScreen();
@@ -607,11 +607,11 @@
         function openVengeanceOrThroneModal() {
             let content = "";
             if(game.pathType === 'ทาส') {
-                content = `<b>สถานะ: ทาสรับใช้</b><br>เก็บเงินให้ครบ 500 ตำลึงเพื่อไถ่ตัว![cite: 1]<br><br><button class="btn-action" onclick="redeemSlave()">🪙 ไถ่ตัวเป็นสามัญชน (ใช้ 500 ตำลึง)</button>[cite: 1]`;
+                content = `<b>สถานะ: ทาสรับใช้</b><br>เก็บเงินให้ครบ 500 ตำลึงเพื่อไถ่ตัว!<br><br><button class="btn-action" onclick="redeemSlave()">🪙 ไถ่ตัวเป็นสามัญชน (ใช้ 500 ตำลึง)</button>`;
             } else if(game.isFramed) {
-                content = `<b>สถานะ: ขุนนางถูกใส่ร้าย</b><br>ใช้สติปัญญา 60 เพื่อสืบคดีล้างมลทิน![cite: 1]<br><br><button class="btn-action" onclick="investigateCase()">🔍 สืบคดีล้างมลทิน</button>[cite: 1]`;
+                content = `<b>สถานะ: ขุนนางถูกใส่ร้าย</b><br>ใช้สติปัญญา 60 เพื่อสืบคดีล้างมลทิน!<br><br><button class="btn-action" onclick="investigateCase()">🔍 สืบคดีล้างมลทิน</button>`;
             } else {
-                content = `<b>เส้นทางสู่บัลลังก์:</b><br>หากมีพลังต่อสู้ 80 และชื่อเสียง 100 สามารถก่อกบฏขึ้นเป็นฮ่องเต้ได้![cite: 1]<br><br><button class="btn-action" onclick="launchRebellion()">⚔️ ก่อกบฏยึดบัลลังก์มังกร</button>[cite: 1]`;
+                content = `<b>เส้นทางสู่บัลลังก์:</b><br>หากมีพลังต่อสู้ 80 และชื่อเสียง 100 สามารถก่อกบฏขึ้นเป็นฮ่องเต้ได้!<br><br><button class="btn-action" onclick="launchRebellion()">⚔️ ก่อกบฏยึดบัลลังก์มังกร</button>`;
             }
             showModal("⚔️ เควสต์ชะตากรรม", content);
         }
@@ -622,9 +622,9 @@
                 game.pathType = 'ขุนนาง';
                 game.career = "สามัญชนอิสระ";
                 closeModal();
-                showModal("ไถ่ตัวสำเร็จ!", "ท่านไถ่ตัวเป็นอิสระเรียบร้อย![cite: 1]");
+                showModal("ไถ่ตัวสำเร็จ!", "ท่านไถ่ตัวเป็นอิสระเรียบร้อย!");
                 updateScreen();
-            } else { showModal("เงินไม่พอ", "ต้องใช้ 500 ตำลึง");[cite: 1] }
+            } else { showModal("เงินไม่พอ", "ต้องใช้ 500 ตำลึง"); }
         }
 
         function investigateCase() {
@@ -634,9 +634,9 @@
                 game.title = "ขุนนางผู้กอบกู้ตระกูล";
                 game.money += 1000;
                 closeModal();
-                showModal("ล้างมลทินสำเร็จ!", "ฮ่องเต้คืนบรรดาศักดิ์และทรัพย์สินให้ตระกูล![cite: 1]");
+                showModal("ล้างมลทินสำเร็จ!", "ฮ่องเต้คืนบรรดาศักดิ์และทรัพย์สินให้ตระกูล!");
                 updateScreen();
-            } else { showModal("สติปัญญาไม่พอ", "ต้องมีสติปัญญา >= 60");[cite: 1] }
+            } else { showModal("สติปัญญาไม่พอ", "ต้องมีสติปัญญา >= 60"); }
         }
 
         function launchRebellion() {
@@ -645,14 +645,14 @@
                 game.career = "องค์ฮ่องเต้ผู้เกรียงไกร";
                 game.title = "ปฐมกษัตริย์ผู้สร้างราชวงศ์ใหม่";
                 closeModal();
-                showModal("👑 ชัยชนะแห่งบัลลังก์มังกร!", "ท่านสถาปนาตนเองเป็นฮ่องเต้ผู้ครองแผ่นดินแต่เพียงผู้เดียว![cite: 1]");
+                showModal("👑 ชัยชนะแห่งบัลลังก์มังกร!", "ท่านสถาปนาตนเองเป็นฮ่องเต้ผู้ครองแผ่นดินแต่เพียงผู้เดียว!");
                 updateScreen();
-            } else { showModal("กำลังพลไม่พร้อม", "ต้องมีพลังต่อสู้ >= 80 และชื่อเสียง >= 100");[cite: 1] }
+            } else { showModal("กำลังพลไม่พร้อม", "ต้องมีพลังต่อสู้ >= 80 และชื่อเสียง >= 100"); }
         }
 
         function openExamModal() {
             if(game.age < 16 || game.pathType === 'ทาส') { showModal("ไม่สามารถสอบได้", "🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป และไม่ใช่ทาส"); return; }
-            showModal("📖 สอบขุนนางสำนักหลวง", `<button class="btn-action" onclick="selectExam()">🪙 สอบบรรดาศักดิ์ขุนนางหลวง</button>[cite: 1]`);
+            showModal("📖 สอบขุนนางสำนักหลวง", `<button class="btn-action" onclick="selectExam()">🪙 สอบบรรดาศักดิ์ขุนนางหลวง</button>`);
         }
 
         function selectExam() {
@@ -662,9 +662,9 @@
                 game.title = "บัณฑิตผู้ทรงภูมิปัญญา";
                 game.salary = 500;
                 closeModal();
-                showModal("สอบผ่าน!", "ได้รับการแต่งตั้งเป็นขุนนางในราชสำนัก![cite: 1]");
+                showModal("สอบผ่าน!", "ได้รับการแต่งตั้งเป็นขุนนางในราชสำนัก!");
                 updateScreen();
-            } else { showModal("สอบไม่ผ่าน", "ปัญญาต้องถึง 70");[cite: 1] }
+            } else { showModal("สอบไม่ผ่าน", "ปัญญาต้องถึง 70"); }
         }
 
         function openMilitaryModal() {
@@ -673,7 +673,7 @@
             game.careerRank = "แม่ทัพคุมกำลังพล";
             game.title = "แม่ทัพผู้พิชิตแผ่นดิน";
             game.salary = 800;
-            showModal("เข้ากองทัพ", "ท่านไต่เต้าเป็นแม่ทัพใหญ่คุมกำลังพลชายแดน![cite: 1]");
+            showModal("เข้ากองทัพ", "ท่านไต่เต้าเป็นแม่ทัพใหญ่คุมกำลังพลชายแดน!");
             updateScreen();
         }
 
@@ -683,7 +683,7 @@
             game.careerRank = "สนมเอกวังหลัง";
             game.title = "สนมเอกผู้กุมอำนาจวังหลัง";
             game.salary = 900;
-            showModal("เข้าวังหลัง", "ไต่เต้าจากนางกำนัลหลวงขึ้นเป็นพระสนมเอกผู้ทรงอำนาจ![cite: 1]");
+            showModal("เข้าวังหลัง", "ไต่เต้าจากนางกำนัลหลวงขึ้นเป็นพระสนมเอกผู้ทรงอำนาจ!");
             updateScreen();
         }
 
@@ -693,7 +693,7 @@
             game.careerRank = "ราชนิกุล";
             game.title = "ราชนิกุลผู้ทรงอิทธิพล";
             game.salary = 1000;
-            showModal("แต่งเข้าวังหลวง", "กลายเป็นราชบุตรเขย/ท่านอ๋องผู้มีอิทธิพลในราชสำนัก![cite: 1]");
+            showModal("แต่งเข้าวังหลวง", "กลายเป็นราชบุตรเขย/ท่านอ๋องผู้มีอิทธิพลในราชสำนัก!");
             updateScreen();
         }
 
@@ -701,7 +701,7 @@
             if(game.age < 16) { showModal("ยังไม่ถึงเกณฑ์", "🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป"); return; }
             game.family.spouse = "ฮูหยิน/สามีตระกูลสูงศักดิ์";
             game.family.spouseAffection = 70;
-            showModal("มงคลสมรส", "แต่งงานสร้างครอบครัวเรียบร้อย![cite: 1]");
+            showModal("มงคลสมรส", "แต่งงานสร้างครอบครัวเรียบร้อย!");
             saveGame();
             updateScreen();
         }
@@ -711,7 +711,7 @@
             let name = prompt("ตั้งชื่อทายาท:", "เป่าเปา");
             if(name) {
                 game.family.heirs.push({ name: name, talent: "อัจฉริยะ" });
-                showModal("ทายาทถือกำเนิด", `ทายาทนามว่า "${name}" ถือกำเนิดในจวน`);[cite: 1]
+                showModal("ทายาทถือกำเนิด", `ทายาทนามว่า "${name}" ถือกำเนิดในจวน`);
             }
             saveGame();
             updateScreen();
@@ -723,17 +723,17 @@
             else { game.stats.combat += gain; }
             saveGame();
             updateScreen();
-            showModal("ฝึกฝนสำเร็จ", `ได้รับแต้มเพิ่มขึ้น +${gain}`);[cite: 1]
+            showModal("ฝึกฝนสำเร็จ", `ได้รับแต้มเพิ่มขึ้น +${gain}`);
         }
 
         function visitLocation(loc) {
             if(loc === 'teahouse') {
                 game.stats.charm += 5;
                 game.money += 30;
-                showModal("โรงน้ำชา", "ดื่มชาฟังข่าวลือและประชันบทกลอน ได้รับเสน่ห์และเงินเล็กน้อย");[cite: 1]
+                showModal("โรงน้ำชา", "ดื่มชาฟังข่าวลือและประชันบทกลอน ได้รับเสน่ห์และเงินเล็กน้อย");
             } else {
                 game.money += 100;
-                showModal("บ่อนการพนัน", "เสี่ยงโชคชนะ ได้รับเงินรางวัล!");[cite: 1]
+                showModal("บ่อนการพนัน", "เสี่ยงโชคชนะ ได้รับเงินรางวัล!");
             }
             saveGame();
             updateScreen();
@@ -742,7 +742,7 @@
         function openChronicleModal() {
             toggleDrawer(false);
             let logsHtml = game.chronicleMasterLog.slice().reverse().map(item => `• [ปีที่ ${item.year}] ${item.text}`).join('<br>');
-            showModal("📖 บันทึกพงศาวดาร", `<div style="max-height: 300px; overflow-y: auto;">${logsHtml}</div>`);[cite: 1]
+            showModal("📖 บันทึกพงศาวดาร", `<div style="max-height: 300px; overflow-y: auto;">${logsHtml}</div>`);
         }
 
         function toggleDrawer(open) {
@@ -775,7 +775,6 @@
         }
 
         window.onload = function() {
-            // เคลียร์เซฟเก่าอัตโนมัติป้องกันค้าง
             let setupScreen = document.getElementById('setup-screen');
             if(setupScreen) setupScreen.style.display = 'flex';
         };
