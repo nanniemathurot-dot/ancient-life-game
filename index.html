@@ -2610,5 +2610,132 @@
         if (typeof autoSaveGame === 'function') autoSaveGame();
     };
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 29 (ULTIMATE LEGACY, RELATIONSHIPS & WORLD ENCOUNTERS) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบตัวแปรพื้นฐาน (ความสัมพันธ์, ทายาท)
+    // ---------------------------------------------------------
+    if (typeof player !== 'undefined') {
+        player.relationship = player.relationship || 50; // ค่าความสัมพันธ์/มิตรภาพ
+        player.heirName = player.heirName || "ทายาทรุ่นลูก";
+    }
+
+    // ---------------------------------------------------------
+    // 2. ระบบเดินทางท่องเที่ยว / ท่องยุทธภพสุ่มอีเวนต์ (World Encounters)
+    // ---------------------------------------------------------
+    window.exploreWorld = function() {
+        if (typeof checkActionLimit === 'function' && !checkActionLimit()) return;
+
+        let events = [
+            {
+                title: "🏮 โรงเตี๊ยมกลางเมืองหลวง",
+                desc: "ท่านเดินทางมายังโรงเตี๊ยมชื่อดัง พบสำนักจอมยุทธ์กำลังท้าประลองฝีมือกันอย่างดุเดือด",
+                action: () => {
+                    player.militaryPower = (player.militaryPower || 10) + 8;
+                    player.repu += 5;
+                    showModal("🏮 ชัยชนะในโรงเตี๊ยม", "ท่านร่วมสังเกตการณ์และประลองฝีมือจนได้เคล็ดวิชาลับ พลังทหาร +8!", "⚔️");
+                    addTimeline("🏮 ท่องยุทธภพโรงเตี๊ยม", "เข้าร่วมสังเกตการณ์และประลองในโรงเตี๊ยม ได้รับประสบการณ์ยุทธ์ล้ำค่า", "good");
+                }
+            },
+            {
+                title: "📜 ผู้เฒ่าปริศนาข้างถนน",
+                desc: "ท่านพบนักพรตเฒ่าผู้หนึ่งนั่งดูดวงอยู่ริมทาง แววตาเปี่ยมด้วยประกายปัญญา",
+                action: () => {
+                    player.intel += 10;
+                    player.stress = Math.max(0, (player.stress || 0) - 10);
+                    showModal("📜 คำชี้แนะจากเซียน", "นักพรตชี้แนะวิถีชีวิตและเคล็ดวิชา สติปัญญาพุ่งพรวด ความเครียดลดลง!", "🧠");
+                    addTimeline("📜 พบเซียนเร่ร่อน", "ได้รับคำชี้แนะแนวทางชีวิตจากนักพรตปริศนา จิตใจโปร่งใสปัญญาเฉียบแหลม", "good");
+                }
+            },
+            {
+                title: "💰 ถุงเงินตกหล่นปริศนา",
+                desc: "ขณะเดินผ่านตรอกแคบ ท่านพบถุงผ้าไหมปักดิ้นทองตกอยู่ ภายในบรรจุเบี้ยเงินตำลึงจำนวนมาก",
+                action: () => {
+                    player.money += 100;
+                    player.moral -= 2;
+                    showModal("💰 ขุมทรัพย์กลางตรอก", "ท่านเก็บถุงเงินได้โดยบังเอิญ ทรัพย์สินในคลังเพิ่มขึ้น 100 ตำลึง!", "💎");
+                    addTimeline("💰 เก็บเงินได้โดยบังเอิญ", "เก็บถุงทองคำของพ่อค้าเร่ที่ทำตกไว้ได้ นำเข้าคลังจวนส่วนตัว", "neutral");
+                }
+            }
+        ];
+
+        let selectedEvent = events[Math.floor(Math.random() * events.length)];
+        selectedEvent.action();
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 3. ระบบสานสัมพันธ์ตัวละครรอบข้าง (Relationship Confidant)
+    // ---------------------------------------------------------
+    window.interactWithConfidant = function() {
+        player.relationship = Math.min(100, (player.relationship || 50) + 10);
+        player.charm += 5;
+        
+        addTimeline("🤝 สานสัมพันธ์สหายสนิท", "ใช้เวลาพูดคุยและแลกเปลี่ยนมุมมองการเมืองกับสหายคนสนิท แนบแน่นยิ่งขึ้น", "good");
+        showModal("🤝 มิตรภาพแนบแน่น", `ค่าความสัมพันธ์กับสหายคนสนิทเพิ่มขึ้นเป็น ${player.relationship}/100! พวกเขาพร้อมช่วยเหลือยามท่านตกยาก`, "💖");
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 4. ระบบส่งต่อทายาทข้ามรุ่น (Multi-Generation Heir System)
+    // ---------------------------------------------------------
+    window.triggerHeirSuccessionEvent = function() {
+        document.getElementById('res-icon').innerText = "👑";
+        document.getElementById('res-title').innerText = "👑 มรดกโลหิต & การสืบทอดตระกูลข้ามรุ่น";
+        document.getElementById('res-desc').innerText = `สังขารไม่เที่ยง ตอนนี้ตัวละครหลักเข้าสู่วัยชราภาพ (อายุ 50 ปีขึ้นไป) ถึงเวลาต้องส่งต่อจวน บรรดาศักดิ์ และทรัพย์สินทั้งหมดให้แก่ทายาทผู้สืบสกุลเพื่อดำเนินตำนานบทใหม่แล้ว!`;
+        
+        let choicesHTML = `
+            <button class="choice-btn" onclick="executeSuccession()">👑 สละตำแหน่ง ส่งไม้ต่อให้ "ทายาท" สืบสานอำนาจตระกูลต่อไป (รีเซ็ตอายุเป็น 16 ปี พร้อมโบนัสสเตตัสเริ่มต้น)</button>
+            <button class="choice-btn" onclick="closeModal()">ใช้ชีวิตบั้นปลายอย่างสงบต่อในจวน</button>
+        `;
+        document.getElementById('res-choices').innerHTML = choicesHTML;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.executeSuccession = function() {
+        // สืบทอดสเตตัส 30% ให้ลูกหลานเริ่มต้นอย่างแข็งแกร่ง
+        player.age = 16;
+        player.intel = Math.floor((player.intel || 30) * 0.4) + 20;
+        player.militaryPower = Math.floor((player.militaryPower || 20) * 0.4) + 15;
+        player.money = Math.floor((player.money || 100) * 0.5) + 50;
+        player.repu = Math.floor((player.repu || 20) * 0.5);
+        player.stress = 0;
+        player.health = 100;
+        player.activeTitle = "🌟 ทายาทผู้สืบทอดตระกูลรุ่นใหม่";
+
+        addTimeline("👑 ผลัดแผ่นดินสืบสกุล", "ตัวละครหลักส่งไม้ต่อให้ทายาทรุ่นลูกเข้ามาดูแลจวนและสานต่อความยิ่งใหญ่ของตระกูล", "good");
+        showModal("👑 ตำนานบทใหม่เริ่มต้นขึ้น!", "ท่านได้สวมบทบาทเป็นทายาทรุ่นลูก เริ่มต้นเส้นทางชีวิตใหม่ด้วยฐานะและทุนเดิมที่พ่อแม่ปูไว้ให้!", "✨");
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 5. แทรกปุ่มลัดท่องเที่ยวและสหายลงบนหน้าจอหลักอัตโนมัติ
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('world-adventure-panel')) {
+                let advDiv = document.createElement('div');
+                advDiv.id = 'world-adventure-panel';
+                advDiv.style.cssText = "background: #f0f7ff; border: 1px dashed #2196f3; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
+                
+                advDiv.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #0d47a1;">🗺️ ท่องโลก & เครือข่ายความสัมพันธ์</div>
+                    <button class="choice-btn" style="margin: 4px 0; background: #e3f2fd;" onclick="exploreWorld()">🗺️ เดินทางท่องเที่ยว / ท่องยุทธภพ (สุ่มเหตุการณ์เซอร์ไพรส์)</button>
+                    <button class="choice-btn" style="margin: 4px 0; background: #e3f2fd;" onclick="interactWithConfidant()">🤝 สานสัมพันธ์สหายคนสนิท (เพิ่มค่าความสัมพันธ์และเสน่ห์)</button>
+                `;
+                actionContainer.appendChild(advDiv);
+            }
+        }, 2000);
+    });
+</script>
 </body>
 </html>
