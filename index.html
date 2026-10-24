@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Imperial Dynasty Life Simulator - Ultimate Deep-Simulation Edition</title>
+    <title>Imperial Dynasty Life Simulator - Master Edition</title>
     <style>
         :root {
             --primary: #8b0000;
@@ -13,15 +13,14 @@
             --bg-main: #f4f1ea;
             --card-bg: #ffffff;
             --text-dark: #2c2c2c;
-            --accent-green: #2e6930;
-            --accent-blue: #1b4f72;
             --border-color: #dcd6c8;
             --danger-red: #a93226;
+            --success-green: #1e8449;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; }
         body { background: var(--bg-main); color: var(--text-dark); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
 
-        /* --- ADVANCED STICKY HEADER --- */
+        /* --- STICKY HEADER & DYNAMIC AVATAR --- */
         header {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: var(--gold-light);
@@ -41,7 +40,7 @@
         .header-info p { font-size: 11px; color: #fff; opacity: 0.95; margin-top: 2px; }
         .header-right { text-align: right; font-size: 11px; color: var(--gold-light); line-height: 1.4; }
 
-        /* --- DETAILED LEFT OFF-CANVAS DRAWER --- */
+        /* --- LEFT OFF-CANVAS DRAWER MENU --- */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.6); z-index: 100; display: none; backdrop-filter: blur(3px);
@@ -59,7 +58,7 @@
         .drawer-btn { background: #fdfbf7; border: 1px solid var(--border-color); padding: 14px; border-radius: 12px; cursor: pointer; font-weight: bold; text-align: left; font-size: 13px; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.03); display: flex; align-items: center; gap: 10px; }
         .drawer-btn:hover { background: var(--gold-light); border-color: var(--gold); color: var(--primary); transform: translateX(6px); }
 
-        /* --- DEEP DETAIL MAIN CONTAINER --- */
+        /* --- MAIN CONTAINER & SYSTEM CARDS --- */
         main {
             flex-grow: 1; padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 20px;
             padding-bottom: 130px; scroll-behavior: smooth;
@@ -74,7 +73,7 @@
         .status-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; font-size: 13px; }
         .status-item { background: #faf8f2; padding: 13px; border-radius: 12px; border: 1px solid #e8e2d0; box-shadow: inset 0 1px 3px rgba(0,0,0,0.02); }
 
-        /* --- IMMERSIVE ACTION BUTTONS --- */
+        /* --- ACTION & INTERACTION BUTTONS --- */
         .action-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 8px; }
         .btn-action {
             background: #fff; border: 1.5px solid var(--primary); color: var(--primary);
@@ -112,7 +111,7 @@
         .nav-item.active { color: var(--primary); font-weight: bold; transform: translateY(-3px); }
         .nav-icon { font-size: 22px; }
 
-        /* --- ADVANCED UNIVERSAL MODAL --- */
+        /* --- UNIVERSAL MODAL SYSTEM --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.75); z-index: 200; display: none; justify-content: center; align-items: center;
@@ -137,8 +136,7 @@
     </style>
 </head>
 <body>
-
-    <!-- STICKY HEADER -->
+<!-- STICKY HEADER -->
     <header>
         <div class="header-left">
             <button class="menu-btn" onclick="toggleDrawer(true)">☰</button>
@@ -171,15 +169,15 @@
         </div>
     </div>
 
-    <!-- MAIN CONTAINER -->
+    <!-- MAIN CONTAINER (DYNAMIC MODULE RENDERING) -->
     <main id="main-content"></main>
 
-    <!-- ADVANCE YEAR BUTTON -->
+    <!-- FLOATING ADVANCE YEAR BUTTON -->
     <div class="advance-container">
         <button class="btn-advance" onclick="advanceYear()">⏳ ผ่านพ้นไปอีกปี (อายุ +1)</button>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
+    <!-- BOTTOM NAVIGATION BAR -->
     <nav>
         <button class="nav-item active" onclick="switchTab('life')" id="nav-life"><span class="nav-icon">📖</span>ชีวิต</button>
         <button class="nav-item" onclick="switchTab('court')" id="nav-court"><span class="nav-icon">🏛️</span>ราชสำนัก</button>
@@ -198,8 +196,9 @@
             </div>
         </div>
     </div>
+
     <script>
-        // --- DEEP GAME STATE ENGINE (8 MODULES DATABASE) ---
+        // --- 8 CORE MODULES & DEEP DATABASE ENGINE ---
         let game = {
             surname: "มู่หรง",
             firstname: "เฟิ่ง",
@@ -235,7 +234,6 @@
             ],
             currentTab: "life"
         };
-
         // --- DYNAMIC SCREEN RENDERER (8 MODULES DISPLAY) ---
         function updateScreen() {
             document.getElementById('header-name').innerText = `${game.surname} ${game.firstname}`;
@@ -381,8 +379,7 @@
             saveGame();
             updateScreen();
         }
-
-        function takeExam() {
+       function takeExam() {
             if (game.stats.intelligence >= 90) {
                 game.title = "จอหงวนเอกผู้ปราดเปรื่องแห่งราชสำนักต้าเซี่ย";
                 game.avatar = "🎓";
@@ -468,12 +465,11 @@
             }
             updateScreen();
         }
-    </script>
-    <script>
-        // --- DUAL SAVE ENGINE (Auto & Manual Storage Management) ---
+
+        // --- DUAL SAVE ENGINE (Auto & Manual Storage) ---
         function saveGame() {
             try {
-                localStorage.setItem('dynasty_epic_master_ultimate_save', JSON.stringify(game));
+                localStorage.setItem('dynasty_epic_master_ultimate_save_v2', JSON.stringify(game));
             } catch (e) {
                 console.error("Critical Save Error:", e);
             }
@@ -486,7 +482,7 @@
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('dynasty_epic_master_ultimate_save');
+                let saved = localStorage.getItem('dynasty_epic_master_ultimate_save_v2');
                 if (saved) {
                     let loadedData = JSON.parse(saved);
                     game = { ...game, ...loadedData };
@@ -498,7 +494,7 @@
 
         function resetGame() {
             if (confirm("คำเตือนระดับสูงสุด: คุณต้องการล้างข้อมูลและเริ่มต้นสร้างตระกูลใหม่ทั้งหมดใช่หรือไม่? ประวัติศาสตร์ พงศาวดาร และทรัพย์สินทั้งหมดจะสูญหายถาวร!")) {
-                localStorage.removeItem('dynasty_epic_master_ultimate_save');
+                localStorage.removeItem('dynasty_epic_master_ultimate_save_v2');
                 location.reload();
             }
         }
@@ -537,7 +533,7 @@
 
         // --- PREMIUM FEATURE MODALS (Pedigree, Shrine, Chronicle, Settings) ---
         function openModal(type) {
-            toggleDrawer(false); // ปิดเมนูซ่อนซ้ายอัตโนมัติเมื่อกดเลือก
+            toggleDrawer(false);
             
             if (type === 'pedigree') {
                 showModal("📜 บันทึกพื้นเพตระกูลเชิงลึก", `
@@ -570,6 +566,12 @@
                 showModal("อัปเดตชื่อสำเร็จ", `เปลี่ยนชื่อเสียงเรียนามเป็น "${game.surname} ${game.firstname}" เรียบร้อยแล้ว`);
             }
         }
+
+        // --- AUTO LOAD ON STARTUP ---
+        window.onload = function() {
+            loadGame();
+            updateScreen();
+        };
     </script>
 </body>
-</html>
+</html> 
