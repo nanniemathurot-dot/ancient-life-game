@@ -2539,5 +2539,76 @@
         if (typeof autoSaveGame === 'function') autoSaveGame();
     };
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 28 (DYNAMIC & REALISTIC STAT GAINS SYSTEM) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // ฟังก์ชันสุ่มค่าสเตตัสแบบสมจริง (มีขึ้นน้อย, ขึ้นปกติ, และพุ่งพรวด)
+    // ---------------------------------------------------------
+    window.getRandomGain = function(baseMin, baseMax) {
+        let roll = Math.random();
+        let multiplier = 1.0;
+
+        // ถ้าสุขภาพดี ไม่มีเครียด ได้โบนัสเพิ่ม
+        if ((player.health || 100) > 80 && (player.stress || 0) < 30) {
+            multiplier = 1.2;
+        } 
+        // ถ้าสุขภาพแย่หรือเครียดจัด การฝึกฝนจะได้ผลน้อยลง
+        else if ((player.health || 100) < 40 || (player.stress || 0) > 70) {
+            multiplier = 0.6;
+        }
+
+        // 15% โอกาสสมองแล่น/ฟอร์มดีเยี่ยม (ได้แต้มพิเศษ x2)
+        if (roll < 0.15) {
+            return { val: Math.floor((Math.random() * 5 + baseMax) * multiplier), type: "lucky" };
+        } 
+        // 15% โอกาสร่างกายล้า/ติดขัด (ได้แต้มน้อยหน่อย)
+        else if (roll > 0.85) {
+            return { val: Math.max(1, Math.floor((Math.random() * 2 + 1) * multiplier)), type: "low" };
+        } 
+        // 70% โอกาสเติบโตตามมาตรฐานทั่วไป
+        else {
+            let normalVal = Math.floor((Math.random() * (baseMax - baseMin + 1) + baseMin) * multiplier);
+            return { val: Math.max(1, normalVal), type: "normal" };
+        }
+    };
+
+    // ---------------------------------------------------------
+    // อัปเดตฟังก์ชัน trainInEstate ให้ใช้ระบบสุ่มสมจริง
+    // ---------------------------------------------------------
+    window.trainInEstate = function(type) {
+        // เพิ่มระบบจัดการความเครียดเล็กน้อยทุกครั้งที่ฝึกหนัก
+        player.stress = Math.min(100, (player.stress || 0) + 3);
+
+        if (type === 'study') {
+            let res = getRandomGain(3, 8); // สุ่มสติปัญญาเพิ่ม 3 ถึง 8 แต้ม
+            player.intel = (player.intel || 10) + res.val;
+            player.examPrepared += (res.val * 3);
+
+            let msg = `ใช้เวลาศึกษาตำราอย่างตั้งใจ สติปัญญาเพิ่มขึ้น ${res.val} แต้ม!`;
+            if (res.type === 'lucky') msg = `💡 ปิ๊งไอเดีย! แตกฉานในตำราพิชัยสงครามอย่างรวดเร็ว สติปัญญาพุ่งพรวด ${res.val} แต้ม!`;
+            if (res.type === 'low') msg = `วันนี้สมาธิหลุดลอย อ่านหนังสือไม่ค่อยเข้าหัว สติปัญญาเพิ่มขึ้นเพียง ${res.val} แต้ม...`;
+
+            addTimeline("📚 ศึกษาตำราในจวน", msg, res.type === 'lucky' ? "good" : "neutral");
+            showModal("📚 ผลการศึกษา", msg, "📖");
+
+        } else if (type === 'martial') {
+            let res = getRandomGain(4, 10); // สุ่มพลังทหารเพิ่ม 4 ถึง 10 แต้ม
+            player.militaryPower = (player.militaryPower || 10) + res.val;
+            player.health = Math.min(100, (player.health || 100) + 2);
+
+            let msg = `ฝึกฝนกระบวนท่าอาวุธที่ลานจวน พลังทหารเพิ่มขึ้น ${res.val} แต้ม!`;
+            if (res.type === 'lucky') msg = `🔥 จิตวิญญาณนักสู้ตื่น ญาณดาบเฉียบคมขึ้นถนัดตา พลังทหารพุ่งพรวด ${res.val} แต้ม!`;
+            if (res.type === 'low') msg = `ร่างกายอ่อนล้าจากการฝึกหนัก กล้ามเนื้อตึงเครียด พลังทหารเพิ่มขึ้น ${res.val} แต้ม...`;
+
+            addTimeline("⚔️ ฝึกยุทธ์ที่ลานจวน", msg, res.type === 'lucky' ? "good" : "neutral");
+            showModal("⚔️ ผลการฝึกยุทธ์", msg, "🛡️");
+        }
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+</script>
 </body>
 </html>
