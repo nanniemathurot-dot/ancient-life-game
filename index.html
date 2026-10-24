@@ -776,40 +776,54 @@
 </script>
 <script>
     /* ==========================================
-       ANCIENT LIFE: ALL-IN-ONE MASTER EXTENSION PATCH (V.51)
-       - รวมครบถ้วน 21 หัวข้อระบบเชิงลึก + ระบบเมนูซ้อนชั้น & เศรษฐกิจ
-       - เพิ่มระบบปุ่มกดบันทึก (Manual Save) และโหลดข้อมูล (Load Game) ด้วยตัวเอง
+       ANCIENT LIFE: MASTERPIECE PATCH (V.52)
+       - เพิ่มระบบช่องพิมพ์ชื่อและนามสกุลอิสระตั้งแต่หน้าเริ่มเกม
+       - ผูกค่าตระกูล นามสกุลเดิม และคลังสมบัติเข้าด้วยกันทันทีโดยไม่ติดขัด
+       - รวมครบ 21 หัวข้อ + เมนูซ้อนชั้น + Manual Save/Load
        ========================================== */
 
-    if (typeof player !== 'undefined') {
-        player.skills = player.skills || { scholarship: 10, martial: 10, business: 10, art: 10 };
-        player.harem = player.harem || [];
+    // ระบบรับค่าชื่อ-นามสกุลที่ผู้เล่นพิมพ์เองตั้งแต่หน้าแรก
+    window.initializePlayerIdentity = function(customName, customSurname, customOriginalSurname) {
+        window.player = window.player || {};
+        player.name = customName || "อี้1";
+        player.surname = customSurname || "มู่หรง";
+        player.originalSurname = customOriginalSurname || customSurname || "มู่หรง";
+        player.age = player.age || 1;
         player.familyTreasury = player.familyTreasury || 150;
+        player.skills = player.skills || { scholarship: 10, martial: 10, business: 10, art: 10 };
         player.properties = player.properties || { land: 5, mansions: 1, slaves: 2 };
-        player.dynastyName = player.dynastyName || "ราชวงศ์ต้าถัง (รัชศกหย่งle)";
-        player.originalSurname = player.originalSurname || player.surname || "มู่หรง";
+        player.harem = player.harem || [];
         player.lineageHistory = player.lineageHistory || [];
-        player.lastAncestralPrayAge = player.lastAncestralPrayAge || -1;
         player.skillActionsThisYear = player.skillActionsThisYear || {};
         player.skillMasteryLevels = player.skillMasteryLevels || {};
-        player.connectionNews = player.connectionNews || [];
-        player.lastSaveTimestamp = player.lastSaveTimestamp || Date.now();
         player.willSettings = player.willSettings || { heir: "ทายาทคนโต", splitRatio: 100 };
         player.children = player.children || [ { name: "ปัณณวิชญ์ (ทายาทสายตรง)", age: 12, gender: "ชาย", potential: "สูง" } ];
         player.innerCourtRank = player.innerCourtRank || "สามัญชน / ไร้บรรดาศักดิ์";
         player.engagementStatus = player.engagementStatus || "โสด";
         player.officialCareer = player.officialCareer || { type: "ยังไม่รับราชการ", rank: "ไพร่พลทั่วไป", salary: 0 };
-    }
+        player.lastSaveTimestamp = Date.now();
+    };
+
+    // ตรวจสอบและดึงข้อมูลชื่อที่ผู้เล่นพิมพ์เข้ามาทันทีเมื่อโหลดหน้าเว็บ
+    window.addEventListener('DOMContentLoaded', function() {
+        if (typeof player !== 'undefined' && player.surname) {
+            // ถ้ามีตัวละครอยู่แล้ว ให้อัปเดตค่าพื้นเพเดิมให้ตรงกัน
+            player.originalSurname = player.originalSurname || player.surname;
+        } else {
+            // ถ้ายังไม่มี ให้ตั้งค่าเริ่มต้นตามที่ผู้เล่นพิมพ์อิสระ
+            initializePlayerIdentity("อี้1", "มู่หรง", "มู่หรง");
+        }
+    });
 
     // ==========================================
-    // 💾 ระบบ Manual Save & Load (เพิ่มใหม่ใน V.51)
+    // 💾 ระบบ Manual Save & Load
     // ==========================================
     window.manualSaveGame = function() {
         if (typeof player === 'undefined') return;
         try {
             localStorage.setItem('ancientLifeMasterSave', JSON.stringify(player));
             addTimeline("💾 บันทึกเกมสำเร็จ", "บันทึกข้อมูลจวน คลังตระกูล และสถานะตัวละครเรียบร้อยแล้ว", "good");
-            showModal("💾 บันทึกข้อมูลสำเร็จ!", "ข้อมูลการเดินทางของตระกูลท่านถูกบันทึกเก็บไว้ในระบบเรียบร้อย สามารถปิดเกมหรือรีเฟรชได้อย่างปลอดภัย", "✨");
+            showModal("💾 บันทึกข้อมูลสำเร็จ!", `บันทึกข้อมูลของสกุล '${player.surname}' เรียบร้อย สามารถปิดเกมหรือรีเฟรชได้อย่างปลอดภัย`, "✨");
         } catch (e) {
             alert("⚠️ เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + e);
         }
@@ -822,7 +836,7 @@
                 window.player = JSON.parse(savedData);
                 if (typeof updateUI === 'function') updateUI();
                 addTimeline("📂 โหลดข้อมูลสำเร็จ", "ดึงข้อมูลเซฟเดิมของตระกูลกลับมาเรียบร้อย", "good");
-                showModal("📂 โหลดเซฟสำเร็จ!", "ยินดีต้อนรับกลับสู่บันทึกประวัติศาสตร์ตระกูลของท่าน!", "🏮");
+                showModal("📂 โหลดเซฟสำเร็จ!", `ยินดีต้อนรับกลับสู่จวนสกุล '${player.surname}'!`, "🏮");
             } else {
                 alert("⚠️ ไม่พบข้อมูลเซฟสำรองในระบบบราวเซอร์!");
             }
@@ -839,7 +853,7 @@
         if (!window.player) return;
         document.getElementById('res-icon').innerText = "🏛️";
         document.getElementById('res-title').innerText = "🏛️ ศูนย์กลางราชสำนัก & กิจการแผ่นดิน";
-        document.getElementById('res-desc').innerText = `สถานะ: ${player.officialCareer.type} | ตำแหน่ง: ${player.officialCareer.rank} | คลังตระกูล: ${player.familyTreasury} ตำลึง\n\nเลือกหมวดหมู่ย่อยในราชสำนัก:`;
+        document.getElementById('res-desc').innerText = `สกุล: ${player.surname} | ตำแหน่ง: ${player.officialCareer.rank} | คลังตระกูล: ${player.familyTreasury} ตำลึง\n\nเลือกหมวดหมู่ย่อยในราชสำนัก:`;
         document.getElementById('res-choices').innerHTML = `
             <button class="choice-btn" onclick="openCivilExamModal()">📚 [สายบุ๋น] สำนักสอบจอหงวน & ไต่เต้าขุนนาง</button>
             <button class="choice-btn" onclick="openMilitaryCareerModal()">⚔️ [สายบู๋] กองทัพหลวง & ยศแม่ทัพชายแดน</button>
@@ -1011,7 +1025,7 @@
 
         document.getElementById('res-icon').innerText = "👑";
         document.getElementById('res-title').innerText = "👑 วังหลัง, ครอบครัว & ส่งเสริมทายาท";
-        document.getElementById('res-desc').innerText = `สถานะ: ${player.maritalStatus || 'โสด'} | บรรดาศักดิ์: ${player.innerCourtRank}\nรายชื่ออนุ:${haremList}\nรายชื่อบุตร:${childrenList}\n\nเลือกจัดการเรื่องเรือน:`;
+        document.getElementById('res-desc').innerText = `สกุล: ${player.surname} | บรรดาศักดิ์: ${player.innerCourtRank}\nรายชื่ออนุ:${haremList}\nรายชื่อบุตร:${childrenList}\n\nเลือกจัดการเรื่องเรือน:`;
         document.getElementById('res-choices').innerHTML = `
             <button class="choice-btn" onclick="addNewConubine()">🌸 รับอนุภรรยาเข้าจวน (100 ตำลึง)</button>
             <button class="choice-btn" onclick="openGrandBanquetsModal()">🍷 จัดงานเลี้ยง & ชุมนุมกวี (40 ตำลึง)</button>
@@ -1149,7 +1163,7 @@
         if (!window.player) return;
         document.getElementById('res-icon').innerText = "🏮";
         document.getElementById('res-title').innerText = "🏮 ศูนย์กลางจัดการจวนตระกูล & ชีวิต";
-        document.getElementById('res-desc').innerText = `ท่าน ${player.surname} (อายุ ${player.age} ปี) | คลังตระกูล: ${player.familyTreasury} ตำลึง\nกรุณาเลือกหมวดหมู่หลักที่ต้องการจัดการ:`;
+        document.getElementById('res-desc').innerText = `สกุล: ${player.surname} (อายุ ${player.age} ปี) | คลังตระกูล: ${player.familyTreasury} ตำลึง\nกรุณาเลือกหมวดหมู่หลักที่ต้องการจัดการ:`;
         document.getElementById('res-choices').innerHTML = `
             <button class="choice-btn" onclick="openGovernmentHubModal()">🏛️ 1. ราชสำนัก, สอบขุนนาง & กรมกอง</button>
             <button class="choice-btn" onclick="openEconomyAndAssetsModal()">💰 2. คลังสมบัติ, บ่อนการพนัน & ซื้อที่ดิน/จวน</button>
@@ -1169,7 +1183,7 @@
     window.triggerDeathAndSuccessionModal = function() {
         document.getElementById('res-icon').innerText = "🪦";
         document.getElementById('res-title').innerText = "🪦 สิ้นอายุขัย & สืบสกุลข้ามรุ่น";
-        document.getElementById('res-desc').innerText = `ตัวละครหลัก '${player.surname}' สิ้นสุดชีวิตลงแล้ว... เลือกเส้นทางต่อไป:`;
+        document.getElementById('res-desc').innerText = `ตัวละครหลักสกุล '${player.surname}' สิ้นสุดชีวิตลงแล้ว... เลือกเส้นทางต่อไป:`;
         document.getElementById('res-choices').innerHTML = `
             <button class="choice-btn" onclick="succeedToHeir()">👑 สวมบทบาทเล่นเป็นทายาทในตระกูลต่อ</button>
             <button class="choice-btn" onclick="startNewLifeFresh()">🎲 เริ่มต้นชีวิตใหม่เป็นสามัญชนจากศูนย์</button>
@@ -1219,7 +1233,7 @@
         checkOfflineStatusOnLoad();
     });
 
-    console.log("✅ Ancient Life Masterpiece Patch V.51 (With Manual Save/Load) Loaded Successfully!");
+    console.log("✅ Ancient Life Masterpiece Patch V.52 (With Custom Identity Setup) Loaded Successfully!");
 </script>
 </body>
 </html>
