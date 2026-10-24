@@ -1584,5 +1584,110 @@
         }, 1000);
     });
 </script>
+    <!-- ==========================================================
+     🌸 PATCH 21: STAT LIMITS, TIMELINE FIX, SWIPE MENU & AUTO-SAVE 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบ Auto-Save & บันทึกไทม์ไลน์ไม่ให้หาย
+    // ---------------------------------------------------------
+    function autoSaveGame() {
+        if (typeof player !== 'undefined' && player.age !== undefined) {
+            localStorage.setItem('ANCIENT_LIFE_V21_SAVE', JSON.stringify(player));
+        }
+    }
+
+    // ดักจับและเขียนทับฟังก์ชัน ageUp, initGame, และกิจกรรมหลักให้ Auto-Save ทันที
+    let originalAgeUp = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUp === 'function') originalAgeUp();
+        autoSaveGame();
+    };
+
+    let originalInitGame = window.initGame;
+    window.initGame = function() {
+        if (typeof originalInitGame === 'function') originalInitGame();
+        autoSaveGame();
+    };
+
+    // โหลดเซฟอัตโนมัติเมื่อเปิดเกม และเรนเดอร์ไทม์ไลน์เก่ากลับมาแสดงผลครบถ้วน
+    window.addEventListener('DOMContentLoaded', () => {
+        let savedData = localStorage.getItem('ANCIENT_LIFE_V21_SAVE') || localStorage.getItem('ANCIENT_LIFE_V13_SAVE');
+        if (savedData && typeof player !== 'undefined') {
+            try {
+                let parsed = JSON.parse(savedData);
+                if (parsed && parsed.age !== undefined) {
+                    player = parsed;
+                    if (typeof updateUI === 'function') updateUI();
+                    
+                    // เรนเดอร์ไทม์ไลน์ย้อนหลังทั้งหมดกลับมาแสดงที่หน้าจอ
+                    let feed = document.getElementById('timeline-feed');
+                    if (feed && player.timeline && player.timeline.length > 0) {
+                        feed.innerHTML = player.timeline.map((t, idx) => `
+                            <div class="timeline-box ${t.type || ''}" onclick="showTimelineDetail(${idx})">
+                                <div class="timeline-tag">[อายุ ${t.age} ปี] ${t.tag} <span class="hint">🔍 คลิกอ่านดีเทล</span></div>
+                                <div class="timeline-content">${t.text}</div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // ---------------------------------------------------------
+        // 2. เมนูด้านซ้าย ปัดเลื่อนปิดได้ทันทีเมื่อแตะพื้นที่มืดข้างนอก
+        // ---------------------------------------------------------
+        let sideMenu = document.getElementById('side-menu');
+        if (sideMenu) {
+            // สร้างพื้นหลังมืดครอบจอเมื่อเปิดเมนู
+            let backdrop = document.createElement('div');
+            backdrop.id = 'side-menu-backdrop';
+            backdrop.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:140; display:none; backdrop-filter:blur(2px); transition:opacity 0.3s ease;";
+            document.body.appendChild(backdrop);
+
+            backdrop.onclick = () => {
+                sideMenu.classList.remove('active');
+                backdrop.style.display = 'none';
+            };
+
+            // อัปเกรดฟังก์ชัน toggleSideMenu ให้เปิด-ปิด Backdrop พร้อมกัน
+            window.toggleSideMenu = function() {
+                sideMenu.classList.toggle('active');
+                backdrop.style.display = sideMenu.classList.contains('active') ? 'block' : 'none';
+            };
+        }
+
+        // Pop-up แจ้งอัปเดต Patch 21 โดยเวลาในเกมไม่เดินเอง
+        setTimeout(() => {
+            if (typeof showModal === 'function' && typeof player !== 'undefined') {
+                let msg = `ยินดีต้อนรับกลับสู่จวน, ท่าน ${player.surname}${player.firstname}!\n\n`;
+                msg += `📢 รายงานการอัปเดต Patch 21:\n`;
+                msg += `• เพิ่มลิมิตการกดพัฒนาสเตตัสต่อปี (สร้างความท้าทาย)\n`;
+                msg += `• ล็อคเวลาออฟไลน์: เวลาในเกมเดินตามการตัดสินใจของท่าน 100%\n`;
+                msg += `• แก้ไขไทม์ไลน์บันทึกประวัติชีวิตไม่ให้หายยามรีเฟรช\n`;
+                msg += `• อัปเกรดเมนูด้านซ้าย แตะพื้นหลังเพื่อปัดปิดได้ทันที\n`;
+                msg += `• ระบบ Auto-Save ทำงานอัตโนมัติทุกย่างก้าว ป้องกันข้อมูลหาย`;
+                
+                showModal("📜 บันทึกแพตช์ 21 & สถานะจวน", msg, "🏛️");
+            }
+        }, 800);
+    });
+
+    // ---------------------------------------------------------
+    // 3. กำหนดลิมิต (Cooldown) สเตตัสต่อปี ไม่ให้กดปั๊มได้ไม่จำกัด
+    // ---------------------------------------------------------
+    // ตัวแปรจำกัดลิมิตถูกรีเซ็ตทุกครั้งที่กด ageUp
+    let originalAgeUpForLimits = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUpForLimits === 'function') originalAgeUpForLimits();
+        if (typeof player !== 'undefined') {
+            player.studyLimit = 2;
+            player.trainLimit = 2;
+            player.artLimit = 2;
+            player.socialLimit = 2;
+        }
+        autoSaveGame();
+    };
+</script>
 </body>
 </html>
