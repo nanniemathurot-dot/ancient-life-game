@@ -1325,5 +1325,54 @@
         }
     });
 </script>
+    <!-- ==========================================================
+     ⏳ PATCH 17: OFFLINE TIME PROGRESSION & IDLE REPORT SYSTEM ⏳
+     ========================================================== -->
+<script>
+    // 1. บันทึกเวลาล่าสุดที่ปิดเกมลงใน localStorage เมื่อผู้เล่นปิดแท็บหรือรีเฟรช
+    window.addEventListener('beforeunload', () => {
+        if (typeof player !== 'undefined') {
+            localStorage.setItem('ANCIENT_LIFE_LAST_TIME', Date.now());
+            localStorage.setItem('ANCIENT_LIFE_V17_SAVE', JSON.stringify(player));
+        }
+    });
+
+    // 2. ตรวจสอบเวลาที่หายไปเมื่อเปิดเกมขึ้นมาใหม่ (Offline Idle Check)
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let lastTime = localStorage.getItem('ANCIENT_LIFE_LAST_TIME');
+            if (lastTime && typeof player !== 'undefined' && player.age !== undefined) {
+                let now = Date.now();
+                let diffSeconds = Math.floor((now - parseInt(lastTime)) / 1000);
+                
+                // สมมติว่าทุกๆ 30 วินาทีที่ปิดเกมไป เทียบเท่ากับ 1 เดือนในเกม (หรือปรับตามความเหมาะสม)
+                let monthsPassed = Math.floor(diffSeconds / 30);
+                
+                if (monthsPassed > 0 && typeof showModal === 'function') {
+                    let idleMoneyEarned = monthsPassed * (rankSalaries && rankSalaries[player.rankLevel] ? Math.floor(rankSalaries[player.rankLevel] / 12) : 5);
+                    player.money += idleMoneyEarned;
+
+                    let idleReport = `ยินดีต้อนรับกลับสู่จวน, ท่าน ${player.surname}${player.firstname}!\n\n`;
+                    idleReport += `⏳ ระหว่างที่ท่านไม่อยู่หน้าจอเป็นเวลา ${Math.floor(diffSeconds / 60)} นาที:\n`;
+                    idleReport += `• กาลเวลาในต่างภพดำเนินไป ${monthsPassed} เดือน\n`;
+                    idleReport += `• กิจการในจวนและเบี้ยหวัดสะสมสร้างรายได้: +${idleMoneyEarned} ตำลึง\n`;
+                    idleReport += `• สมาชิกในจวนและบริวารต่างปฏิบัติหน้าที่ด้วยความเรียบร้อยดี`;
+
+                    if (typeof addTimeline === 'function') {
+                        addTimeline("⏳ รายงานพงศาวดารยามออฟไลน์", `ระหว่างที่ท่านห่างหายจากหน้าจอไป ${Math.floor(diffSeconds / 60)} นาที โลกภพยังคงหมุนผ่านไป ${monthsPassed} เดือน (ได้รับทรัพย์สินสะสม +${idleMoneyEarned} ตำลึง)`, "good");
+                    }
+
+                    // เด้ง Pop-up ต้อนรับการกลับมา
+                    setTimeout(() => {
+                        showModal("📜 รายงานสถานการณ์ยามออฟไลน์", idleReport, "⏳");
+                        if (typeof updateUI === 'function') updateUI();
+                    }, 800);
+                }
+            }
+            // อัปเดตเวลาเริ่มต้นปัจจุบัน
+            localStorage.setItem('ANCIENT_LIFE_LAST_TIME', Date.now());
+        }, 1000);
+    });
+</script>
 </body>
 </html>
