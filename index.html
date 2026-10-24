@@ -1374,5 +1374,115 @@
         }, 1000);
     });
 </script>
+    <!-- ==========================================================
+     🔊 PATCH 18: CUSTOM SURNAME & AUDIO SYSTEM (BGM & SFX) 🔊
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบเสียง Web Audio API (สร้างเสียง BGM & เสียงปุ่มกด SFX)
+    // ---------------------------------------------------------
+    let audioCtx = null;
+
+    function initAudioContext() {
+        if (!audioCtx) {
+            let AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) audioCtx = new AudioContext();
+        }
+    }
+
+    // เสียงปุ่มกด SFX Click
+    function playClickSound() {
+        try {
+            initAudioContext();
+            if (!audioCtx) return;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.08);
+        } catch(e) {}
+    }
+
+    // เสียงดนตรีบรรยากาศ BGM จีนโบราณ (Pentatonic Scale Synth)
+    let bgmInterval = null;
+    const pentatonicNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25]; // โน้ตเพลงจีน
+
+    function toggleBGM() {
+        initAudioContext();
+        bgmPlaying = !bgmPlaying;
+        let btn = document.getElementById('sound-btn');
+        if (btn) btn.innerText = bgmPlaying ? "🔊" : "🎵";
+
+        if (bgmPlaying) {
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            bgmInterval = setInterval(() => {
+                if (!bgmPlaying || !audioCtx) return;
+                try {
+                    let note = pentatonicNotes[Math.floor(Math.random() * pentatonicNotes.length)];
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(note, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 1.2);
+                } catch(e) {}
+            }, 600);
+        } else {
+            if (bgmInterval) clearInterval(bgmInterval);
+        }
+    }
+
+    // ผูกเสียง SFX กับการคลิกปุ่มทุกปุ่มในเกม
+    document.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.classList.contains('choice-btn') || e.target.classList.contains('card-item') || e.target.classList.contains('nav-item')) {
+            playClickSound();
+        }
+    });
+
+    // ---------------------------------------------------------
+    // 2. ปรับเปลี่ยนช่องเลือกนามสกุลให้พิมพ์ได้อย่างอิสระ 100%
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        let surnameSelect = document.getElementById('setup-surname');
+        if (surnameSelect) {
+            let inputSurname = document.createElement('input');
+            inputSurname.type = 'text';
+            inputSurname.id = 'setup-surname';
+            inputSurname.value = 'มู่หรง';
+            inputSurname.placeholder = 'พิมพ์นามสกุลตระกูลของท่าน...';
+            surnameSelect.parentNode.replaceChild(inputSurname, surnameSelect);
+        }
+    });
+
+    // ปรับปรุงระบบสุ่มตัวละครให้รองรับการพิมพ์นามสกุลอิสระ
+    let originalRandomizeFunc = window.randomizeCharacter;
+    window.randomizeCharacter = function() {
+        let g = Math.random() > 0.5 ? 'ชาย' : 'หญิง';
+        let customSurnames = ["มู่หรง", "เซียว", "ไป๋", "เฉิน", "หลิน", "หลี่", "หวัง", "จาง", "หยาง"];
+        let s = customSurnames[Math.floor(Math.random() * customSurnames.length)];
+        let f = getRandomFirstName(g);
+        
+        let gEl = document.getElementById('setup-gender');
+        let sEl = document.getElementById('setup-surname');
+        let fEl = document.getElementById('setup-firstname');
+        
+        if (gEl) gEl.value = g;
+        if (sEl) sEl.value = s;
+        if (fEl) fEl.value = f;
+        
+        playClickSound();
+        alert("🎲 สุ่มชะตาตัวละครสำเร็จ!");
+    };
+</script>
 </body>
 </html>
