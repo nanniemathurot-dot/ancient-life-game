@@ -16,7 +16,6 @@
             --border-color: #dcd6c8;
             --danger-red: #a93226;
             --success-green: #1e8449;
-            --badge-gray: #7f8c8d;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg-main); color: var(--text-dark); display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: hidden; position: fixed; font-size: 14px; }
@@ -113,7 +112,7 @@
     <div id="setup-screen">
         <div class="setup-card">
             <h2>📜 สร้างตัวละคร & สุ่มชะตาชีวิต</h2>
-            <p>เริ่มต้นชีวิตตั้งแต่วัยทารก (อายุ 0 ปี) พร้อมระบบหมายเหตุเงื่อนไขทุกฟีเจอร์</p>
+            <p>เริ่มต้นชีวิตตั้งแต่วัยทารก (อายุ 0 ปี) พร้อม 5 ระบบอัปเกรดระดับมาสเตอร์พีซ</p>
             
             <div class="form-group">
                 <label>นามสกุลตระกูล:</label>
@@ -139,7 +138,7 @@
             </div>
             <button class="btn-random" onclick="rollRandomFate()">🔄 สุ่มโชคชะตาใหม่</button>
 
-            <button class="btn-start" onclick="initGameSession()">🚀 เริ่มต้นตำนาน (อายุ 0 ปี)</button>
+            <button class="btn-start" onclick="initGameSession()">🚀 เริ่มต้นตำนานตระกูล (อายุ 0 ปี)</button>
         </div>
     </div>
 
@@ -161,7 +160,7 @@
 
     <!-- MINI STATS BAR -->
     <div class="mini-stats-bar">
-        <div class="mini-stat">💰 เงิน: <span id="bar-money">200</span></div>
+        <div class="mini-stat">💰 เงิน: <span id="bar-money">300</span></div>
         <div class="mini-stat">📖 ปัญญา: <span id="bar-intel">10</span></div>
         <div class="mini-stat">⚔️ ยุทธ์: <span id="bar-combat">5</span></div>
         <div class="mini-stat">🌸 เสน่ห์: <span id="bar-charm">10</span></div>
@@ -177,9 +176,8 @@
         </div>
         <div class="drawer-body">
             <button class="drawer-btn" onclick="openChronicleModal()">📖 บันทึกพงศาวดารมหภาค (อ่านย้อนหลัง)</button>
-            <button class="drawer-btn" onclick="openModal('pedigree')">📜 บันทึกพื้นเพ & เครือญาติ</button>
-            <button class="drawer-btn" onclick="openModal('shrine')">⛩️ วิหารบรรพบุรุษ (Legacy Buffs)</button>
-            <button class="drawer-btn" onclick="openFamilyTreeModal()">🌳 ผังตระกูล & สลับตัวละครเล่น</button>
+            <button class="drawer-btn" onclick="openShrineModal()">⛩️ วิหารบรรพบุรุษ (Legacy Buffs & มรดกตระกูล)</button>
+            <button class="drawer-btn" onclick="openFamilyTreeModal()">🌳 ผังตระกูล & สลับตัวละครเล่น (สืบทอดรุ่นลูก)</button>
             <button class="drawer-btn" onclick="saveGameManually()">💾 บันทึกเกมทันที</button>
             <button class="drawer-btn" onclick="resetGame()" style="color: var(--danger-red);">🔄 เริ่มเกมใหม่ทั้งหมด</button>
         </div>
@@ -230,34 +228,40 @@
             title: "ทารกแรกเกิดในจวนตระกูล",
             career: "ทารกแบเบาะ",
             careerRank: "ยังไม่บรรลุนิติภาวะ",
-            money: 200,
+            rankLevel: 0,
+            salary: 0,
+            money: 300,
             stats: { intelligence: 10, combat: 5, charm: 10, prestige: 0 },
             actionsLeftThisYear: 3,
             maxActionsPerYear: 3,
             family: {
                 father: "มู่หรงจิ้น (ขุนนางผู้น้อยกรมคลัง)",
                 mother: "คุณหญิงหลินซื่อ (มารดาผู้โอบอ้อมอารี)",
-                siblings: "พี่ชาย (มู่หรงเฉิน - กำลังศึกษา)",
+                fatherAffection: 50,
+                motherAffection: 60,
                 spouse: "โสด",
-                concubines: [],
-                friends: ["อาหลิน (สหายวัยเด็ก)"],
+                spouseAffection: 50,
                 heirs: []
+            },
+            shrineBuffs: {
+                legacyMoneyBonus: 0,
+                legacyStatBonus: 0,
+                shrineLevel: 1
             },
             chronicleMasterLog: [
                 { year: 1, type: "personal", text: "อายุ 0 ปี: ถือกำเนิดลืมตาดูโลกในจวนตระกูลมู่หรง ท่ามกลางความยินดีของบิดามารดา" },
-                { year: 1, type: "royal", text: "ข่าวราชสำนัก: ฮ่องเต้ทรงประกาศปฏิรูปภาษีเกลือและเสบียงทั่วราชอาณาจักร" },
-                { year: 1, type: "rumor", text: "ข่าวชาวบ้าน: ชาวเมืองวิพากษ์วิจารณ์เรื่องภัยแล้งทางตอนเหนือ ปีนี้ราคาข้าวอาจพุ่งสูงขึ้น" }
+                { year: 1, type: "royal", text: "ข่าวราชสำนัก: ฮ่องเต้ทรงประกาศปฏิรูปภาษีเกลือและเสบียงทั่วราชอาณาจักร" }
             ],
             currentTab: "life"
         };
 
         function saveGame() {
-            try { localStorage.setItem('dynasty_game_autosave_v8', JSON.stringify(game)); } catch(e) {}
+            try { localStorage.setItem('dynasty_game_autosave_v9', JSON.stringify(game)); } catch(e) {}
         }
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('dynasty_game_autosave_v8');
+                let saved = localStorage.getItem('dynasty_game_autosave_v9');
                 if(saved) {
                     game = JSON.parse(saved);
                     document.getElementById('setup-screen').style.display = 'none';
@@ -275,7 +279,7 @@
 
         function resetGame() {
             if(confirm("ท่านต้องการเริ่มเกมใหม่ทั้งหมดจริงหรือ? ข้อมูลเดิมทั้งหมดจะหายไป")) {
-                localStorage.removeItem('dynasty_game_autosave_v8');
+                localStorage.removeItem('dynasty_game_autosave_v9');
                 location.reload();
             }
         }
@@ -299,8 +303,13 @@
             if(window.tempDream) game.dream = window.tempDream;
             if(window.tempStatus) game.statusLife = window.tempStatus;
 
-            if(game.statusLife.includes("พ่อค้า")) game.money = 800;
-            if(game.statusLife.includes("แม่ทัพ")) game.stats.combat = 15;
+            if(game.statusLife.includes("พ่อค้า")) game.money = 1000;
+            if(game.statusLife.includes("แม่ทัพ")) game.stats.combat = 25;
+
+            // นำ Buff จากวิหารบรรพบุรุษมาบวกเพิ่ม
+            game.money += game.shrineBuffs.legacyMoneyBonus;
+            game.stats.intelligence += game.shrineBuffs.legacyStatBonus;
+            game.stats.combat += game.shrineBuffs.legacyStatBonus;
 
             document.getElementById('setup-screen').style.display = 'none';
             saveGame();
@@ -326,16 +335,18 @@
             container.innerHTML = "";
 
             if (game.currentTab === 'life') {
-                let ageInfo = game.age < 6 ? "วัยเยาว์แบเบาะ (เติบโตในจวน ตรวจสอบฟีเจอร์อื่นๆ ได้ทุกแท็บเมนู)" : (game.age < 16 ? "วัยศึกษาเล่าเรียน (เตรียมตัวสอบ)" : "วัยผู้ใหญ่ (ปลดล็อกทุกฟีเจอร์เต็มรูปแบบ)");
+                let ageInfo = game.age < 6 ? "วัยเยาว์แบเบาะ (เติบโตในจวน)" : (game.age < 16 ? "วัยศึกษาเล่าเรียน (สำนักศึกษาหลวง)" : "วัยผู้ใหญ่ (ปลดล็อกราชสำนัก วังหลัง & สร้างครอบครัว)");
                 container.innerHTML = `
                     <div class="card">
-                        <h3>📖 สถานะชีวิต & เงื่อนไขวัย</h3>
+                        <h3>📖 สถานะชีวิต & พัฒนาการตามวัย</h3>
                         <div style="font-size: 13px; line-height: 1.6;">
                             <b>อาชีพหลัก:</b> ${game.career}<br>
-                            <b>ขั้นยศ:</b> ${game.careerRank}<br>
+                            <b>บรรดาศักดิ์/ยศ:</b> ${game.careerRank} ${game.rankLevel > 0 ? `(ขั้นที่ ${game.rankLevel})` : ''}<br>
+                            <b>เบี้ยหวัดรายปี:</b> ${game.salary} ตำลึง<br>
                             <b>ช่วงวัย:</b> ${ageInfo}<br>
-                            <b>หมายเหตุ:</b> แนนสามารถกดดูหัวข้อ "ราชสำนัก", "ครอบครัว", และ "ฝึกทักษะ" เพื่อดูรายละเอียดทุกฟีเจอร์และเงื่อนไขการปลดล็อกได้ตลอดเวลา!
+                            <b>ความฝัน:</b> ${game.dream}
                         </div>
+                        ${game.rankLevel > 0 ? `<button class="btn-action" onclick="promoteCareerRank()" style="margin-top:10px;">⭐ ทำผลงานเพื่อเลื่อนขั้นยศบรรดาศักดิ์</button>` : ``}
                     </div>
                     <div class="card">
                         <h3>⚡ ไทม์ไลน์เหตุการณ์ล่าสุด (Real-time Detailed)</h3>
@@ -348,19 +359,19 @@
             } else if (game.currentTab === 'court') {
                 container.innerHTML = `
                     <div class="card">
-                        <h3>🏛️ ราชสำนัก, อาชีพ & เส้นทางเกียรติยศ (แสดงทุกฟีเจอร์พร้อมเงื่อนไข)</h3>
+                        <h3>🏛️ ราชสำนัก, อาชีพ & เส้นทางเกียรติยศ</h3>
                         <div class="action-grid">
                             <button class="btn-action" onclick="openExamModal()">
                                 <span>📖 ระบบสอบขุนนาง (6 กรมราชสำนัก)</span>
-                                <span class="feature-note">🔒 เงื่อนไข: ต้องมีอายุ 16 ปีขึ้นไป และสติปัญญา >= 75</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป | ปัญญา >= 75</span>
                             </button>
                             <button class="btn-action" onclick="openMilitaryModal()">
                                 <span>⚔️ เส้นทางสายทหารชายแดน</span>
-                                <span class="feature-note">🔒 เงื่อนไข: ต้องมีอายุ 16 ปีขึ้นไป (ไต่เต้าจากทหารเกณฑ์)</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป (ไต่เต้าจากทหารเกณฑ์)</span>
                             </button>
                             <button class="btn-action" onclick="openCommonerCareerModal()">
                                 <span>🪙 อาชีพสุจริตทั่วไป (พ่อค้า, หมอหลวง)</span>
-                                <span class="feature-note">🔒 เงื่อนไข: ต้องมีอายุ 16 ปีขึ้นไป</span>
+                                <span class="feature-note">🔒 เงื่อนไข: อายุ 16 ปีขึ้นไป</span>
                             </button>
                             ${game.gender === 'หญิง' ? `
                             <button class="btn-action" onclick="openHaremModal()">
@@ -377,13 +388,12 @@
             } else if (game.currentTab === 'family') {
                 container.innerHTML = `
                     <div class="card">
-                        <h3>🏠 จวนตระกูล & รายละเอียดครอบครัว (แสดงทุกฟีเจอร์)</h3>
+                        <h3>🏠 จวนตระกูล & ความสัมพันธ์ครอบครัว</h3>
                         <div style="font-size: 13px; margin-bottom: 12px; line-height: 1.6;">
-                            <div><b>บิดา:</b> ${game.family.father} <button onclick="talkToFamily('father')" style="padding:2px 6px; font-size:11px; cursor:pointer; margin-left:6px;">ขอคำชี้แนะ (ใช้งานได้ทุกวัย)</button></div>
-                            <div><b>มารดา:</b> ${game.family.mother} <button onclick="talkToFamily('mother')" style="padding:2px 6px; font-size:11px; cursor:pointer; margin-left:6px;">ออดอ้อน (ใช้งานได้ทุกวัย)</button></div>
-                            <div><b>พี่น้อง:</b> ${game.family.siblings}</div>
-                            <div><b>คู่ครอง:</b> ${game.family.spouse}</div>
-                            <div><b>ทายาท:</b> ${game.family.heirs.length} คน</div>
+                            <div><b>บิดา:</b> ${game.family.father} (ความสัมพันธ์: ${game.family.fatherAffection}%) <button onclick="talkToFamily('father')" style="padding:2px 6px; font-size:11px; cursor:pointer; margin-left:6px;">ขอคำชี้แนะ</button></div>
+                            <div><b>มารดา:</b> ${game.family.mother} (ความสัมพันธ์: ${game.family.motherAffection}%) <button onclick="talkToFamily('mother')" style="padding:2px 6px; font-size:11px; cursor:pointer; margin-left:6px;">ออดอ้อน</button></div>
+                            <div><b>คู่ครอง:</b> ${game.family.spouse} (ความสัมพันธ์: ${game.family.spouseAffection}%)</div>
+                            <div><b>ทายาทในจวน:</b> ${game.family.heirs.length} คน</div>
                         </div>
                         <div class="action-grid">
                             <button class="btn-action" onclick="arrangeMarriage()">
@@ -400,18 +410,18 @@
             } else if (game.currentTab === 'training') {
                 container.innerHTML = `
                     <div class="card">
-                        <h3>🏮 ฝึกทักษะ & ท่องเที่ยวเมืองหลวง (แสดงทุกฟีเจอร์)</h3>
+                        <h3>🏮 ฝึกทักษะ & ท่องเที่ยวเมืองหลวง</h3>
                         <p style="font-size: 12px; color: ${game.actionsLeftThisYear > 0 ? 'var(--success-green)' : 'var(--danger-red)'}; margin-bottom: 8px;">
-                            โควตากิจกรรมปีนี้เหลือ: <b>${game.actionsLeftThisYear} / ${game.maxActionsPerYear} ครั้ง</b> (จำกัดปีละ 3 ครั้ง)
+                            โควตากิจกรรมปีนี้เหลือ: <b>${game.actionsLeftThisYear} / ${game.maxActionsPerYear} ครั้ง</b>
                         </p>
                         <div class="action-grid">
                             <button class="btn-action" onclick="doTraining('study')">
                                 <span>📖 ศึกษาตำราปราชญ์ (+สติปัญญา)</span>
-                                <span class="feature-note">✨ ใช้งานได้ทุกวัย | สุ่มแต้มมากน้อยตามดวง</span>
+                                <span class="feature-note">✨ สุ่มแต้มมากน้อยตามดวง</span>
                             </button>
                             <button class="btn-action" onclick="doTraining('combat')">
                                 <span>⚔️ ฝึกยุทธ์พิชัยสงคราม (+พลังต่อสู้)</span>
-                                <span class="feature-note">✨ ใช้งานได้ทุกวัย | สุ่มแต้มมากน้อยตามดวง</span>
+                                <span class="feature-note">✨ สุ่มแต้มมากน้อยตามดวง</span>
                             </button>
                             <button class="btn-action" onclick="visitLocation('teahouse')">
                                 <span>🍵 โรงน้ำชา (ฟังข่าวลือ & พบปะบัณฑิต)</span>
@@ -423,7 +433,7 @@
                             </button>
                             <button class="btn-action" onclick="visitLocation('gambling')">
                                 <span>🎲 บ่อนการพนัน (เสี่ยงโชคเงินทอง)</span>
-                                <span class="feature-note">⚠️ เสี่ยงโชค: ลุ้นได้เงินหรือเสียเงิน</span>
+                                <span class="feature-note">⚠️ เสี่ยงดวง: ลุ้นได้เงินหรือเสียเงิน</span>
                             </button>
                             <button class="btn-action" onclick="visitLocation('brothel')">
                                 <span>🌸 หอนางโลม / โรงคณิกา (สังสรรค์)</span>
@@ -445,10 +455,30 @@
             game.seasonIndex = (game.seasonIndex + 1) % 4;
             game.actionsLeftThisYear = game.maxActionsPerYear;
 
-            if(game.age === 6) { game.avatar = "👦"; game.title = "เด็กชายวัยกำลังซน"; }
-            else if(game.age === 16) { game.avatar = "🧑"; game.title = "หนุ่มสาววัยปักปิ่น/สวมหมวก"; game.career = "สามัญชนรอสอบรับราชการ"; }
-            else if(game.age === 40) { game.avatar = "👨‍💼"; game.title = "วัยกลางคนผู้มากประสบการณ์"; }
-            else if(game.age === 65) { game.avatar = "👴"; game.title = "ผู้อาวุโสในตระกูล"; }
+            // ระบบพัฒนาการช่วงวัย & เหตุการณ์เฉพาะอายุ (Age Milestones)
+            if(game.age === 6) {
+                game.avatar = "👦";
+                game.title = "เด็กชายวัยกำลังซน";
+                showModal("🏫 เหตุการณ์เติบโต (อายุ 6 ปี)", "ท่านอายุครบ 6 ขวบ บิดาส่งเข้าศึกษาในสำนักศึกษาหลวง ได้รับสติปัญญา +15 และเริ่มเรียนรู้ตัวอักษรจีนโบราณ!");
+                game.stats.intelligence += 15;
+            } else if(game.age === 16) {
+                game.avatar = "🧑";
+                game.title = "หนุ่มสาววัยปักปิ่น/สวมหมวก";
+                game.career = "สามัญชนรอสอบรับราชการ";
+                showModal("冠 พิธีปักปิ่น & สวมหมวก (อายุ 16 ปี)", "ท่านเข้าสู่วัยผู้ใหญ่เต็มตัว! ผ่านพิธีสวมหมวก/ปักปิ่น บิดามารดามอบเงินทุนตั้งต้น 300 ตำลึง พร้อมปลดล็อกราชสำนักและระบบแต่งงาน!");
+                game.money += 300;
+            } else if(game.age === 40) {
+                game.avatar = "👨‍💼";
+                game.title = "วัยกลางคนผู้มากประสบการณ์";
+                showModal("📜 เหตุการณ์วัยกลางคน (อายุ 40 ปี)", "ท่านผ่านร้อนผ่านหนาวมาครึ่งชีวิต ประสบการณ์กร้านโลกทำให้ชื่อเสียงและบารมีในเมืองหลวงเพิ่มขึ้น +30!");
+                game.stats.prestige += 30;
+            }
+
+            // รับเบี้ยหวัดประจำปีหากมีตำแหน่ง
+            if(game.salary > 0) {
+                game.money += game.salary;
+                game.chronicleMasterLog.push({ year: game.year, type: "royal", text: `เบี้ยหวัดประจำปี: ราชสำนักพระราชทานเบี้ยหวัดจำนวน ${game.salary} ตำลึง แก่ตำแหน่ง ${game.career}` });
+            }
 
             let cost = game.age >= 16 ? 120 : 25;
             game.money -= cost;
@@ -456,46 +486,56 @@
 
             game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `อายุ ${game.age} ปี (${game.seasons[game.seasonIndex]}): ผ่านพ้นไปอีก 1 ปี หักค่าใช้จ่ายในจวน ${cost} ตำลึง` });
 
-            checkAndTriggerStoryOrFestivalEvent();
+            // สุ่มวิกฤตการณ์ราชสำนัก & ภัยพิบัติ
+            checkAndTriggerCrisisOrEvent();
             saveGame();
             updateScreen();
         }
 
-        function checkAndTriggerStoryOrFestivalEvent() {
-            let eventsPool = [
+        function checkAndTriggerCrisisOrEvent() {
+            let crisisPool = [
                 {
-                    title: "🧧 เทศกาลตรุษจีนหลวง",
-                    desc: "ถึงเทศกาลตรุษจีน สมาชิกในตระกูลมารวมตัวไหว้บรรพบุรุษ ท่านจะเลือกปฏิบัติอย่างไร?",
+                    title: "🌪️ ภัยแล้งและข้าวยากหมากแพงในเมืองหลวง",
+                    desc: "ปีนี้เกิดภัยแล้งทางเหนือ ราคาข้าวของพุ่งสูง ชาวบ้านเดือดร้อน ท่านจะยื่นมือช่วยเหลืออย่างไร?",
                     choices: [
-                        { text: "กราบไหว้ขอพรผู้ใหญ่และแจกอั่งเป่า (+ชื่อเสียง, +เสน่ห์)", action: () => { game.stats.prestige += 15; game.stats.charm += 10; showModal("ตรุษจีนสุขสันต์", "ผู้ใหญ่ในตระกูลเอ็นดูและชื่นชมท่าน ชื่อเสียงเพิ่มขึ้น!"); } },
-                        { text: "เก็บตัวอ่านตำราเงียบๆ ไม่สนใจงานฉลอง (+สติปัญญา)", action: () => { game.stats.intelligence += 20; showModal("ขยันขันแข็ง", "ท่านได้ความรู้จากตำราเพิ่มขึ้นอย่างมาก!"); } }
+                        { text: "บริจาคเงินส่วนตัว 200 ตำลึงช่วยราษฎร (+ชื่อเสียงสูงมาก)", action: () => {
+                            if(game.money >= 200) {
+                                game.money -= 200; game.stats.prestige += 40;
+                                showModal("ราษฎรสรรเสริญ", "ท่านใจบุญสุนทาน ราษฎรทั่วเมืองหลวงต่างแซ่ซ้องสรรเสริญตระกูลมู่หรง!");
+                            } else {
+                                showModal("เงินไม่พอ", "ท่านอยากช่วยแต่เงินในคลังจวนไม่พอ ราษฎรจึงได้แต่มองตาปริบๆ");
+                            }
+                        }},
+                        { text: "นิ่งเฉยไม่สนใจ ปล่อยให้ทางการจัดการ", action: () => { game.stats.prestige -= 10; showModal("เพิกเฉย", "ชื่อเสียงตระกูลลดลงเล็กน้อยเนื่องจากขาดความใส่ใจต่อราษฎร"); } }
                     ]
                 },
                 {
-                    title: "⚔️ วิกฤตการณ์มือสังหารปริศนา",
-                    desc: "ยามดึกดื่น มีเงาร่างลึกลับบุกรุกเข้ามาในจวนตระกูลเพื่อหมายเอาชีวิต ท่านจะรับมืออย่างไร?",
+                    title: "🗡️ การใส่ร้ายป้ายสีในราชสำนัก",
+                    desc: "ขุนนางฝ่ายตรงข้ามส่งคนมาใส่ร้ายป้ายสีตระกูลของท่านต่อหน้าฮ่องเต้ ท่านจะจัดการอย่างไร?",
                     choices: [
-                        { text: "ใช้กำลังเข้าต่อสู้ป้องกันตัว (วัดดวงพลังยุทธ์)", action: () => {
-                            let success = game.stats.combat >= 30;
-                            if(success) {
-                                game.stats.prestige += 25;
-                                showModal("เอาชนะมือสังหาร", "ท่านไหวพริบดีและใช้เพลงยุทธ์ขับไล่มือสังหารหนีไปได้ ชื่อเสียงระบือไกล!");
+                        { text: "ให้บิดาหรือสหายผู้มีอิทธิพลช่วยวิ่งเต้นเคลียร์คดี (ใช้ความสัมพันธ์)", action: () => {
+                            if(game.family.fatherAffection >= 60 || game.stats.prestige >= 30) {
+                                showModal("รอดพ้นข้อกล่าวหา", "ด้วยสายสัมพันธ์อันดีและบารมีค้ำจุน ทำให้ข้อกล่าวหาสลายตัว ขุนนางกังฉินหน้าแตก!");
                             } else {
-                                game.stats.combat += 5;
-                                game.money -= 100;
-                                showModal("บาดเจ็บเล็กน้อย", "ท่านสู้ไม่ไหวจนได้รับบาดเจ็บ เสียเงินค่ารักษาตัวไป 100 ตำลึง");
+                                game.money -= 150; game.stats.prestige -= 15;
+                                showModal("เสียค่าสินบน", "ท่านต้องยอมควักเงิน 150 ตำลึงใต้โต๊ะเพื่อเคลียร์คดีให้จบสิ้น");
                             }
                         }},
-                        { text: "ตะโกนเรียกทหารยามและหลบหนีในห้องลับ", action: () => {
-                            game.money -= 50;
-                            showModal("รอดตัวหวุดหวิด", "ท่านรอดชีวิตมาได้แต่ข้าวของในห้องเสียหาย เสียเงินซ่อมแซม 50 ตำลึง");
+                        { text: "สู้คดีตรงไปตรงมาด้วยหลักฐานและปัญญา", action: () => {
+                            if(game.stats.intelligence >= 60) {
+                                game.stats.prestige += 30;
+                                showModal("ชนะคดีอย่างสง่างาม", "ท่านใช้ไหวพริบและสติปัญญาหักล้างข้อกล่าวหาได้สำเร็จ ฮ่องเต้ชื่นชม!");
+                            } else {
+                                game.money -= 200;
+                                showModal("พ่ายแพ้คดี", "หลักฐานไม่แน่นหนา ถูกปรับเงินและลดตำแหน่งลงชั่วคราว");
+                            }
                         }}
                     ]
                 }
             ];
 
-            if(Math.random() < 0.6) {
-                let ev = eventsPool[Math.floor(Math.random() * eventsPool.length)];
+            if(Math.random() < 0.5) {
+                let ev = crisisPool[Math.floor(Math.random() * crisisPool.length)];
                 showFestivalModal(ev);
             }
         }
@@ -503,13 +543,13 @@
         function showFestivalModal(ev) {
             let choiceHtml = ev.choices.map((c, i) => `<button class="btn-action" onclick="executeStoryChoice(${i})" style="margin-top:8px;">${c.text}</button>`).join('');
             window.currentStoryChoices = ev.choices;
-            showModal(`⚡ Pop-up เหตุการณ์: ${ev.title}`, `${ev.desc}<br><br><b>โปรดเลือกการตัดสินใจของท่าน:</b><br>${choiceHtml}`);
+            showModal(`⚡ วิกฤตการณ์ & เหตุการณ์สำคัญ: ${ev.title}`, `${ev.desc}<br><br><b>โปรดเลือกการตัดสินใจของท่าน:</b><br>${choiceHtml}`);
         }
 
         window.executeStoryChoice = function(index) {
             if(window.currentStoryChoices && window.currentStoryChoices[index]) {
                 window.currentStoryChoices[index].action();
-                game.chronicleMasterLog.push({ year: game.year, type: "rumor", text: `[เหตุการณ์สำคัญ] ท่านตัดสินใจเผชิญหน้าและดำเนินการตามทางเลือกในเหตุการณ์สำคัญ` });
+                game.chronicleMasterLog.push({ year: game.year, type: "rumor", text: `[วิกฤตการณ์] ตัดสินใจจัดการปัญหาสำคัญในเมืองหลวงเรียบร้อย` });
                 saveGame();
                 updateScreen();
             }
@@ -517,21 +557,24 @@
 
         function checkActionQuota() {
             if(game.actionsLeftThisYear <= 0) {
-                showModal("โควตาหมดแล้ว!", "ปีนี้ท่านตรากตรำทำกิจกรรมและฝึกฝนครบ 3 ครั้งจนหมดแรงแล้ว! โปรดกดปุ่ม <b>'ผ่านไป 1 ปี'</b> ด้านล่างเพื่อพักผ่อนและเข้าสู่ปีถัดไป");
+                showModal("โควตาหมดแล้ว!", "ปีนี้ท่านทำกิจกรรมครบ 3 ครั้งแล้ว! โปรดกดปุ่ม <b>'ผ่านไป 1 ปี'</b> ด้านล่างเพื่อเข้าสู่ปีถัดไป");
                 return false;
             }
             game.actionsLeftThisYear--;
             return true;
         }
 
+        // ระบบความสัมพันธ์ครอบครัว
         function talkToFamily(target) {
             if(!checkActionQuota()) return;
             if(target === 'father') {
+                game.family.fatherAffection = Math.min(100, game.family.fatherAffection + 10);
                 game.stats.intelligence += Math.floor(Math.random() * 8) + 4;
-                showModal("สนทนากับบิดา", "บิดาตักเตือนให้ท่านตั้งใจศึกษาเล่าเรียน ได้รับสติปัญญาเพิ่มขึ้นตามความตั้งใจ");
+                showModal("สนทนากับบิดา", `บิดาตักเตือนสั่งสอนด้วยความเมตตา (ความสัมพันธ์พ่อลูกเพิ่มเป็น ${game.family.fatherAffection}%) ได้รับสติปัญญาเพิ่มขึ้น!`);
             } else if(target === 'mother') {
+                game.family.motherAffection = Math.min(100, game.family.motherAffection + 10);
                 game.stats.charm += Math.floor(Math.random() * 8) + 4;
-                showModal("สนทนากับมารดา", "มารดาโอบกอดด้วยความรักความอบอุ่น ปรุงอาหารบำรุงร่างกาย ได้รับเสน่ห์เพิ่มขึ้น");
+                showModal("สนทนากับมารดา", `มารดาโอบกอดและปรุงอาหารบำรุง (ความสัมพันธ์แม่ลูกเพิ่มเป็น ${game.family.motherAffection}%) ได้รับเสน่ห์เพิ่มขึ้น!`);
             }
             saveGame();
             updateScreen();
@@ -592,6 +635,19 @@
             updateScreen();
         }
 
+        // ระบบเลื่อนขั้นยศบรรดาศักดิ์ (Promotion System)
+        function promoteCareerRank() {
+            if(game.stats.prestige >= (game.rankLevel + 1) * 35) {
+                game.rankLevel += 1;
+                game.salary += 300;
+                showModal("เลื่อนขั้นบรรดาศักดิ์สำเร็จ!", `ท่านสร้างผลงานเป็นที่ประจักษ์ เลื่อนขึ้นเป็น <b>ขั้นที่ ${game.rankLevel}</b> ได้รับเบี้ยหวัดเพิ่มขึ้นเป็น ${game.salary} ตำลึงต่อปี!`);
+            } else {
+                showModal("ชื่อเสียงไม่พอเลื่อนขั้น", `ท่านต้องสะสมชื่อเสียงให้ถึง ${(game.rankLevel + 1) * 35} แต้มจึงจะสามารถเลื่อนขั้นยศได้`);
+            }
+            updateScreen();
+        }
+
+        // เมนูสอบขุนนาง
         function openExamModal() {
             if(game.age < 16) { showModal("ยังไม่บรรลุนิติภาวะ", "🔒 เงื่อนไข: ระบบสอบขุนนางจะปลดล็อกเมื่อตัวละครมีอายุ 16 ปีขึ้นไป"); return; }
             showModal("📖 การสอบจอหงวนหลวง (6 กรมราชสำนัก)", `
@@ -605,17 +661,20 @@
         function selectExamDept(dept) {
             if(game.stats.intelligence >= 75) {
                 game.career = `ขุนนางสังกัด${dept}`;
-                game.careerRank = "ขุนนางขั้น 7";
-                game.money += 800;
-                game.stats.prestige += 40;
-                game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `สอบผ่านจอหงวนหลวง ได้รับแต่งตั้งเป็น ${game.career}` });
-                showModal("สอบเข้ารับราชการสำเร็จ!", `ท่านทำคะแนนสอบยอดเยี่ยม ได้รับแต่งตั้งเป็น "${game.career}" พร้อมเบี้ยหวัด 800 ตำลึง!`);
+                game.careerRank = "ขุนนางหลวง";
+                game.rankLevel = 7;
+                game.salary = 500;
+                game.money += 1000;
+                game.stats.prestige += 50;
+                game.chronicleMasterLog.push({ year: game.year, type: "personal", text: `สอบผ่านจอหงวนหลวง ได้รับแต่งตั้งเป็น ${game.career} (ขั้น 7)` });
+                showModal("สอบเข้ารับราชการสำเร็จ!", `ท่านทำคะแนนสอบยอดเยี่ยม ได้รับแต่งตั้งเป็น "${game.career}" ขั้น 7 พร้อมเบี้ยหวัด 500 ตำลึง!`);
             } else {
                 showModal("สอบไม่ผ่าน", "สติปัญญาของท่านยังไม่ถึง 75 ไปศึกษาตำราเพิ่ม!");
             }
             updateScreen();
         }
 
+        // เมนูสายทหาร
         function openMilitaryModal() {
             if(game.age < 16) { showModal("ยังไม่บรรลุนิติภาวะ", "🔒 เงื่อนไข: เส้นทางสายทหารจะปลดล็อกเมื่อตัวละครมีอายุ 16 ปีขึ้นไป"); return; }
             showModal("⚔️ เส้นทางสายทหารชายแดน", `
@@ -629,13 +688,17 @@
             if(rank === 'ทหารเกณฑ์') {
                 game.career = "ทหารเกณฑ์ชายแดน";
                 game.careerRank = "พลทหาร";
-                game.stats.combat += 10;
-                showModal("เข้ากองทัพ", "ท่านเข้ารายงานตัวเป็นทหารเกณฑ์ ฝึกซ้อมรบชายแดน ได้รับพลังยุทธ์ +10!");
+                game.rankLevel = 9;
+                game.salary = 300;
+                game.stats.combat += 15;
+                showModal("เข้ากองทัพ", "ท่านเข้ารายงานตัวเป็นทหารเกณฑ์ ฝึกซ้อมรบชายแดน ได้รับพลังยุทธ์ +15!");
             } else {
                 if(game.stats.combat >= 50) {
                     game.career = "นายกองคุมกำลังพล";
-                    game.careerRank = "นายกองขั้น 6";
-                    game.stats.prestige += 35;
+                    game.careerRank = "นายกองทัพ";
+                    game.rankLevel = 6;
+                    game.salary = 600;
+                    game.stats.prestige += 40;
                     showModal("แต่งตั้งนายกอง", "ท่านแสดงฝีมือยอดเยี่ยม ได้รับแต่งตั้งเป็นนายกองคุมกำลังพล!");
                 } else {
                     showModal("พลังยุทธ์ไม่พอ", "พลังต่อสู้ยังไม่ถึง 50");
@@ -644,6 +707,7 @@
             updateScreen();
         }
 
+        // เมนูวังหลัง
         function openHaremModal() {
             if(game.age < 16) { showModal("ยังไม่บรรลุนิติภาวะ", "🔒 เงื่อนไข: ระบบวังหลังจะปลดล็อกเมื่อตัวละครมีอายุ 16 ปีขึ้นไป"); return; }
             showModal("🌸 การคัดเลือกนางในวังหลัง", `
@@ -657,12 +721,16 @@
             if(type === 'นางกำนัล') {
                 game.career = "นางกำนัลวังหลวง";
                 game.careerRank = "นางรับใช้ตำหนักใน";
+                game.rankLevel = 9;
+                game.salary = 200;
                 showModal("เข้าวัง", "ท่านเริ่มต้นชีวิตในวังหลังด้วยความอดทน");
             } else {
                 if(game.stats.charm >= 60) {
                     game.career = "พระสนมวังหลัง";
                     game.careerRank = "สนมขั้นผิน";
-                    game.stats.prestige += 50;
+                    game.rankLevel = 5;
+                    game.salary = 700;
+                    game.stats.prestige += 60;
                     showModal("แต่งตั้งเป็นสนม", "โฉมสะคราญของท่านต้องพระเนตรฮ่องเต้ ได้รับแต่งตั้งเป็นพระสนม!");
                 } else {
                     showModal("เสน่ห์ไม่ถึง", "เสน่ห์ยังไม่ถึง 60");
@@ -674,14 +742,16 @@
         function openCommonerCareerModal() {
             if(game.age < 16) { showModal("ยังไม่บรรลุนิติภาวะ", "🔒 เงื่อนไข: การประกอบอาชีพจะปลดล็อกเมื่อตัวละครมีอายุ 16 ปีขึ้นไป"); return; }
             showModal("🪙 อาชีพสุจริตทั่วไป", `
-                <button class="btn-action" onclick="setCommonerJob('พ่อค้าวาณิชย์', 600)">💰 พ่อค้าวาณิชย์ (+600 ตำลึง)</button>
-                <button class="btn-action" onclick="setCommonerJob('หมอหลวง/หมอชาวบ้าน', 400)">💊 หมอรักษาโรค (+400 ตำลึง)</button>
+                <button class="btn-action" onclick="setCommonerJob('พ่อค้าวาณิชย์', 800)">💰 พ่อค้าวาณิชย์ (+800 ตำลึง)</button>
+                <button class="btn-action" onclick="setCommonerJob('หมอหลวง/หมอชาวบ้าน', 500)">💊 หมอรักษาโรค (+500 ตำลึง)</button>
             `);
         }
 
         function setCommonerJob(jobName, startMoney) {
             game.career = jobName;
             game.careerRank = "สามัญชนประกอบอาชีพ";
+            game.rankLevel = 1;
+            game.salary = 400;
             game.money += startMoney;
             showModal("เริ่มต้นอาชีพ", `ท่านยึดอาชีพ "${jobName}" เรียบร้อยแล้ว`);
             updateScreen();
@@ -691,15 +761,17 @@
             if(game.age < 16) { showModal("ยังไม่บรรลุนิติภาวะ", "🔒 เงื่อนไข: ระบบบรรดาศักดิ์จะปลดล็อกเมื่อตัวละครมีอายุ 16 ปีขึ้นไป"); return; }
             game.career = "ท่านอ๋องผู้ทรงอำนาจ";
             game.careerRank = "ชิน왕 (ท่านอ๋องครองเมือง)";
-            game.stats.prestige += 85;
-            showModal("แต่งตั้งท่านอ๋อง", "ได้รับพระราชทานบรรดาศักดิ์ท่านอ๋องครองเมือง!");
+            game.rankLevel = 1;
+            game.salary = 1200;
+            game.stats.prestige += 100;
+            showModal("แต่งตั้งท่านอ๋อง", "ได้รับพระราชทานบรรดาศักดิ์ท่านอ๋องครองเมือง พร้อมเบี้ยหวัดมหาศาล!");
             updateScreen();
         }
 
         function arrangeMarriage() {
             if(game.age < 16) { showModal("ยังไม่บรรลุนิติภาวะ", "🔒 เงื่อนไข: การแต่งงานจะปลดล็อกเมื่อตัวละครมีอายุ 16 ปีขึ้นไป"); return; }
             game.family.spouse = "ฮูหยิน/สามีตระกูลขุนนางใหญ่";
-            showModal("มงคลสมรส", "ท่านแต่งงานสร้างครอบครัวเรียบร้อย!");
+            showModal("มงคลสมรส", "ท่านแต่งงานสร้างครอบครัวและเชื่อมสัมพันธ์ไมตรีกับตระกูลใหญ่เรียบร้อย!");
             saveGame();
             updateScreen();
         }
@@ -711,10 +783,22 @@
                 let talents = ["อัจฉริยะ", "ปานกลาง", "อ่อนแอ"];
                 let chosenTalent = talents[Math.floor(Math.random() * talents.length)];
                 game.family.heirs.push({ name: childName, talent: chosenTalent, age: 0 });
-                showModal("ทายาทถือกำเนิด", `ทายาทนามว่า "${childName}" พรสวรรค์: <b>${chosenTalent}</b>`);
+                showModal("ทายาทถือกำเนิด", `ทายาทนามว่า "${childName}" ถือกำเนิดในจวน พรสวรรค์: <b>${chosenTalent}</b>`);
             }
             saveGame();
             updateScreen();
+        }
+
+        // ระบบวิหารบรรพบุรุษ (Legacy Shrine)
+        function openShrineModal() {
+            toggleDrawer(false);
+            showModal("⛩️ วิหารบรรพบุรุษ (Legacy Buffs)", `
+                วิหารประจำตระกูลมู่หรง ระดับความศักดิ์สิทธิ์: <b>เลเวล ${game.shrineBuffs.shrineLevel}</b><br><br>
+                <b>บัฟมรดกตกทอดปัจจุบัน:</b><br>
+                - โบนัสเงินเริ่มต้นรุ่นถัดไป: +${game.shrineBuffs.legacyMoneyBonus} ตำลึง<br>
+                - โบนัสสติปัญญา/พลังยุทธ์เริ่มต้น: +${game.shrineBuffs.legacyStatBonus} แต้ม<br><br>
+                <i>(ทุกครั้งที่ท่านสร้างชื่อเสียงและปั้นทายาทสืบทอด บัฟความสามารถในวิหารจะยิ่งแข็งแกร่งขึ้น!)</i>
+            `);
         }
 
         function openChronicleModal() {
@@ -727,20 +811,34 @@
             toggleDrawer(false);
             let heirsHtml = game.family.heirs.length > 0 
                 ? game.family.heirs.map((h, idx) => `• ${h.name} (พรสวรรค์: ${h.talent}) <button onclick="switchCharacter(${idx})" style="padding:3px 8px; font-size:11px; cursor:pointer; margin-left:6px;">เล่นเป็นตัวนี้</button>`).join('<br>')
-                : "ยังไม่มีทายาท";
-            showModal("🌳 ผังตระกูล & สลับตัวละคร", `<b>รายชื่อทายาท:</b><br>${heirsHtml}`);
+                : "ยังไม่มีทายาทในจวน";
+            showModal("🌳 ผังตระกูล & สลับตัวละคร", `<b>รายชื่อทายาทสืบสกุล:</b><br>${heirsHtml}`);
         }
 
         function switchCharacter(index) {
             let heir = game.family.heirs[index];
+            // ส่งต่อบัฟเข้าวิหารบรรพบุรุษ
+            game.shrineBuffs.legacyMoneyBonus += Math.floor(game.money * 0.1);
+            game.shrineBuffs.legacyStatBonus += Math.floor((game.stats.intelligence + game.stats.combat) * 0.05);
+            game.shrineBuffs.shrineLevel += 1;
+
             game.firstname = heir.name;
             game.age = 16;
-            game.career = "ทายาทสืบสกุล";
-            game.stats = { intelligence: 50, combat: 40, charm: 50, prestige: 20 };
+            game.career = "ทายาทสืบสกุลตระกูล";
+            game.careerRank = "สามัญชนรอสอบรับราชการ";
+            game.rankLevel = 0;
+            game.salary = 0;
+            game.money = 500 + game.shrineBuffs.legacyMoneyBonus;
+            game.stats = { 
+                intelligence: 40 + game.shrineBuffs.legacyStatBonus, 
+                combat: 40 + game.shrineBuffs.legacyStatBonus, 
+                charm: 50, 
+                prestige: 20 
+            };
             closeModal();
             saveGame();
             updateScreen();
-            showModal("สลับสำเร็จ", `สืบทอดเป็น "${game.surname} ${game.firstname}" เรียบร้อยแล้ว!`);
+            showModal("สืบทอดตระกูลสำเร็จ", `ท่านสลับมาสวมบทบาทเป็นทายาท "${game.surname} ${game.firstname}" ในวัย 16 ปี ได้รับมรดกและบัฟจากวิหารบรรพบุรุษเรียบร้อย!`);
         }
 
         function toggleDrawer(open) {
@@ -758,7 +856,6 @@
         function showModal(title, desc) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-desc').innerHTML = desc;
-            document.getElementById('game-modal').classList.active = true;
             document.getElementById('game-modal').classList.add('active');
         }
 
