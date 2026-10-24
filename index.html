@@ -775,117 +775,105 @@
     console.log("✅ Ancient Life Epic Story & Imperial Decree Patch V.37 Loaded Successfully!");
 </script>
 <!-- ==========================================
-     MODULE 1: UNLOCK CUSTOM SURNAME INPUT
+     STABLE UI ENHANCEMENT PATCH (ISOLATED EXECUTION)
      ========================================== -->
 <script>
 (function() {
-    function replaceSurnameSelect() {
-        let selects = document.querySelectorAll('select');
-        selects.forEach(function(sel) {
-            if (sel.innerHTML.includes('มู่หรง') || sel.innerHTML.includes('เชียว') || (sel.id && sel.id.includes('surname'))) {
-                if (sel.dataset.replaced) return;
-                
-                let input = document.createElement('input');
-                input.type = 'text';
-                input.value = sel.value || 'มู่หรง';
-                input.className = sel.className;
-                input.placeholder = 'พิมพ์นามสกุลตามใจชอบ...';
-                input.style.cssText = 'width: 100%; padding: 8px; border: 1px solid #c5a059; border-radius: 4px; font-size: 14px; background: #fff8dc; font-weight: bold; color: #333;';
-                
-                input.oninput = function() {
-                    if (window.player) player.surname = this.value;
-                };
+    'use strict';
 
-                sel.dataset.replaced = "true";
-                if (sel.parentNode) {
-                    sel.parentNode.replaceChild(input, sel);
+    // 1. ระบบเปลี่ยน Dropdown นามสกุลเป็นช่องพิมพ์อิสระ
+    function safeUnlockSurname() {
+        try {
+            let selectEls = document.querySelectorAll('select');
+            selectEls.forEach(function(sel) {
+                if (!sel.dataset.customSurnameActive && sel.innerHTML && (sel.innerHTML.includes('มู่หรง') || sel.innerHTML.includes('เชียว') || (sel.id && sel.id.includes('surname')))) {
+                    sel.dataset.customSurnameActive = "true";
+                    let inputEl = document.createElement('input');
+                    inputEl.type = 'text';
+                    inputEl.value = sel.value || 'มู่หรง';
+                    inputEl.className = sel.className;
+                    inputEl.placeholder = 'พิมพ์นามสกุล...';
+                    inputEl.style.cssText = 'width: 95%; padding: 8px; border: 1px solid #c5a059; border-radius: 4px; font-size: 14px; background: #fff8dc; font-weight: bold; color: #333; margin: 4px 0;';
+                    
+                    inputEl.addEventListener('input', function() {
+                        if (window.player) {
+                            window.player.surname = this.value;
+                            window.player.lastName = this.value;
+                        }
+                    });
+
+                    if (sel.parentNode) {
+                        sel.parentNode.replaceChild(inputEl, sel);
+                    }
                 }
+            });
+        } catch(e) { console.log('Surname Patch Safe Skip'); }
+    }
+
+    // 2. แถบแสดงผลรัชศก ราชวงศ์ ฤดูกาล ด้านบนสุดแบบไม่บัง UI
+    function safeRenderHeader() {
+        if (!window.player) return;
+        try {
+            let headerEl = document.getElementById('ancient-safe-header');
+            if (!headerEl) {
+                headerEl = document.createElement('div');
+                headerEl.id = 'ancient-safe-header';
+                headerEl.style.cssText = 'background: #5c0606; color: #ffd700; text-align: center; padding: 5px; font-size: 12px; font-weight: bold; border-bottom: 1px solid #ffd700; position: relative; z-index: 1000;';
+                document.body.insertBefore(headerEl, document.body.firstChild);
             }
-        });
+            let dynasty = window.player.dynastyName || "ราชวงศ์ต้าเฉิง";
+            let era = window.player.eraName || "หย่งเล่อ";
+            let season = window.player.currentSeason || "ฤดูใบไม้ผลิ";
+            let surname = window.player.surname || window.player.lastName || "มู่หรง";
+            let age = window.player.age || 1;
+
+            headerEl.innerHTML = '📜 ' + dynasty + ' (รัชศก' + era + ' ปีที่ ' + age + ') | 🌸 ' + season + ' | 🏛️ สกุล' + surname;
+        } catch(e) {}
     }
 
-    let observer = new MutationObserver(replaceSurnameSelect);
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener('load', replaceSurnameSelect);
-})();
-</script>
-<!-- ==========================================
-     MODULE 2: REAL-TIME ERA & SEASON HEADER
-     ========================================== -->
-<script>
-(function() {
-    function renderHeaderBar() {
-        if (!window.player) return;
-        
-        let header = document.getElementById('ancient-header-bar');
-        if (!header) {
-            header = document.createElement('div');
-            header.id = 'ancient-header-bar';
-            header.style.cssText = 'position: sticky; top: 0; z-index: 9999; background: #5c0606; color: #ffd700; text-align: center; padding: 6px 10px; font-size: 12px; font-weight: bold; border-bottom: 1px solid #ffd700; font-family: sans-serif;';
-            document.body.insertBefore(header, document.body.firstChild);
+    // 3. ระบบส่งผลลัพธ์เข้าไทม์ไลน์ Real-time
+    window.safeActionTrigger = function(title, desc) {
+        if (typeof window.addTimeline === 'function') {
+            window.addTimeline(title, desc, 'good');
         }
-
-        let dynasty = player.dynastyName || "ราชวงศ์ต้าเฉิง";
-        let era = player.eraName || "หย่งเล่อ";
-        let season = player.currentSeason || "ฤดูใบไม้ผลิ";
-        let surname = player.surname || player.lastName || "มู่หรง";
-        let age = player.age || 1;
-
-        header.innerHTML = `📜 ${dynasty} (รัชศก${era} ปีที่ ${age}) | 🌸 ${season} | 🏛️ สกุล${surname}`;
-    }
-
-    setInterval(renderHeaderBar, 500);
-})();
-</script>
-<!-- ==========================================
-     MODULE 3: BOTTOM NAV HUB & REAL-TIME TIMELINE
-     ========================================== -->
-<script>
-(function() {
-    // ฟังก์ชันสั่งอัปเดตไทม์ไลน์และวาดหน้าจอใหม่ทันที
-    window.triggerRealtimeAction = function(title, desc, type) {
-        if (typeof addTimeline === 'function') {
-            addTimeline(title, desc, type || 'good');
-        }
-        if (typeof updateUI === 'function') {
-            updateUI();
+        if (typeof window.updateUI === 'function') {
+            window.updateUI();
         }
     };
 
-    // กิจกรรมการ์ดพัฒนาตนเอง & ท่องโลก
-    window.doStudyInLibrary = function() {
+    window.actStudyInLibrary = function() {
         if (!window.player) return;
-        player.skills = player.skills || {};
-        player.skills.scholarship = (player.skills.scholarship || 10) + 8;
-        triggerRealtimeAction("📖 ศึกษาตำราในห้องหนังสือ", "ตั้งใจอ่านตำราปราชญ์ในเรือน ปัญญาเพิ่มขึ้น (+8 ปัญญา)", "good");
+        window.player.skills = window.player.skills || {};
+        window.player.skills.scholarship = (window.player.skills.scholarship || 10) + 8;
+        window.safeActionTrigger("📖 ศึกษาตำราในห้องหนังสือ", "ตั้งใจอ่านตำราปราชญ์ในเรือน ปัญญาเพิ่มขึ้น (+8 ปัญญา)");
     };
 
-    window.doTrainMartial = function() {
+    window.actTrainMartial = function() {
         if (!window.player) return;
-        player.skills = player.skills || {};
-        player.skills.martial = (player.skills.martial || 10) + 12;
-        triggerRealtimeAction("⚔️ ฝึกฝนในลานยุทธ์", "ฝึกซ้อมวิชาต่อสู้และอาวุธ ร่างกายแข็งแกร่งขึ้น (+12 พลัง)", "good");
+        window.player.skills = window.player.skills || {};
+        window.player.skills.martial = (window.player.skills.martial || 10) + 12;
+        window.safeActionTrigger("⚔️ ฝึกฝนในลานยุทธ์", "ฝึกซ้อมวิชาต่อสู้และอาวุธ ร่างกายแข็งแกร่งขึ้น (+12 พลัง)");
     };
 
-    window.doTravelWorld = function() {
+    window.actTravelWorld = function() {
         if (!window.player) return;
-        player.money = (player.money || 100) + 30;
-        triggerRealtimeAction("🗺️ ออกท่องยุทธภพ", "พบเจอมิตรภาพต่างเมืองและได้รับโอกาสใหม่ๆ (+30 ตำลึง)", "good");
+        window.player.money = (window.player.money || 100) + 30;
+        window.safeActionTrigger("🗺️ ออกท่องยุทธภพ", "พบเจอมิตรภาพต่างเมืองและได้รับโอกาสใหม่ๆ (+30 ตำลึง)");
     };
 
-    window.doStrengthenFriendship = function() {
+    window.actStrengthenFriendship = function() {
         if (!window.player) return;
-        player.repu = (player.repu || 10) + 10;
-        triggerRealtimeAction("🤝 สานสัมพันธ์สหายสนิท", "ร่ำสุราร่วมกับขุนนางในเมืองหลวง เสน่ห์บารมีเพิ่มขึ้น (+10 ชื่อเสียง)", "good");
+        window.player.repu = (window.player.repu || 10) + 10;
+        window.safeActionTrigger("🤝 สานสัมพันธ์สหายสนิท", "ร่ำสุราร่วมกับขุนนางในเมืองหลวง เสน่ห์บารมีเพิ่มขึ้น (+10 ชื่อเสียง)");
     };
 
-    // หน้าต่างป๊อปอัปเมนูหลัก
-    window.openMainActionHub = function() {
+    // 4. หน้าต่างป๊อปอัปศูนย์ฝึกตน & ท่องโลก
+    window.openTrainingHub = function() {
         let modal = document.getElementById('result-modal');
         if (!modal) return;
 
-        let pSurname = (window.player && (player.surname || player.lastName)) ? (player.surname || player.lastName) : 'มู่หรง';
-        let pMoney = (window.player && (player.familyTreasury || player.money)) ? (player.familyTreasury || player.money) : 100;
+        let pSurname = (window.player && (window.player.surname || window.player.lastName)) ? (window.player.surname || window.player.lastName) : 'มู่หรง';
+        let pMoney = (window.player && (window.player.familyTreasury || window.player.money)) ? (window.player.familyTreasury || window.player.money) : 100;
 
         let iconEl = document.getElementById('res-icon');
         let titleEl = document.getElementById('res-title');
@@ -894,34 +882,41 @@
 
         if (iconEl) iconEl.innerText = "🏮";
         if (titleEl) titleEl.innerText = "🏮 ศูนย์ฝึกตน & ท่องยุทธภพ (สกุล" + pSurname + ")";
-        if (descEl) descEl.innerText = `คลังตระกูล: ${pMoney} ตำลึง\nเลือกกิจกรรมพัฒนาทักษะที่ต้องการดำเนินการ:`;
+        if (descEl) descEl.innerText = "คลังตระกูล: " + pMoney + " ตำลึง\nเลือกกิจกรรมพัฒนาทักษะที่ต้องการดำเนินการ:";
 
         if (choicesEl) {
-            choicesEl.innerHTML = `
-                <button class="choice-btn" onclick="doStudyInLibrary(); closeModal();">📖 1. ห้องหนังสือ: ศึกษาตำรา (+8 ปัญญา)</button>
-                <button class="choice-btn" onclick="doTrainMartial(); closeModal();">⚔️ 2. ลานฝึกยุทธ์: ฝึกฝนอาวุธ (+12 พลัง)</button>
-                <button class="choice-btn" onclick="doTravelWorld(); closeModal();">🗺️ 3. ท่องยุทธภพ / สุ่มเหตุการณ์ (+30 ตำลึง)</button>
-                <button class="choice-btn" onclick="doStrengthenFriendship(); closeModal();">🤝 4. สานสัมพันธ์สหายสนิท (+10 ชื่อเสียง)</button>
-                <button class="choice-btn" style="background:#6c757d; color:white;" onclick="closeModal();">❌ ปิดหน้าต่าง</button>
-            `;
+            choicesEl.innerHTML = 
+                '<button class="choice-btn" onclick="actStudyInLibrary(); closeModal();">📖 1. ห้องหนังสือ: ศึกษาตำรา (+8 ปัญญา)</button>' +
+                '<button class="choice-btn" onclick="actTrainMartial(); closeModal();">⚔️ 2. ลานฝึกยุทธ์: ฝึกฝนอาวุธ (+12 พลัง)</button>' +
+                '<button class="choice-btn" onclick="actTravelWorld(); closeModal();">🗺️ 3. ท่องยุทธภพ / สุ่มเหตุการณ์ (+30 ตำลึง)</button>' +
+                '<button class="choice-btn" onclick="actStrengthenFriendship(); closeModal();">🤝 4. สานสัมพันธ์สหายสนิท (+10 ชื่อเสียง)</button>' +
+                '<button class="choice-btn" style="background:#6c757d; color:white;" onclick="closeModal();">❌ ปิดหน้าต่าง</button>';
         }
         modal.classList.add('active');
     };
 
-    // ฝังปุ่มลงแถบเมนูด้านล่างสุด (Bottom Navigation Bar)
-    function attachBottomTab() {
-        let nav = document.querySelector('.bottom-nav') || document.querySelector('.nav-tabs') || document.querySelector('footer');
-        if (nav && !document.getElementById('bottom-nav-family-hub')) {
-            let item = document.createElement('div');
-            item.id = 'bottom-nav-family-hub';
-            item.style.cssText = 'flex: 1; text-align: center; cursor: pointer; padding: 4px 0; color: #ffd700; font-size: 11px; font-weight: bold;';
-            item.innerHTML = '🏮<br>ฝึกตน & ท่องโลก';
-            item.onclick = openMainActionHub;
-            nav.appendChild(item);
-        }
+    // 5. ฝังปุ่มลงแถบด้านล่างสุดอย่างปลอดภัย
+    function safeAttachBottomNav() {
+        try {
+            let nav = document.querySelector('.bottom-nav') || document.querySelector('.nav-tabs') || document.querySelector('footer');
+            if (nav && !document.getElementById('safe-nav-training-hub')) {
+                let tab = document.createElement('div');
+                tab.id = 'safe-nav-training-hub';
+                tab.style.cssText = 'flex: 1; text-align: center; cursor: pointer; padding: 4px 0; color: #ffd700; font-size: 11px; font-weight: bold;';
+                tab.innerHTML = '🏮<br>ฝึกตน & ท่องโลก';
+                tab.onclick = function() { window.openTrainingHub(); };
+                nav.appendChild(tab);
+            }
+        } catch(e) {}
     }
 
-    setInterval(attachBottomTab, 1000);
+    // เริ่มการทำงานแบบปลอดภัยเมื่อโหลดหน้าจอ
+    window.addEventListener('load', function() {
+        safeUnlockSurname();
+        setInterval(safeUnlockSurname, 1000);
+        setInterval(safeRenderHeader, 800);
+        setInterval(safeAttachBottomNav, 1000);
+    });
 })();
 </script>
 </body>
