@@ -2246,5 +2246,189 @@
         }, 1400);
     });
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 26 (ULTIMATE MASTERPIECE & EQUAL PATH EDITION) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบเลือกสังกัดกรมกองและเส้นทางราชวงศ์ (อิสระทั้งชายและหญิง)
+    // ---------------------------------------------------------
+    window.triggerDepartmentChoice = function() {
+        document.getElementById('res-icon').innerText = "🏛️";
+        document.getElementById('res-title').innerText = "🏛️ การเลือกสังกัดกรมกอง & เส้นทางราชสำนัก";
+        document.getElementById('res-desc').innerText = `ท่านสร้างผลงานเป็นที่ประจักษ์จนมีสิทธิ์เลือกว่าจะก้าวเดินในเส้นทางใด เพื่อเป็นฐานอำนาจในการไต่เต้าสู่จุดสูงสุดของแผ่นดิน! (อิสระเสรีทั้งชายและหญิง)`;
+        
+        let choicesHTML = `
+            <button class="choice-btn" onclick="chooseDepartment('mord')">⚔️ กรมกลาโหม (คุมกำลังทหารและยุทโธปกรณ์ - เหมาะแก่การสร้างกองกำลัง)</button>
+            <button class="choice-btn" onclick="chooseDepartment('treasury')">💰 กรมคลัง (คุมคลังหลวงและงบประมาณแผ่นดิน - มั่งคั่งและมีอำนาจต่อรอง)</button>
+            <button class="choice-btn" onclick="chooseDepartment('justice')">⚖️ กรมอาญา (คุมกฎหมายและไต่สวนคดี - ใช้กำจัดศัตรูทางการเมือง)</button>
+        `;
+
+        if (player.gender === 'หญิง') {
+            choicesHTML += `
+                <button class="choice-btn" style="background:#fff3d6; border-color:var(--secondary-gold); font-weight:600;" onclick="chooseDepartment('palace_power')">👑 สายในราชสำนัก & วังหลัง (ไต่เต้าเป็นสนมเอก/ฮองเฮา กุมอำนาจฝ่ายใน)</button>
+                <button class="choice-btn" style="background:#fff3d6; border-color:var(--secondary-gold); font-weight:600;" onclick="chooseDepartment('royal_kin')">🏮 สายราชนิกุล (อภิเษกสมรสเข้าสู่ราชวงศ์ เป็นพระชายาเอกผู้ทรงอิทธิพล)</button>
+            `;
+        } else {
+            choicesHTML += `
+                <button class="choice-btn" style="background:#fff3d6; border-color:var(--secondary-gold); font-weight:600;" onclick="chooseDepartment('royal_kin')">🏮 สายราชนิกุล (สร้างคอนเน็กชั่นอภิเษกเป็นราชบุตรเขย หรือท่านอ๋องผู้มีศักดินา)</button>
+                <button class="choice-btn" style="background:#fff3d6; border-color:var(--secondary-gold); font-weight:600;" onclick="chooseDepartment('palace_power')">👑 สายที่ปรึกษาข้างพระวรกาย (กุมอำนาจการเมืองเบื้องหลังบัลลังก์มังกร)</button>
+            `;
+        }
+
+        document.getElementById('res-choices').innerHTML = choicesHTML;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.chooseDepartment = function(dept) {
+        if (dept === 'mord') {
+            player.repu += 15; player.militaryPower = (player.militaryPower || 10) + 20;
+            player.activeTitle = "⚔️ ขุนนางแม่ทัพกรมกลาโหม";
+            addTimeline("⚔️ สังกัดกรมกลาโหม", "เข้ารับราชการในกรมกลาโหม กุมอำนาจทหารและเตรียมพร้อมออกศึก", "good");
+            showModal("⚔️ สังกัดกรมกลาโหม", "ท่านกุมอำนาจฝ่ายทหาร ฐานกำลังทหารแข็งแกร่งขึ้น!", "🛡️");
+        } else if (dept === 'treasury') {
+            player.money += 150; player.intel += 10;
+            player.activeTitle = "💰 ขุนนางคลังหลวงผู้มั่งคั่ง";
+            addTimeline("💰 สังกัดกรมคลัง", "เข้ารับราชการในกรมคลัง บริหารเงินทองแผ่นดิน ทรัพย์สินพุ่งพรวด", "good");
+            showModal("💰 สังกัดกรมคลัง", "ท่านคุมเศรษฐกิจคลังหลวง ทรัพย์สินเงินทองหลั่งไหลเข้าจวน!", "💎");
+        } else if (dept === 'justice') {
+            player.intel += 15; player.repu += 10;
+            player.activeTitle = "⚖️ ผู้ตรวจการกรมอาญาผู้เฉียบขาด";
+            addTimeline("⚖️ สังกัดกรมอาญา", "เข้ารับราชการในกรมอาญา ถือตราชั่งกฎหมายตรวจสอบขุนนางทุจริต", "good");
+            showModal("⚖️ สังกัดกรมอาญา", "อำนาจสอบสวนอยู่ในมือ ไม่มีใครกล้ามีเรื่องกับท่าน!", "📜");
+        } else if (dept === 'palace_power') {
+            player.charm += 20; 
+            if(player.gender === 'หญิง') {
+                player.haremRank = "สนมเอกขั้นสาม (กุ้ยเฟย)";
+                player.favor = 60;
+            }
+            player.activeTitle = "👑 ผู้กุมอำนาจฝ่ายในราชสำนัก";
+            addTimeline("👑 ครองอำนาจฝ่ายใน", "สร้างเครือข่ายสายสัมพันธ์ในราชสำนักจนผู้คนยำเกรงและฮ่องเต้โปรดปราน", "good");
+            showModal("👑 อำนาจฝ่ายใน", "ท่านกุมอำนาจสูงสุด สะเทือนถึงขุนนางในท้องพระโรง!", "🏛️");
+        } else if (dept === 'royal_kin') {
+            player.repu += 20; player.money += 100;
+            player.activeTitle = "🏮 เชื้อพระวงศ์ / ท่านอ๋องผู้ทรงอิทธิพล";
+            addTimeline("🏮 สายสัมพันธ์ราชนิกุล", "สร้างผลงานและคอนเน็กชั่นจนได้อภิเษกเข้าสู่ราชวงศ์ มีศักดินาและอำนาจสูงส่ง", "good");
+            showModal("🏮 สู่บรรดาศักดิ์สูงส่ง", "ท่านก้าวขึ้นเป็นบุคคลสำคัญในเครือข่ายราชวงศ์ มีอำนาจต่อรองมหาศาล!", "🌟");
+        }
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 2. ระบบเหตุการณ์ออกรบศึกชายแดน (Military Campaign)
+    // ---------------------------------------------------------
+    window.triggerMilitaryCampaignEvent = function() {
+        document.getElementById('res-icon').innerText = "⚔️";
+        document.getElementById('res-title').innerText = "⚔️ วิกฤตการณ์ศึกชายแดนครั้งใหญ่";
+        document.getElementById('res-desc').innerText = `กองทัพแคว้นศัตรูนำกำลังแสนนายบุกประชิดแนวหน้า ชายแดนลุกเป็นไฟ ราชสำนักมีคำสั่งให้ท่านนำทัพออกศึกกอบกู้แผ่นดิน! ท่านจะวางแผนทำศึกอย่างไร?`;
+        
+        let choicesHTML = `
+            <button class="choice-btn" onclick="executeCampaignChoice('frontal')">🔥 นำทัพหน้าบุกตะลุยเข้าตีทัพศัตรูตรงๆ (เสี่ยงบาดเจ็บ แต่สร้างชื่อเสียงมหาศาล)</button>
+            <button class="choice-btn" onclick="executeCampaignChoice('strategy')">🧠 ใช้กลยุทธ์ตัดเสบียงและซุ่มโจมตี (ปลอดภัย ได้ชัยชนะด้วยสติปัญญา)</button>
+            <button class="choice-btn" onclick="executeCampaignChoice('bribe')">💰 เจรจาสงบศึกและใช้สินบนซื้อเวลา (เสียเงินทอง แต่รักษาชีวิตทหาร)</button>
+        `;
+
+        document.getElementById('res-choices').innerHTML = choicesHTML;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.executeCampaignChoice = function(strategy) {
+        if (strategy === 'frontal') {
+            player.health -= 15; player.repu += 25; player.militaryPower = (player.militaryPower || 10) + 30;
+            addTimeline("🔥 ชัยชนะศึกแนวหน้า", "นำทัพบุกตะลุยด้วยความกล้าหาญ ได้รับบาดเจ็บแต่ชื่อเสียงเกริกไกรทั่วนครหลวง", "good");
+            showModal("🔥 แม่ทัพผู้หาญกล้า", "ท่านคว้าชัยชนะกลับมาอย่างยิ่งใหญ่ ชื่อเสียงขจรขจายทั่วหล้า!", "🏆");
+        } else if (strategy === 'strategy') {
+            player.intel += 15; player.repu += 20; player.militaryPower = (player.militaryPower || 10) + 20;
+            addTimeline("🧠 ชัยชนะด้วยกลยุทธ์", "ใช้แผนซุ่มโจมตีและตัดเสบียงศัตรูจนพ่ายแพ้ราบคาบโดยทหารบาดเจ็บน้อยที่สุด", "good");
+            showModal("🧠 แม่ทัพผู้ปราดเปรื่อง", "ชนะศึกด้วยมันสมอง บัณฑิตและขุนนางต่างสรรเสริญ!", "📜");
+        } else if (strategy === 'bribe') {
+            player.money = Math.max(0, player.money - 80); player.moral -= 5; player.repu += 5;
+            addTimeline("💰 เจรจาสงบศึกชายแดน", "ใช้ทรัพย์สินส่วนตัวเจรจาติดสินบนและซื้อเวลาสงบศึกกับแม่ทัพฝ่ายตรงข้าม", "neutral");
+            showModal("💰 สงบศึกชั่วคราว", "ระงับสงครามลงได้ด้วยเงินทอง แต่ต้องระวังความลับรั่วไหล", "⚠️");
+        }
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 3. ระบบศึกชิงบัลลังก์ & วิกฤตการณ์กบฏแผ่นดิน (Coup & Usurpation)
+    // ---------------------------------------------------------
+    window.triggerImperialCoupEvent = function() {
+        document.getElementById('res-icon').innerText = "👑";
+        document.getElementById('res-title').innerText = "👑 ศึกชิงบัลลังก์ & วิกฤตการณ์กบฏแผ่นดิน";
+        document.getElementById('res-desc').innerText = `ความขัดแย้งในราชสำนักปะทุถึงขีดสุด ขุนนางฝ่ายกบฏนำกำลังปิดล้อมท้องพระโรงบังคับให้ฮ่องเต้สละราชสมบัติ ในฐานะผู้มีอิทธิพล ท่านจะตัดสินใจอย่างไรในวินาทีชี้ชะตาแผ่นดินนี้?`;
+        
+        let choicesHTML = `
+            <button class="choice-btn" onclick="executeCoupChoice('protect')">🛡️ นำกองทัพเข้าปกป้องบัลลังก์และฮ่องเต้ (สะสมความจงรักภักดี เลื่อนขั้นเป็นอัครเสนาบดี)</button>
+        `;
+        if ((player.militaryPower || 0) >= 30 || player.repu >= 50) {
+            choicesHTML += `<button class="choice-btn" style="background:#fff3d6; border-color:var(--secondary-gold); font-weight:600;" onclick="executeCoupChoice('usurp')">👑 ฉวยโอกาสนี้นำกำลังทหารตลบหลัง ถอดถอนฮ่องเต้ และสถาปนาตนเองขึ้นเป็นกษัตริย์องค์ใหม่!</button>`;
+        } else {
+            choicesHTML += `<button class="choice-btn" style="opacity: 0.6; cursor: not-allowed;" disabled>👑 [ยังไม่พร้อม] กองทัพหรือชื่อเสียงยังไม่แกร่งพอจะสถาปนาเป็นกษัตริย์ (ต้องการกำลังทหาร 30+ หรือชื่อเสียง 50+)</button>`;
+        }
+        choicesHTML += `<button class="choice-btn" onclick="executeCoupChoice('neutral')">🍃 นำบริวารหลบหนีออกนอกเมืองเพื่อรักษาชีวิตรอด</button>`;
+
+        document.getElementById('res-choices').innerHTML = choicesHTML;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.executeCoupChoice = function(action) {
+        if (action === 'protect') {
+            player.repu += 30; player.activeTitle = "👑 อัครเสนาบดีผู้ค้ำจุนแผ่นดิน";
+            addTimeline("🛡️ พิทักษ์บัลลังก์มังกร", "นำกำลังพลเข้าปราบปรามกบฏปกป้องฮ่องเต้สำเร็จ ได้รับพระราชทานบรรดาศักดิ์สูงสุด", "good");
+            showModal("🛡️ ผู้พิทักษ์แผ่นดิน", "ท่านกวาดล้างกบฏราบคาบ ได้รับความไว้วางใจสูงสุดจากราชสำนัก!", "🏆");
+        } else if (action === 'usurp') {
+            player.activeTitle = "🐉 องค์กษัตริย์ผู้สถาปนาราชวงศ์ใหม่";
+            addTimeline("🐉 สถาปนาราชวงศ์ใหม่", "นำกำลังตลบหลังยึดอำนาจ ประกาศก้องขึ้นเป็นกษัตริย์องค์ใหม่แห่งแผ่นดิน!", "good");
+            showModal("🐉 ขึ้นครองราชย์เป็นกษัตริย์!", "ประวัติศาสตร์จารึกนามท่านเป็นปฐมกษัตริย์ผู้เกรียงไกร!", "👑✨");
+        } else if (action === 'neutral') {
+            player.stress += 10; player.money = Math.max(0, player.money - 50);
+            addTimeline("🍃 หลบหนีภัยการเมือง", "ตัดสินใจพาครอบครัวหลบหนีออกจากเมืองหลวงเพื่อรักษากระดูกสันหลังไว้ก่อน", "neutral");
+            showModal("🍃 เอาตัวรอดปลอดภัย", "หนีพ้นความวุ่นวายมาได้ แต่ทรัพย์สินเสียหายไปไม่น้อย", "💨");
+        }
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 4. ระบบสมาคมตลาดมืด & เครือข่ายข่าวกรองใต้ดิน (Shadow Broker)
+    // ---------------------------------------------------------
+    window.openShadowMarket = function() {
+        document.getElementById('res-icon').innerText = "🏮";
+        document.getElementById('res-title').innerText = "🏮 หอสืบข่าวและตลาดมืดใต้ดิน";
+        document.getElementById('res-desc').innerText = `ท่านแอบเดินทางมายังโรงเตี๊ยมลับยามวิกาล ที่นี่คือศูนย์รวมของนักฆ่า พ่อค้าข่าว และผู้ต้องการพลิกเกมการเมืองด้วยวิธีสกปรก...`;
+        
+        let choicesHTML = `
+            <button class="choice-btn" onclick="buyShadowService('rumor')">🗣️ จ้างคนปล่อยข่าวลือทำลายชื่อเสียงคู่แข่ง (เสีย 30 ตำลึง, ศัตรูชื่อเสียงลด)</button>
+            <button class="choice-btn" onclick="buyShadowService('bounty')">🗡️ จ้างมือสังหารเงากำจัดอุปสรรคในเส้นทางอำนาจ (เสีย 80 ตำลึง, สติปัญญา/อำนาจเพิ่ม)</button>
+            <button class="choice-btn" onclick="closeModal()">เดินกลับจวนเงียบๆ</button>
+        `;
+        document.getElementById('res-choices').innerHTML = choicesHTML;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.buyShadowService = function(type) {
+        if (type === 'rumor') {
+            if (player.money >= 30) {
+                player.money -= 30; player.repu += 5;
+                addTimeline("🗣️ ปล่อยข่าวลือการเมือง", "ใช้เงิน 30 ตำลึงซื้อเครือข่ายข่าวกรองปล่อยข่าวทำลายคู่แข่งทางการเมือง", "good");
+                showModal("🗣️ สำเร็จลุล่วง", "ข่าวลือแพร่สะพัด คู่แข่งเสียหน้าในราชสำนัก!", "📜");
+            } else {
+                showModal("💸 เงินไม่พอ", "เบี้ยในถุงมีไม่พอจ่ายค่าจ้าง 30 ตำลึง!", "⚠️");
+            }
+        } else if (type === 'bounty') {
+            if (player.money >= 80) {
+                player.money -= 80; player.militaryPower = (player.militaryPower || 10) + 10;
+                addTimeline("🗡️ กำจัดเสี้ยนหนามใต้ดิน", "ใช้บริการมือสังหารตลาดมืดจัดเก็บอุปสรรคขัดขวางเส้นทางอำนาจ", "good");
+                showModal("🗡️ กำจัดสำเร็จ", "อุปสรรคหนทางมืดหายไป เส้นทางสู่อำนาจโล่งโปร่ง!", "🌙");
+            } else {
+                showModal("💸 เงินไม่พอ", "ค่าจ้างมือสังหารเงาราคาสูงถึง 80 ตำลึง!", "⚠️");
+            }
+        }
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+</script>
 </body>
 </html>
