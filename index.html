@@ -1164,5 +1164,166 @@
         }
     });
 </script>
+    <!-- ==========================================================
+     🏮 PATCH 16: BLACK MARKET, JIANGHU SECTS & JUSTICE TRIALS 🏮
+     ========================================================== -->
+<script>
+    // 1. เพิ่มข้อมูลสเตตัสระบบใหม่ในตัวแปร Player
+    if (typeof player !== 'undefined') {
+        player.martialArtRank = player.martialArtRank || "สามัญชนไร้วรยุทธ์"; // ขั้นยุทธ์
+        player.sect = player.sect || "ไม่มีสำนัก";                     // สำนักยุทธ์
+        player.justiceFame = player.justiceFame || 50;               // ชื่อเสียงความยุติธรรม
+    }
+
+    // 2. ระบบตลาดมืดใต้ดิน & ประมูลสมบัติ (Black Market & Auction)
+    function openBlackMarket() {
+        if (player.age < 14) { showModal("🏮 ตลาดมืด", "ยังเยาว์วัยเกินกว่าจะย่างกรายเข้าสู่ตลาดมืดใต้ดิน (ต้องอายุ 14+)", "🚫"); return; }
+        
+        document.getElementById('res-icon').innerText = "🏮";
+        document.getElementById('res-title').innerText = "🏮 ตลาดมืดใต้ดิน & ประมูลของล้ำค่า";
+        document.getElementById('res-desc').innerText = `ท่านแอบสวมหน้ากากลึกลับย่างกรายเข้าสู่ตลาดมืดใต้ดินยามวิกาล ที่นี่มีทั้งสินค้าเถื่อน ข่าวกรองลับ และการประมูลสมบัติโบราณ ท่านต้องการทำสิ่งใด?`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="blackMarketAction('bounty')">📜 รับภารกิจล่าค่าหัวมือสังหาร (เสี่ยงอันตราย ได้เงินก้อนโต)</button>
+            <button class="choice-btn" onclick="blackMarketAction('auction')">💎 ประมูลกล่องสมบัติโบราณลึกลับ (ใช้ 50 ตำลึง)</button>
+            <button class="choice-btn" onclick="blackMarketAction('rumor')">🗣️ ซื้อข่าวกรองลับราชสำนัก (ใช้ 20 ตำลึง, สติปัญญา +5)</button>
+            <button class="choice-btn" onclick="closeModal()">ออกจากการซื้อขาย</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    }
+
+    function blackMarketAction(action) {
+        if (action === 'bounty') {
+            if (player.health >= 50) {
+                player.money += 120; player.repu += 10; player.stress += 10;
+                addTimeline("📜 รับภารกิจล่าค่าหัวตลาดมืด", "แฝงตัวตามล่าโจรป่าและมือสังหารตามประกาศจับ สำเร็จภารกิจรับรางวัลมหาศาล (เงิน +120, ชื่อเสียง +10)", "good");
+                showModal("📜 ล่าค่าหัวสำเร็จ", "ปราบโจรป่าสำเร็จ! รับเงินรางวัล 120 ตำลึงเต็มกระเป๋า", "💰");
+            } else {
+                player.health -= 15; player.stress += 15;
+                addTimeline("💥 พลาดท่าบาดเจ็บจากภารกิจล่าค่าหัว", "ร่างกายอ่อนล้า พลาดท่าถูกโจรป่าเล่นงานบาดเจ็บกลับมา (สุขภาพ -15, ความเครียด +15)", "bad");
+                showModal("💥 บาดเจ็บ", "พลาดท่าบาดเจ็บระหว่างล่าค่าหัว! (สุขภาพ -15)", "💥");
+            }
+        } else if (action === 'auction') {
+            if (player.money < 50) { showModal("💎 ประมูลสมบัติ", "เงินไม่พอ! การประมูลเริ่มต้นที่ 50 ตำลึง", "💸"); return; }
+            player.money -= 50;
+            let luck = Math.random();
+            if (luck < 0.5) {
+                player.relics.push("ตำราพิชัยสงครามโบราณ");
+                addTimeline("💎 ประมูลได้ตำราพิชัยสงคราม", "ประมูลชนะเศรษฐีลึกลับ ได้รับ 'ตำราพิชัยสงครามโบราณ' เพิ่มพูนปัญญา", "good");
+                showModal("💎 ประมูลสำเร็จ!", "ชนะการประมูล ได้รับ 'ตำราพิชัยสงครามโบราณ' เข้าคลังสมบัติ!", "📖");
+            } else {
+                player.money += 120;
+                addTimeline("💎 ประมูลหยกกำไรมหาศาล", "ประมูลซื้อขายเครื่องประดับหยกโบราณต่อยอดทำกำไรได้พอกพูน (เงิน +120 ตำลึง)", "good");
+                showModal("💎 กำไรมหาศาล!", "เก็งกำไรเครื่องประดับหยกโบราณสำเร็จ ได้รับเงินคืน 120 ตำลึง!", "💰");
+            }
+        } else if (action === 'rumor') {
+            if (player.money < 20) { showModal("🗣️ ซื้อข่าวกรอง", "เงินไม่พอ! ค่าข่าวกรอง 20 ตำลึง", "💸"); return; }
+            player.money -= 20; player.intel += 5;
+            addTimeline("🗣️ ซื้อข่าวกรองตลาดมืด", "ซื้อข่าวสารลับวงในเกี่ยวกับขุนนางฉ้อฉล เพิ่มความเฉียบแหลม (สติปัญญา +5)", "good");
+            showModal("🗣️ ข่าวกรองสำเร็จ", "ล่วงรู้กลยุทธ์ลับในราชสำนัก! (สติปัญญา +5)", "🧠");
+        }
+    }
+
+    // 3. ระบบยุทธภพ & พรรคสำนักเซียน (Jianghu & Sects)
+    function openJianghuMenu() {
+        if (player.age < 16) { showModal("⚔️ สำนักยุทธ์", "อายุยังน้อยเกินกว่าจะท่องยุทธภพ (ต้องอายุ 16+)", "🚫"); return; }
+        
+        document.getElementById('res-icon').innerText = "⚔️";
+        document.getElementById('res-title').innerText = "⚔️ ท่องยุทธภพ & สำนักวิชาเซียน";
+        document.getElementById('res-desc', `สถานะยุทธภพปัจจุบัน: ${player.martialArtRank}\nสังกัดสำนัก: ${player.sect}\n\nท่านต้องการเดินทางไปที่ใดเพื่อฝึกฝนวรยุทธ์?`);
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="joinSect('พรรคกระบี่ฟ้า')">🗡️ สมัครเข้า 'พรรคกระบี่ฟ้า' (เน้นกระบี่และชื่อเสียง)</button>
+            <button class="choice-btn" onclick="joinSect('สำนักมารโลหิต')">🩸 สมัครเข้า 'สำนักมารโลหิต' (เน้นพลังดุร้ายและบารมี)</button>
+            <button class="choice-btn" onclick="trainMartialArts()">🥋 ฝึกฝนพลังปราณประจำสำนัก (เพิ่มพลังชีวิต & ปัญญา)</button>
+            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    }
+
+    function joinSect(sectName) {
+        player.sect = sectName;
+        player.martialArtRank = "ศิษย์สายเอก " + sectName;
+        addTimeline(`⚔️ เข้าร่วม '${sectName}'`, `เดินทางขึ้นเขาฝากตัวเป็นศิษย์ในสังกัด '${sectName}' เริ่มต้นเส้นทางชาวยุทธ`, "good");
+        showModal("⚔️ ฝากตัวเป็นศิษย์", `ท่านได้รับการยอมรับให้เป็นศิษย์แห่ง '${sectName}' สำเร็จ!`, "🎉");
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    function trainMartialArts() {
+        if (player.sect === 'ไม่มีสำนัก') { showModal("🥋 ฝึกวรยุทธ์", "ท่านยังไม่ได้สังกัดสำนักยุทธใดๆ! โปรดเลือกสำนักก่อนฝึกฝน", "🚫"); return; }
+        player.health = Math.min(100, player.health + 10);
+        player.intel += 3;
+        player.stress = Math.max(0, player.stress - 5);
+        addTimeline("🥋 ฝึกฝนพลังปราณยุทธ์", `กักตัวฝึกกระบวนท่าและเดินลมปราณประจำ ${player.sect} ร่างกายแกร่งกล้า (สุขภาพ +10, สติปัญญา +3)`, "good");
+        showModal("🥋 ฝึกวรยุทธ์สำเร็จ", "โคจรลมปราณสำเร็จ ร่างกายแข็งแกร่งและจิตใจสงบนิ่งขึ้น!", "⚡");
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    // 4. ระบบตุลาการจอมเปา & ไต่สวนคดีหลวง (Justice & Court Trials)
+    function openCourtTrial() {
+        if (player.rankLevel < 2) { showModal("⚖️ ศาลตุลาการ", "ต้องมีตำแหน่งขุนนางขั้น 9 ขึ้นไปจึงจะมีอำนาจ นั่งบัลลังก์พิพากษาคดีหลวงได้!", "⚖️"); return; }
+        
+        document.getElementById('res-icon').innerText = "⚖️";
+        document.getElementById('res-title').innerText = "⚖️ ศาลตุลาการหลวง (บัลลังก์พิพากษา)";
+        document.getElementById('res-desc').innerText = `มีคดีความร้อนเรียนเข้าสู่ศาลหลวง: พ่อค้าใหญ่ในเมืองถูกกล่าวหาว่าลักลอบค้าอาวุธเถื่อนและติดสินบนขุนนาง ท่านในฐานะตุลาการผู้พิพากษาจะตัดสินคดีนี้อย่างไร?`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="resolveTrial('guilty')">⚖️ ตัดสินลงโทษสถานหนัก โบย 50 ครั้ง & ริบทรัพย์ (คุณธรรม +10, ความยุติธรรม +10)</button>
+            <button class="choice-btn" onclick="resolveTrial('bribe')">💰 รับสินบนลับ ปล่อยตัวผู้ต้องหา (รับเงิน +150 ตำลึง, คุณธรรมลดลง)</button>
+            <button class="choice-btn" onclick="resolveTrial('pardon')">🕊️ ปล่อยตัวตามกระบวนการยุติธรรมเนื่องจากหลักฐานไม่เพียงพอ (ชื่อเสียง +5)</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    }
+
+    function resolveTrial(verdict) {
+        if (verdict === 'guilty') {
+            player.moral += 10; player.justiceFame += 10; player.repu += 10;
+            addTimeline("⚖️ พิพากษาคดีเด็ดขาด", "นั่งบัลลังก์ตัดสินลงโทษผู้กระทำผิดอย่างเที่ยงธรรม โจษจันไปทั่วเมืองหลวง (คุณธรรม +10, ชื่อเสียง +10)", "good");
+            showModal("⚖️ พิพากษาเที่ยงธรรม", "คำพิพากษาเด็ดขาดสร้างความสั่นสะเทือนไปทั่วเมืองหลวง ชาวบ้านแซ่ซ้องสรรเสริญ!", "🏛️");
+        } else if (verdict === 'bribe') {
+            player.money += 150; player.moral -= 15; player.justiceFame -= 10;
+            addTimeline("💰 รับสินบนในศาลหลวง", "แอบรับทองคำใต้โต๊ะปล่อยตัวผู้ต้องหาคดีใหญ่ ร่ำรวยขึ้นพริบตาแต่คุณธรรมเสื่อมถอย (เงิน +150 ตำลึง)", "bad");
+            showModal("💰 รับสินบนสำเร็จ", "รับทองคำ 150 ตำลึงใต้โต๊ะและสั่งปิดคดีเงียบๆ (คุณธรรมลดลง)", "💸");
+        } else {
+            player.repu += 5; player.justiceFame += 5;
+            addTimeline("🕊️ ปล่อยตัวด้วยความเมตตา", "ตรวจสำนวนคดีพบช่องโหว่ จึงพิพากษาปล่อยตัวตามหลักฐานบริสุทธิ์ (ชื่อเสียง +5)", "good");
+            showModal("🕊️ เมตตาธรรมค้ำจุน", "ตัดสินคดีด้วยความรอบคอบและยุติธรรม!", "📜");
+        }
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    // 5. ฉีดปุ่มทางเข้าเมนูใหม่ทั้ง 3 ระบบ เข้าสู่แท็บกิจกรรมและทรัพย์สินอัตโนมัติ
+    window.addEventListener('DOMContentLoaded', () => {
+        let assetTab = document.getElementById('page-assets');
+        if (assetTab) {
+            let blackMarketBtn = document.createElement('div');
+            blackMarketBtn.className = 'card-item';
+            blackMarketBtn.onclick = openBlackMarket;
+            blackMarketBtn.innerHTML = `
+                <div class="card-left"><div class="card-icon">🏮</div><div class="card-text"><h4>ตลาดมืดใต้ดิน & ประมูลสมบัติ</h4><p>รับล่าค่าหัว ประมูลสมบัติโบราณ และข่าวกรองลับ</p></div></div>
+            `;
+            assetTab.insertBefore(blackMarketBtn, assetTab.children[1]);
+        }
+
+        let actTab = document.getElementById('page-activities');
+        if (actTab) {
+            let jianghuBtn = document.createElement('div');
+            jianghuBtn.className = 'card-item';
+            jianghuBtn.onclick = openJianghuMenu;
+            jianghuBtn.innerHTML = `
+                <div class="card-left"><div class="card-icon">⚔️</div><div class="card-text"><h4>ท่องยุทธภพ & สำนักวิชาเซียน</h4><p>สมัครเข้าสำนักพรรคกระบี่ฟ้า/มารโลหิต ฝึกปราณยุทธ์</p></div></div>
+            `;
+            actTab.insertBefore(jianghuBtn, actTab.children[2]);
+
+            let courtBtn = document.createElement('div');
+            courtBtn.className = 'card-item';
+            courtBtn.onclick = openCourtTrial;
+            courtBtn.innerHTML = `
+                <div class="card-left"><div class="card-icon">⚖️</div><div class="card-text"><h4>ศาลตุลาการหลวง (พิพากษาคดี)</h4><p>นั่งบัลลังก์ตัดสินคดีฉ้อฉล (ต้องมีตำแหน่งขุนนาง)</p></div></div>
+            `;
+            actTab.insertBefore(courtBtn, courtBtn.children[3]);
+        }
+    });
+</script>
 </body>
 </html>
