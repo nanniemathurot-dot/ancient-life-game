@@ -519,5 +519,94 @@
         if (localStorage.getItem('ANCIENT_LIFE_V34_FULL_SAVE')) { loadGame(false); }
     });
 </script>
+<script>
+    /* ==========================================
+       ANCIENT LIFE: ADVANCED EXTENSION PATCH (V.35)
+       - ระบบวังหลัง & ดีเทลในจวน (ฮูหยิน, อนุ, นอกใจ, หย่าร้าง)
+       - ระบบพัฒนาสกิล & ความเชี่ยวชาญเฉพาะทาง
+       - ระบบหาเงินเชิงลึก & บริหารทรัพย์สินตระกูล
+       ========================================== */
+
+    // 1. ระบบขยายค่าสถานะและความเชี่ยวชาญ (Skill Progression & Proficiency)
+    if (typeof player !== 'undefined') {
+        player.skills = player.skills || { scholarship: 10, martial: 10, business: 10, charm: 10 };
+        player.harem = player.harem || [];
+        player.familyTreasury = player.familyTreasury || 0;
+    }
+
+    // ฟังก์ชันพัฒนาสกิลเฉพาะทาง (ปราชญ์ / ยุทธ์ / การค้า)
+    window.trainAdvancedSkill = function(skillType) {
+        if (!window.player) return;
+        if (skillType === 'scholarship') {
+            player.skills.scholarship += 5;
+            player.intel += 5;
+            addTimeline("📚 พัฒนาความรู้ปราชญ์", "ศึกษาตำราล้ำลึก ค่าความรู้ปราชญ์เพิ่มขึ้น (+5)", "good");
+            showModal("📚 เชี่ยวชาญตำรา", "ความรู้ความสามารถด้านวิชาการพัฒนาขึ้นอีกขั้น!", "📖");
+        } else if (skillType === 'martial') {
+            player.skills.martial += 5;
+            player.health += 5;
+            addTimeline("⚔️ ฝึกฝนวิทยายุทธ์ขั้นสูง", "ร่ำเรียนกระบวนท่าลับ ค่าวิทยายุทธ์เพิ่มขึ้น (+5)", "good");
+            showModal("⚔️ ยุทธ์ศาสตร์ก้าวหน้า", "ร่างกายกำยำและมีชั้นเชิงวิทยายุทธ์สูงขึ้น!", "🗡️");
+        } else if (skillType === 'business') {
+            player.skills.business += 5;
+            player.money += 30;
+            addTimeline("💰 ลงทุนค้าขายตระกูล", "เจรจาการค้าสำเร็จ ได้รับกำไรเข้าจวน (+30 ตำลึง)", "good");
+            showModal("💰 การค้าเจริญรุ่งเรือง", "บริหารกิจการค้าขายได้อย่างยอดเยี่ยม ได้รับกำไรก้อนโต!", "📈");
+        }
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    // 2. ระบบวังหลัง & จัดการในจวน (Harem & Manor Details)
+    window.openAdvancedHaremModal = function() {
+        if (typeof player === 'undefined') return;
+        let haremListText = player.harem.length > 0 ? player.harem.map((h, i) => `\n[${i+1}] ${h.name} (ความสัมพันธ์: ${h.affection}%, ความหึงหวง: ${h.jealousy}%)`).join('') : "\n- ยังไม่มีอนุภรรยาในจวน";
+        
+        document.getElementById('res-icon').innerText = "👑";
+        document.getElementById('res-title').innerText = "👑 ระบบวังหลัง & จัดการในจวน";
+        document.getElementById('res-desc').innerText = `สถานะสมรส: ${player.maritalStatus} | คู่ครอง: ${player.partnerName}\nรายชื่ออนุภรรยาในจวน:${haremListText}\n\nท่านต้องการจัดการเรื่องในจวนอย่างไร?`;
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="addNewConubine()">🌸 รับอนุภรรยาเข้าจวน (เสีย 100 ตำลึง)</button>
+            <button class="choice-btn" onclick="triggerAffairEvent()">🔥 เกิดเหตุนอกใจ / เรื่องอื้อฉาวในจวน</button>
+            <button class="choice-btn" style="color:red;" onclick="executeAdvancedDivorce()">📜 ดำเนินการหย่าร้างเด็ดขาด</button>
+            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.addNewConubine = function() {
+        if (player.money < 100) { alert("เงินตำลึงไม่พอรับอนุ (ต้องใช้ 100 ตำลึง)!"); return; }
+        player.money -= 100;
+        let conubineNames = ["อิงฮวา", "ลี่มี่", "ชิงชิง", "เหมยฮัว"];
+        let name = conubineNames[Math.floor(Math.random() * conubineNames.length)] + " (อนุ)";
+        player.harem.push({ name: name, affection: 70, jealousy: 30 });
+        addTimeline("🌸 รับอนุภรรยาเข้าจวน", `รับ ${name} เข้ามาดูแลภายในจวน บรรยากาศคึกคักขึ้น`, "good");
+        showModal("🌸 รับอนุสำเร็จ", `ตบแต่ง ${name} เข้าจวนเรียบร้อย`, "💖");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.triggerAffairEvent = function() {
+        if (player.harem.length === 0 && player.maritalStatus !== "สมรส") {
+            alert("ท่านยังไม่มีคู่ครองหรืออนุ จึงยังไม่เกิดเรื่องอื้อฉาวในจวน!");
+            return;
+        }
+        player.stress += 25;
+        player.happy -= 15;
+        addTimeline("🔥 เกิดเรื่องอื้อฉาวนอกใจในจวน", "เกิดความขัดแย้งและเรื่องชู้สาวขึ้นภายในเรือน ชื่อเสียงและสุขภาพจิตสั่นคลอน", "bad");
+        showModal("🔥 ดราม่าวังหลังเดือด!", "เกิดเหตุการณ์นอกใจและหึงหวงกันอย่างรุนแรงในจวน! (ความเครียด +25, ความสุข -15)", "⚡");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    window.executeAdvancedDivorce = function() {
+        player.maritalStatus = "โสด";
+        player.partnerName = "หย่าร้างแล้ว";
+        player.money = Math.max(0, player.money - 50);
+        player.stress += 20;
+        addTimeline("📜 หย่าร้างตัดขาด", "ทำเรื่องหย่าร้างอย่างเป็นทางการ สูญเสียทรัพย์สินแบ่งให้ฝ่ายตรงข้าม (-50 ตำลึง)", "bad");
+        showModal("📜 หย่าร้างสำเร็จ", "แยกทางกันอย่างเด็ดขาด ทรัพย์สินบางส่วนถูกแบ่งออกไป", "💔");
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    console.log("✅ Ancient Life Advanced Extension Patch V.35 Loaded Successfully!");
+</script>    
 </body>
 </html>
