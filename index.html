@@ -2430,5 +2430,114 @@
         if (typeof autoSaveGame === 'function') autoSaveGame();
     };
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 27 (ULTIMATE TRAINING, ESTATE BUTTONS & BALANCE) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบตัวแปรเสริม (ผลงาน & ความพร้อมสอบ)
+    // ---------------------------------------------------------
+    if (typeof player !== 'undefined') {
+        player.merit = player.merit || 0;
+        player.examPrepared = player.examPrepared || 0;
+    }
+
+    // ---------------------------------------------------------
+    // 2. ปรับปรุงปุ่ม ageUp ให้มีระบบ "เติบโตตามธรรมชาติ" (แก้ปัญหาสเตตัสขึ้นช้า)
+    // ---------------------------------------------------------
+    let originalAgeUpPatch27 = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUpPatch27 === 'function') originalAgeUpPatch27();
+
+        if (typeof player !== 'undefined') {
+            // โบนัสเติบโตตามธรรมชาติทุกๆ ปี (ป้องกันสเตตัสค้างหรือขึ้นช้าเกินไป)
+            player.intel = (player.intel || 10) + 2;
+            player.health = Math.min(100, (player.health || 100) + 2);
+            player.charm = (player.charm || 10) + 1;
+
+            // สุ่มโอกาสเกิดอีเวนต์สอบจอหงวนหรือออกรบตามช่วงอายุ
+            if (player.age === 18 && typeof triggerCivilExamEvent === 'function') {
+                setTimeout(triggerCivilExamEvent, 1000);
+            } else if (player.age === 22 && typeof triggerMilitaryCampaignEvent === 'function') {
+                setTimeout(triggerMilitaryCampaignEvent, 1000);
+            }
+        }
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 3. กิจกรรมพัฒนาตนเองในจวน (ห้องหนังสือ & ลานฝึกยุทธ์)
+    // ---------------------------------------------------------
+    window.trainInEstate = function(type) {
+        if (type === 'study') {
+            player.intel = (player.intel || 10) + 8;
+            player.examPrepared += 25;
+            addTimeline("📚 ศึกษาตำราในจวน", "ใช้เวลาท่องตำราประวัติศาสตร์และพิชัยสงครามอย่างขะมักเขม้น (สติปัญญา +8)", "good");
+            showModal("📚 ศึกษาเล่าเรียน", "ท่านก้มหน้าก้มตาอ่านตำราจนความรู้แตกฉานยิ่งขึ้น เตรียมพร้อมสำหรับการสอบ!", "📖");
+        } else if (type === 'martial') {
+            player.health = Math.min(100, (player.health || 100) + 5);
+            player.militaryPower = (player.militaryPower || 10) + 12;
+            addTimeline("⚔️ ฝึกยุทธ์ที่ลานจวน", "ฝึกฝนกระบวนท่าดาบและธนูที่ลานบ้านเพื่อเสริมสร้างร่างกายและพลังทหาร", "good");
+            showModal("⚔️ ฝึกฝนวิชา", "เหงื่อชุ่มกายแต่ร่างกายกำยำและฝีมือเฉียบคมขึ้นมาก!", "🛡️");
+        }
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 4. แทรกปุ่มลัดกิจกรรมในจวนลงบนหน้าจอหลักอัตโนมัติ
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('estate-training-panel')) {
+                let trainingDiv = document.createElement('div');
+                trainingDiv.id = 'estate-training-panel';
+                trainingDiv.style.cssText = "background: #fffbf0; border: 1px dashed var(--secondary-gold); padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
+                
+                trainingDiv.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #5a3e1b;">🏡 กิจกรรมพัฒนาตนเองภายในจวน</div>
+                    <button class="choice-btn" style="margin: 4px 0; background: #fdf3e2;" onclick="trainInEstate('study')">📚 ห้องหนังสือ: ศึกษาตำรา & เตรียมสอบ (สติปัญญา +8)</button>
+                    <button class="choice-btn" style="margin: 4px 0; background: #fdf3e2;" onclick="trainInEstate('martial')">⚔️ ลานฝึกยุทธ์: ฝึกฝนอาวุธ & กำลังทหาร (พลังทหาร +12)</button>
+                `;
+                actionContainer.appendChild(trainingDiv);
+            }
+        }, 1800);
+    });
+
+    // ---------------------------------------------------------
+    // 5. ระบบอีเวนต์สอบจอหงวนประจำปี (สายบุ๋น)
+    // ---------------------------------------------------------
+    window.triggerCivilExamEvent = function() {
+        document.getElementById('res-icon').innerText = "📜";
+        document.getElementById('res-title').innerText = "📜 การสอบจอหงวนประจำปี ณ ท้องพระโรง";
+        document.getElementById('res-desc').innerText = `ประตูวังหลวงเปิดกว้าง บัณฑิตทั่วสารทิศมารวมตัวกันเพื่อสอบคัดเลือกขุนนางหลวง ท่านได้เตรียมตัวมาอย่างยาวนาน ถึงเวลาแสดงฝีมือแล้ว!`;
+        
+        let choicesHTML = `
+            <button class="choice-btn" onclick="executeExamChoice('write')">✍️ เขียนฎีกาปฏิรูปบ้านเมืองด้วยหลักนิติธรรม (วัดสติปัญญาและความพร้อม)</button>
+            <button class="choice-btn" onclick="executeExamChoice('strategy')">🧠 เสนอยุทธศาสตร์การค้าและคลังแผ่นดิน (เน้นความมั่งคั่งและไหวพริบ)</button>
+        `;
+        document.getElementById('res-choices').innerHTML = choicesHTML;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.executeExamChoice = function(type) {
+        if (player.examPrepared >= 40 || player.intel >= 45) {
+            player.repu += 25;
+            player.merit += 20;
+            player.activeTitle = "🎓 จอหงวนผู้ทรงภูมิปัญญาแห่งราชสำนัก";
+            addTimeline("🎓 สอบผ่านจอหงวนหลวง", "ทำคะแนนสอบได้ยอดเยี่ยมเป็นอันดับต้นๆ ได้รับการแต่งตั้งเป็นขุนนางระดับสูง", "good");
+            showModal("🎉 สอบผ่านเป็นจอหงวน!", "ชื่อเสียงขจรขจาย ฮ่องเต้ทรงชื่นชมในความสามารถ!", "🏆");
+        } else {
+            player.stress += 10;
+            addTimeline("❌ สอบตกในหลวง", "เตรียมตัวมาไม่ดีพอ ทำข้อสอบได้ไม่ตามเป้าหมาย พลาดโอกาสสอบในปีนี้", "bad");
+            showModal("❌ น่าเสียดาย", "ท่านสอบไม่ผ่านในครั้งนี้ ต้องกลับไปตั้งใจอ่านตำราเพิ่มในจวน!", "⚠️");
+        }
+        player.examPrepared = 0;
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+</script>
 </body>
 </html>
