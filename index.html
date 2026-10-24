@@ -2029,5 +2029,104 @@
         }
     };
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 24 (ULTIMATE CHRONICLE): ERA, SEASONS, ESTATES & FESTIVALS 🌸
+     ========================================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบศักราช, ฤดูกาล และที่ดิน/สหายส่วนตัว
+    // ---------------------------------------------------------
+    if (typeof player !== 'undefined') {
+        player.eraYear = player.eraYear || 1;
+        player.season = player.season || "ฤดูใบไม้ผลิ (春) - ดอกไม้ผลิบาน อากาศอบอุ่น";
+        player.estate = player.estate || "เรือนพักสามัญชนหลังเล็ก";
+        player.retainers = player.retainers || 0;
+    }
+
+    const chineseSeasons = [
+        "ฤดูใบไม้ผลิ (春) - ดอกไม้ผลิบาน อากาศอบอุ่น",
+        "ฤดูร้อน (夏) - แสงแดดแผดเผา อากาศร้อนอบอ้าว",
+        "ฤดูใบไม้ร่วง (秋) - ใบไม้ร่วงหล่น ลมโชยเย็นสบาย",
+        "ฤดูหนาว (เหมันต์ 冬) - หิมะโปรยปราย หนาวเหน็บเข้ากระดูก"
+    ];
+
+    // ผูกระบบเวลาและเทศกาลประจำปีเข้ากับปุ่ม ageUp
+    let originalAgeUpPatch24 = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUpPatch24 === 'function') originalAgeUpPatch24();
+
+        if (typeof player !== 'undefined') {
+            player.eraYear = (player.eraYear || 1) + 1;
+            let seasonIndex = (player.eraYear - 1) % chineseSeasons.length;
+            player.season = chineseSeasons[seasonIndex];
+
+            // สุ่มเทศกาลประจำปีหรือเหตุการณ์พิเศษตามฤดูกาล
+            let festivalEvents = [
+                `🏮 ถึงเทศกาลโคมไฟประจำปี ผู้คนต่างออกมาจุดประทีปอธิษฐาน ท่านได้รับคำอวยพรจากชาวเมือง (ชื่อเสียง +5, ความสุข +5)`,
+                `🌕 ในคืนเทศกาลไหว้พระจันทร์ ชมจันทร์ดื่มสุรากับสหายในจวน จิตใจปลอดโปร่ง (ความเครียดลดลง)`,
+                `🌸 เทศกาลชมดอกไม้บานในเมืองหลวง มีโอกาสได้พบปะพูดคุยกับบัณฑิตและชนชั้นสูง (สติปัญญา +3, เสน่ห์ +3)`
+            ];
+            let chosenFest = festivalEvents[Math.floor(Math.random() * festivalEvents.length)];
+            
+            if (chosenFest.includes("ชื่อเสียง")) { player.repu += 5; player.happy += 5; }
+            if (chosenFest.includes("ความเครียด")) { player.stress = Math.max(0, player.stress - 10); }
+            if (chosenFest.includes("สติปัญญา")) { player.intel += 3; player.charm += 3; }
+
+            if (typeof addTimeline === 'function') {
+                addTimeline(`⏳ ศักราชต้าเฉิง ปีที่ ${player.eraYear} (${player.season})`, chosenFest, "good");
+            }
+        }
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 2. แสดงแถบ HUD ศักราช ฤดูกาล และข้อมูลจวน
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let statusContainer = document.querySelector('.status-box') || document.getElementById('page-status') || document.body;
+            if (statusContainer && !document.getElementById('era-hud')) {
+                let eraDiv = document.createElement('div');
+                eraDiv.id = 'era-hud';
+                eraDiv.style.cssText = "background: linear-gradient(135deg, #fff3d6, #ffe8b6); border: 1px solid var(--secondary-gold); padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; text-align: center; font-weight: 600; color: #5a3e1b; box-shadow: 0 2px 6px rgba(0,0,0,0.05); font-size: 14px; line-height: 1.6;";
+                
+                window.updateEraHUD = function() {
+                    if (typeof player !== 'undefined') {
+                        eraDiv.innerHTML = `📜 ศักราชต้าเฉิง ปีที่ ${player.eraYear || 1} | 🌸 ${player.season || 'ฤดูใบไม้ผลิ'}<br>🏡 ที่พัก: ${player.estate || 'เรือนพักสามัญชน'} | 👥 ผู้ติดตาม: ${player.retainers || 0} คน`;
+                    }
+                };
+                updateEraHUD();
+                statusContainer.insertBefore(eraDiv, statusContainer.firstChild);
+            }
+
+            let oldUpdateUIPatch24 = window.updateUI;
+            window.updateUI = function() {
+                if (typeof oldUpdateUIPatch24 === 'function') oldUpdateUIPatch24();
+                if (typeof window.updateEraHUD === 'function') window.updateEraHUD();
+            };
+        }, 1200);
+    });
+
+    // ---------------------------------------------------------
+    // 3. ฟังก์ชันซื้ออสังหาริมทรัพย์ / ขยายจวน
+    // ---------------------------------------------------------
+    window.buyEstateMarket = function() {
+        let cost = 150;
+        if (player.money >= cost) {
+            player.money -= cost;
+            player.estate = "จวนคหบดีใหญ่ใจกลางเมืองหลวง";
+            player.repu += 20;
+            player.retainers += 2;
+            if (typeof addTimeline === 'function') {
+                addTimeline("🏡 ขยายจวนพักอาศัย", "ใช้ทรัพย์สิน 150 ตำลึงซื้อจวนใหญ่ พร้อมรับผู้ติดตามเพิ่ม 2 คน", "good");
+            }
+            showModal("🏡 ซื้อจวนสำเร็จ", "ท่านย้ายเข้าสู่จวนหลังใหญ่ใจกลางเมืองหลวง ชื่อเสียงขจรขจาย!", "🏛️");
+            if (typeof updateUI === 'function') updateUI();
+            if (typeof autoSaveGame === 'function') autoSaveGame();
+        } else {
+            showModal("💸 เงินไม่พอ", "ต้องใช้ทรัพย์สิน 150 ตำลึงจึงจะสามารถซื้อจวนใหญ่ได้!", "⚠️");
+        }
+    };
+</script>
 </body>
 </html>
