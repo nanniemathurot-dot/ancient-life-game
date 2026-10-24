@@ -1484,5 +1484,105 @@
         alert("🎲 สุ่มชะตาตัวละครสำเร็จ!");
     };
 </script>
+    <!-- ==========================================================
+     🌸 PATCH 19: INSTANT AUDIO, NO OFFLINE TIME SKIP & PATCH NOTES 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. แก้ไขระบบเสียงให้ฉับไว ตอบสนองทันที ไม่หน่วง (Instant SFX)
+    // ---------------------------------------------------------
+    let audioCtx = null;
+
+    function initAudioContext() {
+        if (!audioCtx) {
+            let AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (AudioContext) audioCtx = new AudioContext();
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    // เสียงปุ่มกด SFX Click (ตอบสนองทันที 0ms)
+    function playClickSound() {
+        try {
+            initAudioContext();
+            if (!audioCtx) return;
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        } catch(e) {}
+    }
+
+    // เสียงดนตรีบรรยากาศ BGM จีนโบราณ (ปรับปรุงจังหวะให้ละมุน ไม่กระตุก)
+    let bgmInterval = null;
+    const pentatonicNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+
+    function toggleBGM() {
+        initAudioContext();
+        bgmPlaying = !bgmPlaying;
+        let btn = document.getElementById('sound-btn');
+        if (btn) btn.innerText = bgmPlaying ? "🔊" : "🎵";
+
+        if (bgmPlaying) {
+            if (bgmInterval) clearInterval(bgmInterval);
+            bgmInterval = setInterval(() => {
+                if (!bgmPlaying || !audioCtx) return;
+                try {
+                    let note = pentatonicNotes[Math.floor(Math.random() * pentatonicNotes.length)];
+                    let osc = audioCtx.createOscillator();
+                    let gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(note, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.8);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.8);
+                } catch(e) {}
+            }, 1200); // เว้นจังหวะให้เพลงสมูทขึ้น
+        } else {
+            if (bgmInterval) clearInterval(bgmInterval);
+        }
+    }
+
+    // ผูกเสียง SFX กับการคลิกปุ่ม
+    document.addEventListener('pointerdown', (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.classList.contains('choice-btn') || e.target.classList.contains('card-item') || e.target.classList.contains('nav-item')) {
+            playClickSound();
+        }
+    });
+
+    // ---------------------------------------------------------
+    // 2. ยกเลิกเวลาออฟไลน์เดินเอง และเปลี่ยนเป็น Pop-up รายงาน Patch อัปเดตเกม
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            // ล้างค่าเวลาออฟไลน์เก่าทิ้งเพื่อไม่ให้เกมคำนวณเวลาเดินเองอีก
+            localStorage.removeItem('ANCIENT_LIFE_LAST_TIME');
+
+            if (typeof player !== 'undefined' && player.age !== undefined && typeof showModal === 'function') {
+                let updateMsg = `ยินดีต้อนรับกลับสู่จวน, ท่าน ${player.surname}${player.firstname}!\n\n`;
+                updateMsg += `📢 บันทึกการอัปเดตระบบ (Patch 19):\n`;
+                updateMsg += `• แก้ไขเสียงซาวด์บีจีเอ็มและปุ่มกดให้ตอบสนองฉับไว ไม่หน่วง ไม่กระตุก\n`;
+                updateMsg += `• ยกเลิกเวลาออฟไลน์เดินเองแล้ว! (ท่านเป็นผู้กำหนดจังหวะเวลาและกดโตขึ้นเอง 100%)\n`;
+                updateMsg += `• ระบบตระกูล ภรรยา วังหลัง ยุทธภพ และตลาดมืดพร้อมให้ท่านเล่นต่ออย่างไร้รอยต่อ`;
+
+                setTimeout(() => {
+                    showModal("📜 รายงานสถานการณ์ & อัปเดตแพตช์", updateMsg, "🏛️");
+                }, 600);
+            }
+        }, 1000);
+    });
+</script>
 </body>
 </html>
