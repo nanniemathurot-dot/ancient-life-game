@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Imperial Dynasty Life Simulator - Ultimate Sandbox Edition</title>
+    <title>Imperial Dynasty Life Simulator - Ultimate Sandbox Fixed Edition</title>
     <style>
         :root {
             --primary: #7b1113;
@@ -270,8 +270,8 @@
                 spouseAffection: 50,
                 concubines: [],
                 heirs: [],
-                mansionLevel: 1, // เลเวลคฤหาสน์
-                servants: 5       // จำนวนบ่าวรับใช้
+                mansionLevel: 1,
+                servants: 5
             },
             chronicleMasterLog: [
                 { year: 1, type: "personal", text: "อายุ 0 ปี: ถือกำเนิดลืมตาดูโลก เริ่มต้นเส้นทางชีวิตตามโชคชะตา" }
@@ -280,12 +280,12 @@
         };
 
         function saveGame() {
-            try { localStorage.setItem('dynasty_game_autosave_v20', JSON.stringify(game)); } catch(e) {}
+            try { localStorage.setItem('dynasty_game_autosave_v21', JSON.stringify(game)); } catch(e) {}
         }
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('dynasty_game_autosave_v20');
+                let saved = localStorage.getItem('dynasty_game_autosave_v21');
                 if(saved) {
                     game = JSON.parse(saved);
                     let setupScreen = document.getElementById('setup-screen');
@@ -304,7 +304,7 @@
 
         function resetGame() {
             if(confirm("ท่านต้องการเริ่มเกมใหม่ทั้งหมดจริงหรือ? ข้อมูลเดิมทั้งหมดจะหายไป")) {
-                localStorage.removeItem('dynasty_game_autosave_v20');
+                localStorage.removeItem('dynasty_game_autosave_v21');
                 location.reload();
             }
         }
@@ -403,7 +403,6 @@
                     </div>
                 `;
             } else if (game.currentTab === 'court') {
-                // ปลดล็อกให้เห็นและเลือกเล่นได้ทุกเส้นทางทั้งขุนนาง ทหาร วังหลัง และราชบุตรเขยแบบ Sandbox อิสระ!
                 container.innerHTML = `
                     <div class="card">
                         <h3>🏛️ ราชสำนัก & วังหลัง (ทุกเส้นทางอิสระ)</h3>
