@@ -141,7 +141,7 @@
 
 <div class="app-container">
     <header>
-        <h1>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Dynasty Eternal Legacy)</h1>
+        <h1>ชีวิตต่างภพ: ตำนานชะตาฟ้า</h1>
         <div class="header-btns">
             <button class="icon-btn" id="sound-btn" onclick="toggleBGM()">🎵</button>
             <button class="icon-btn" onclick="openSystemMenu()">⚙️</button>
@@ -157,7 +157,7 @@
             </div>
 
             <div style="padding: 0 14px; margin-top: 8px;">
-                <button class="btn btn-block" style="background:#2c5e3b; margin-bottom:4px; padding:8px;" onclick="randomizeCharacter()">🎲 สุ่มชะตาจุติอัตโนมัติ (Random Fate)</button>
+                <button class="btn btn-block" style="background:#2c5e3b; margin-bottom:4px; padding:8px;" onclick="randomizeCharacter()">🎲 สุ่มชะตาจุติอัตโนมัติ</button>
             </div>
 
             <div class="setup-form">
@@ -179,23 +179,22 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>จุดเริ่มต้นชะตาชีวิต (Class)</label>
+                    <label>จุดเริ่มต้นชะตาชีวิต (Class & Plot)</label>
                     <select id="setup-origin">
-                        <option value="ทาสรับใช้">ทาสรับใช้ในเรือน (จุดต่ำสุด ต้องไถ่ตัวเป็นอิสระ)</option>
-                        <option value="สามัญชนยากจน">สามัญชนยากจน (สู้ชีวิตด้วยสองมือ)</option>
-                        <option value="ตระกูลขุนนางมู่หรง">ตระกูลขุนนางมู่หรง (ผู้ทรงอิทธิพล)</option>
-                        <option value="ตระกูลแม่ทัพไป๋">ตระกูลแม่ทัพไป๋ (เชี่ยวชาญยุทธ์และทหาร)</option>
+                        <option value="ตระกูลขุนนางถูกใส่ร้าย">ตระกูลขุนนางใหญ่ ถูกใส่ร้ายจนล่มสลาย (ดราม่าเข้มข้น)</option>
+                        <option value="ทาสรับใช้">ทาสรับใช้ในเรือน (ต้องไถ่ตัวเป็นอิสระชน)</option>
+                        <option value="สามัญชนยากจน">สามัญชนยากจน (สู้ชีวิตสร้างตัวด้วยสองมือ)</option>
                         <option value="ราชนิกูลเซียว">ราชนิกูลเซียว (เชื้อพระวงศ์สูงศักดิ์)</option>
                     </select>
                 </div>
                 <div style="display:flex; gap:6px;">
                     <div class="form-group" style="flex:1;">
-                        <label>พรสวรรค์ติดตัว (Trait)</label>
+                        <label>พรสวรรค์ติดตัว</label>
                         <select id="setup-trait">
-                            <option value="วาจาคมคาย">วาจาคมคาย (เพิ่มเสน่ห์)</option>
-                            <option value="ดวงเฮงสวรรค์ประทาน">ดวงเฮง (โชคลาภบ่อย)</option>
-                            <option value="กายเซียนอมตะ">กายเซียนอมตะ (สุขภาพอึด)</option>
-                            <option value="ปราชญ์เปรื่องปราด">ปราชญ์เปรื่อง (สติปัญญาไว)</option>
+                            <option value="วาจาคมคาย">วาจาคมคาย</option>
+                            <option value="ดวงเฮงสวรรค์ประทาน">ดวงเฮง</option>
+                            <option value="กายเซียนอมตะ">กายเซียนอมตะ</option>
+                            <option value="ปราชญ์เปรื่องปราด">ปราชญ์เปรื่อง</option>
                         </select>
                     </div>
                     <div class="form-group" style="flex:1;">
@@ -231,17 +230,17 @@
                 <div class="avatar-box" id="ui-avatar">👶<span class="gender-badge" id="ui-gender">ชาย</span></div>
                 <div class="profile-info">
                     <h2 id="ui-name">มู่หรงเฟิง</h2>
-                    <div class="sub-text" id="ui-meta">อายุ 0 ปี • ตระกูลขุนนาง</div>
+                    <div class="sub-text" id="ui-meta">อายุ 0 ปี • จุดเริ่มต้น</div>
                     <div class="rank-text" id="ui-rank">สถานะ: สามัญชน</div>
                 </div>
             </div>
 
             <div class="quest-banner">
-                <span>🎯 <b>เป้าหมายประจำวัย:</b> <span id="ui-quest-desc">ศึกษาตำราให้สติปัญญาถึง 30</span></span>
+                <span>🎯 <b>เป้าหมาย:</b> <span id="ui-quest-desc">พัฒนาตนเองและสร้างตำนานตระกูล</span></span>
             </div>
 
             <div class="energy-bar-container">
-                <div class="energy-title">⚡ พลังงานประจำปี (Action Points):</div>
+                <div class="energy-title">⚡ พลังงานประจำปี:</div>
                 <div class="energy-dots" id="energy-dots">
                     <div class="energy-dot active"></div>
                     <div class="energy-dot active"></div>
@@ -268,34 +267,32 @@
                 <div class="menu-list">
                     <div class="section-header">กิจกรรมพัฒนาตนเอง (ใช้พลังงาน ⚡)</div>
                     <div class="action-card" onclick="doActivity('study')">
-                        <div class="action-left"><span class="icon">📚</span><div class="info"><h4 id="act-study-title">ศึกษาตำรา / งานเรือน</h4><p id="act-study-desc">ฝึกฝนปัญญาและศิลปะสี่แขนง</p></div></div>
+                        <div class="action-left"><span class="icon">📚</span><div class="info"><h4>ศึกษาตำราปราชญ์</h4><p>ฝึกฝนสติปัญญาและความรู้</p></div></div>
                     </div>
                     <div class="action-card" onclick="doActivity('train')">
-                        <div class="action-left"><span class="icon">⚔️</span><div class="info"><h4>ฝึกวิทยายุทธ์ / กายบริหาร</h4><p>บำรุงรักษาร่างกายให้แข็งแกร่ง</p></div></div>
+                        <div class="action-left"><span class="icon">⚔️</span><div class="info"><h4>ฝึกวิทยายุทธ์</h4><p>บำรุงรักษาร่างกาย</p></div></div>
                     </div>
                     <div class="action-card" onclick="doActivity('social')">
-                        <div class="action-left"><span class="icon">🪕</span><div class="info"><h4>เจรจาเข้าสังคม / ศิลปะ</h4><p>พบปะสหาย เพิ่มเสน่ห์และคอนเนกชัน</p></div></div>
+                        <div class="action-left"><span class="icon">🪕</span><div class="info"><h4>เจรจาเข้าสังคม</h4><p>พบปะสหาย เพิ่มเสน่ห์</p></div></div>
                     </div>
 
-                    <div class="section-header">การหมอ & สุขภาพ</div>
-                    <div class="action-card" onclick="visitDoctor()">
-                        <div class="action-left"><span class="icon">🩺</span><div class="info"><h4>ตรวจชีพจรหมอหลวง & ยาบำรุง</h4><p>รักษาร่างกาย ซื้อโสมพันปี (30 ตำลึง)</p></div></div>
-                    </div>
-
-                    <div class="section-header">แหล่งบันเทิง & ท่องเที่ยวในเมือง</div>
+                    <div class="section-header">แหล่งบันเทิง & คอนเนกชันในเมือง</div>
                     <div class="action-card" onclick="openTavern()">
-                        <div class="action-left"><span class="icon">🏮</span><div class="info"><h4>โรงเตี๊ยม & ฟังข่าวกรองลับ</h4><p>หาข่าวสารบ้านเมืองและเบาะแสสมบัติ</p></div></div>
+                        <div class="action-left"><span class="icon">🏮</span><div class="info"><h4>โรงเตี๊ยม (ฟังข่าวกรอง & ค้าขาย)</h4><p>หาเบาะแสและกำไรทองคำ</p></div></div>
                     </div>
-                    <div class="action-card" onclick="openOperaHouse()">
-                        <div class="action-left"><span class="icon">🎭</span><div class="info"><h4>โรงงิ้ว & เสพศิลป์เมืองหลวง</h4><p>ชมการแสดงงิ้วโบราณ ผ่อนคลาย (เสน่ห์ +5)</p></div></div>
+                    <div class="action-card" onclick="openPleasureHouse()">
+                        <div class="action-left"><span class="icon">🪭</span><div class="info"><h4>โรงคณิกา (สังสรรค์ & ไถ่ตัว)</h4><p>พบยอดหญิงงาม/บุรุษงาม หาคนรู้ใจ</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="visitDoctor()">
+                        <div class="action-left"><span class="icon">🩺</span><div class="info"><h4>ตรวจชีพจร & ยาบำรุงหลวง (30 ตำลึง)</h4><p>ฟื้นฟูสุขภาพร่างกาย</p></div></div>
                     </div>
 
-                    <div class="section-header">เส้นทางอาชีพ / ราชสำนัก / ชิงบัลลังก์</div>
+                    <div class="section-header">ราชสำนัก & ก่อการกบฏ</div>
                     <div class="action-card" onclick="takeCareerAction()">
-                        <div class="action-left"><span class="icon" id="career-icon">🏛️</span><div class="info"><h4 id="career-title">สอบขุนนาง / คัดเลือกฝ่ายใน</h4><p id="career-desc">ไต่เต้าตำแหน่งในราชสำนัก</p></div></div>
+                        <div class="action-left"><span class="icon">🏛️</span><div class="info"><h4 id="career-title">สอบขุนนาง / ไต่เต้าตำแหน่ง</h4><p>รับเบี้ยหวัดและอำนาจ</p></div></div>
                     </div>
                     <div class="action-card" onclick="tryRebellion()">
-                        <div class="action-left"><span class="icon">👑</span><div class="info"><h4>ก่อการกบฏ / ชิงบัลลังก์แผ่นดิน</h4><p>ยึดอำนาจสถาปนาตนเองเป็นฮ่องเต้</p></div></div>
+                        <div class="action-left"><span class="icon">👑</span><div class="info"><h4>ก่อการกบฏ / ชิงบัลลังก์</h4><p>สถาปนาตนเป็นฮ่องเต้ผู้ยิ่งใหญ่</p></div></div>
                     </div>
                 </div>
             </div>
@@ -304,9 +301,9 @@
             <div id="page-family" class="page">
                 <div class="menu-list">
                     <div class="action-card" onclick="findPartner()">
-                        <div class="action-left"><span class="icon">💍</span><div class="info"><h4>หมั้นหมาย / แต่งงาน</h4><p>เสาะหาคู่ครองและเลือกสถานะเรือนหลัง</p></div></div>
+                        <div class="action-left"><span class="icon">💍</span><div class="info"><h4>หมั้นหมาย & แต่งงาน (ฮูหยิน/อนุ)</h4><p>สร้างเรือนหลังและเผชิญศึกในเรือน</p></div></div>
                     </div>
-                    <div class="section-header">ผังสายสัมพันธ์ตระกูล & ทายาท (คลิกเพื่อสลับเล่นเป็นลูก)</div>
+                    <div class="section-header">ผังสายสัมพันธ์ตระกูล & ทายาท (สลับเล่นรุ่นลูกได้)</div>
                     <div id="family-list" style="display:flex; flex-direction:column; gap:6px;"></div>
                 </div>
             </div>
@@ -316,18 +313,18 @@
                 <div class="menu-list">
                     <div class="section-header">ระบบย้อนเวลาสวรรค์ (Time-Loop)</div>
                     <div class="action-card" onclick="rewindTime()">
-                        <div class="action-left"><span class="icon">⏳</span><div class="info"><h4>ย้อนเวลากลับไป 1 ปี (Time-Loop)</h4><p>ย้อนกลับไปแก้ไขเหตุการณ์ที่ผ่านมา (ใช้ 50 ตำลึง)</p></div></div>
+                        <div class="action-left"><span class="icon">⏳</span><div class="info"><h4>ย้อนเวลากลับไป 1 ปี (ใช้ 50 ตำลึง)</h4><p>แก้ไขความผิดพลาดในอดีต</p></div></div>
                     </div>
 
-                    <div class="section-header">ระบบจัดการเกม (Save / Load)</div>
+                    <div class="section-header">จัดการข้อมูลเกม</div>
                     <div class="action-card" onclick="saveGame(true)">
-                        <div class="action-left"><span class="icon">💾</span><div class="info"><h4>บันทึกเกม (Save Game)</h4><p>บันทึกลงเบราว์เซอร์ปัจจุบัน</p></div></div>
+                        <div class="action-left"><span class="icon">💾</span><div class="info"><h4>บันทึกเกม (Save)</h4><p>เซฟข้อมูลปัจจุบัน</p></div></div>
                     </div>
                     <div class="action-card" onclick="loadGame(true)">
-                        <div class="action-left"><span class="icon">📂</span><div class="info"><h4>โหลดเกม (Load Game)</h4><p>เล่นต่อจากไฟล์บันทึกล่าสุด</p></div></div>
+                        <div class="action-left"><span class="icon">📂</span><div class="info"><h4>โหลดเกม (Load)</h4><p>เล่นต่อจากเซฟล่าสุด</p></div></div>
                     </div>
                     <div class="action-card" onclick="resetGameData()">
-                        <div class="action-left"><span class="icon">🔄</span><div class="info"><h4>เริ่มจุติชีวิตใหม่</h4><p>ลบตัวละครนี้และเริ่มจุติใหม่</p></div></div>
+                        <div class="action-left"><span class="icon">🔄</span><div class="info"><h4>เริ่มจุติชีวิตใหม่</h4><p>ล้างข้อมูลทั้งหมด</p></div></div>
                     </div>
                 </div>
             </div>
@@ -340,9 +337,9 @@
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav" id="main-nav" style="display:none;">
-        <div class="nav-item active" onclick="switchTab('timeline', this)"><span class="nav-icon">📜</span><span>ภาพรวมชีวิต</span></div>
-        <div class="nav-item" onclick="switchTab('activities', this)"><span class="nav-icon">⚡</span><span>กิจกรรม/อาชีพ</span></div>
-        <div class="nav-item" onclick="switchTab('family', this)"><span class="nav-icon">👨‍👩‍👧</span><span>ตระกูล/สหาย</span></div>
+        <div class="nav-item active" onclick="switchTab('timeline', this)"><span class="nav-icon">📜</span><span>ภาพรวม</span></div>
+        <div class="nav-item" onclick="switchTab('activities', this)"><span class="nav-icon">⚡</span><span>กิจกรรม</span></div>
+        <div class="nav-item" onclick="switchTab('family', this)"><span class="nav-icon">👨‍👩‍👧</span><span>ตระกูล</span></div>
         <div class="nav-item" onclick="switchTab('system', this)"><span class="nav-icon">⚙️</span><span>ระบบ</span></div>
     </nav>
 
@@ -359,28 +356,11 @@
 <script>
     let audioCtx = null, bgmInterval = null, bgmPlaying = false, lastPlayerState = null;
     function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-    function playSoundEffect(freq, type='sine', duration=0.15) {
-        try {
-            initAudio();
-            let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
-            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.start(); osc.stop(audioCtx.currentTime + duration);
-        } catch(e){}
-    }
     function toggleBGM() {
         initAudio(); bgmPlaying = !bgmPlaying;
         document.getElementById('sound-btn').innerText = bgmPlaying ? "🔊" : "🎵";
-        if (bgmPlaying) {
-            let notes = [261.63, 293.66, 329.63, 392.00, 440.00];
-            bgmInterval = setInterval(() => {
-                if (!bgmPlaying) return;
-                playSoundEffect(notes[Math.floor(Math.random() * notes.length)], 'triangle', 0.4);
-            }, 900);
-        } else { clearInterval(bgmInterval); }
     }
+
     const nobleSurnames = ["มู่หรง", "เซียว", "ไป๋", "ฮวา", "เฉิน"];
     const maleNames = ["เฟิง", "เฉิน", "เจ๋อ", "อวี่", "หยาง"];
     const femaleNames = ["เหมย", "หลาน", "อาน", "หลิน", "ชิง"];
@@ -389,33 +369,26 @@
         let n = gender === 'ชาย' ? maleNames[Math.floor(Math.random() * maleNames.length)] : femaleNames[Math.floor(Math.random() * femaleNames.length)];
         return s + n;
     }
+
     function randomizeCharacter() {
         let g = Math.random() > 0.5 ? 'ชาย' : 'หญิง';
         document.getElementById('setup-gender').value = g;
         document.getElementById('setup-name').value = getRandomName(g);
         alert("🎲 สุ่มชะตาเรียบร้อย!");
     }
+
     const maleRanks = ["สามัญชน", "บัณฑิตซิ่วไฉ", "ขุนนางขั้น 9", "ขุนนางขั้น 7", "ขุนนางขั้น 5", "ขุนนางขั้น 3", "อัครมหาเสนาบดี", "👑 ฮ่องเต้"];
     const femaleRanks = ["สามัญชน", "คุณหนูเรือนใน", "นางกำนัล", "สนมปลายแถว", "พระสนมกุ้ยเหริน", "พระสนมเอก", "พระอัครมเหสีฮองเฮา"];
+
     let player = {
-        name: "มู่หรงเฟิง", dynasty: "ราชวงศ์เซียว", city: "ฉางอัน", origin: "ตระกูลขุนนางมู่หรง", gender: "ชาย",
-        trait: "วาจาคมคาย", element: "ธาตุทอง", season: "ฤดูใบไม้ผลิ", isSlave: false, slaveFreed: true,
-        age: 0, energy: 3, health: 100, intel: 50, charm: 50, moral: 50, repu: 10, money: 100,
-        rankLevel: 0, partner: null, partnerStatus: null, parentsName: "ท่านพ่อและท่านแม่", parentsAffection: 80,
-        siblings: [], bestFriend: "หลินเฟิง", rivalName: "เฉินเทียน", sect: null, sectLevel: 0,
-        properties: [], relics: [], children: [], timeline: [], ancestralHall: []
+        name: "มู่หรงเฟิง", dynasty: "ราชวงศ์เซียว", city: "ฉางอัน", origin: "ตระกูลขุนนางถูกใส่ร้าย", gender: "ชาย",
+        trait: "วาจาคมคาย", element: "ธาตุทอง", age: 0, energy: 3, health: 100, intel: 50, charm: 50, 
+        moral: 50, repu: 10, money: 100, rankLevel: 0, partner: null, partnerStatus: null, 
+        children: [], timeline: [], ancestralHall: []
     };
+
     function getRankName() { return player.gender === 'ชาย' ? maleRanks[player.rankLevel] : femaleRanks[player.rankLevel]; }
-    function getTitleName() {
-        if (player.rankLevel >= 7) return "องค์จักรพรรดิผู้ทรงธรรม";
-        if (player.money >= 2000) return "คหบดีมหาเศรษฐี";
-        return "สามัญชนผู้สร้างตำนาน";
-    }
-    function getQuestText() {
-        if (player.age < 15) return "ศึกษาตำราให้สติปัญญาถึง 30";
-        if (player.age < 30) return "สอบขุนนางหรือคัดเลือกเข้าวัง";
-        return "สะสมความมั่งคั่งและสืบทอดตระกูล";
-    }
+
     function initGame() {
         player.name = document.getElementById('setup-name').value || "มู่หรงเฟิง";
         player.dynasty = document.getElementById('setup-dynasty').value;
@@ -423,44 +396,56 @@
         player.origin = document.getElementById('setup-origin').value;
         player.gender = document.getElementById('setup-gender').value;
         player.trait = document.getElementById('setup-trait').value;
+
+        if (player.origin === 'ตระกูลขุนนางถูกใส่ร้าย') {
+            player.money = 30; player.repu = 0;
+            addTimeline("💥 เกิดในตระกูลขุนนางใหญ่ แต่ถูกศัตรูใส่ร้ายป้ายสีจนตระกูลล่มสลาย ต้องใช้ชีวิตอย่างยากลำบากเพื่อรอวันทวงคืนความยุติธรรม!", 'bad');
+        } else if (player.origin === 'ทาสรับใช้') {
+            player.money = 10;
+            addTimeline("⛓️ ถือกำเนิดเป็นทาสรับใช้ในจวนขุนนาง ต้องดิ้นรนไถ่ถอนตัว", 'bad');
+        } else {
+            addTimeline(`🌸 ถือกำเนิดขึ้น ณ เมือง${player.city} ในฐานะ '${player.origin}'`, 'good');
+        }
+
         document.getElementById('page-setup').style.display = 'none';
         document.getElementById('game-view').style.display = 'flex';
         document.getElementById('main-nav').style.display = 'flex';
-        addTimeline(`ถือกำเนิดขึ้น ณ เมือง${player.city} ยุค${player.dynasty} ในฐานะ '${player.origin}'`, 'good');
         updateUI(); saveGame(false);
     }
+
     function switchTab(tabId, el) {
-        playSoundEffect(440);
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         document.getElementById('page-' + tabId).classList.add('active');
         if (el) el.classList.add('active');
     }
+
     function updateUI() {
         document.getElementById('ui-avatar').innerHTML = (player.age < 3 ? '👶' : (player.age < 15 ? (player.gender === 'ชาย' ? '👦' : '👧') : (player.gender === 'ชาย' ? '👨' : '👩'))) + `<span class="gender-badge">${player.gender}</span>`;
         document.getElementById('ui-name').innerText = player.name;
-        document.getElementById('ui-meta').innerText = `อายุ ${player.age} ปี • เมือง${player.city}`;
+        document.getElementById('ui-meta').innerText = `อายุ ${player.age} ปี • ${player.origin}`;
         document.getElementById('ui-rank').innerText = `สถานะ: ${getRankName()}`;
-        document.getElementById('ui-quest-desc').innerText = getQuestText();
         document.getElementById('st-health').innerText = player.health;
         document.getElementById('st-intel').innerText = player.intel;
         document.getElementById('st-charm').innerText = player.charm;
         document.getElementById('st-moral').innerText = player.moral;
         document.getElementById('st-repu').innerText = player.repu;
         document.getElementById('st-money').innerText = player.money + " ตำลึง";
-        
+
         let dots = document.getElementById('energy-dots').children;
         for (let i = 0; i < 3; i++) {
             if (i < player.energy) dots[i].classList.add('active');
             else dots[i].classList.remove('active');
         }
 
-        let famHTML = `<div class="action-card"><div class="action-left"><span class="icon">👴</span><div class="info"><h4>${player.parentsName}</h4><p>ความกตัญญู: ${player.parentsAffection}%</p></div></div></div>`;
+        let famHTML = player.partner ? `<div class="action-card"><div class="action-left"><span class="icon">❤️</span><div class="info"><h4>คู่ครอง: ${player.partner} (${player.partnerStatus})</h4><p>ร่วมทุกข์ร่วมสุขในเรือนหลัง</p></div></div></div>` : `<div class="action-card"><div class="action-left"><span class="icon">👤</span><div class="info"><h4>ยังไม่มีคู่ครอง</h4><p>ไปที่เมนูหมั้นหมายเพื่อหาคู่</p></div></div></div>`;
+        
         player.children.forEach((c, i) => {
-            famHTML += `<div class="action-card" onclick="switchToChild(${i})"><div class="action-left"><span class="icon">👶</span><div class="info"><h4>${c.name} (${c.gender}) - อายุ ${c.age} ปี</h4><p>👑 คลิกเพื่อสลับเล่นเป็นบุตรคนนี้ทันที!</p></div></div></div>`;
+            famHTML += `<div class="action-card" onclick="switchToChild(${i})"><div class="action-left"><span class="icon">👶</span><div class="info"><h4>บุตร: ${c.name} (${c.gender}) - อายุ ${c.age} ปี</h4><p>👑 คลิกเพื่อสลับเล่นเป็นทายาทคนนี้ทันที!</p></div></div></div>`;
         });
         document.getElementById('family-list').innerHTML = famHTML;
     }
+
     function addTimeline(text, type='') {
         player.timeline.unshift({ age: player.age, text: text, type: type });
         document.getElementById('timeline-feed').innerHTML = player.timeline.map(item => `
@@ -470,62 +455,101 @@
             </div>
         `).join('');
     }
+
     function doActivity(type) {
-        if (player.energy <= 0) { alert("พลังงานหมดแล้ว! กดเพิ่มอายุเพื่อขึ้นปีใหม่"); return; }
+        if (player.energy <= 0) { alert("พลังงานประจำปีหมดแล้ว! กดเพิ่มอายุเพื่อข้ามไปปีถัดไป"); return; }
         player.energy--;
-        if (type === 'study') { player.intel += 4; addTimeline("ศึกษาตำราปราชญ์ (สติปัญญา +4)"); }
-        else if (type === 'train') { player.health = Math.min(100, player.health + 4); addTimeline("ฝึกฝนร่างกาย (สุขภาพ +4)"); }
-        else if (type === 'social') { player.charm += 4; addTimeline("ออกงานสังคม (เสน่ห์ +4)"); }
+        if (type === 'study') { player.intel += 5; addTimeline("ศึกษาตำราปราชญ์ (สติปัญญา +5)"); }
+        else if (type === 'train') { player.health = Math.min(100, player.health + 5); addTimeline("ฝึกวิทยายุทธ์บำรุงธาตุ (สุขภาพ +5)"); }
+        else if (type === 'social') { player.charm += 5; addTimeline("เจรจาเข้าสังคมและประชันบทกลอน (เสน่ห์ +5)"); }
         updateUI();
     }
-    function openTavern() { player.money += 15; addTimeline("แวะโรงเตี๊ยม หาเบาะแสการค้า (เงิน +15 ตำลึง)"); updateUI(); alert("ได้กำไรจากการค้าขาย 15 ตำลึง!"); }
-    function openOperaHouse() { player.charm += 5; addTimeline("ชมโรงงิ้วหลวง ผ่อนคลาย (เสน่ห์ +5)"); updateUI(); alert("ชมโรงงิ้วสำราญใจ เสน่ห์เพิ่มขึ้น!"); }
+
+    function openTavern() {
+        player.money += 20; addTimeline("🏮 แวะโรงเตี๊ยม ฟังข่าวกรองและค้าขายเล็กๆ ได้กำไร (เงิน +20 ตำลึง)");
+        updateUI(); alert("ได้กำไรจากการค้าขายในโรงเตี๊ยม 20 ตำลึง!");
+    }
+
+    function openPleasureHouse() {
+        document.getElementById('modal-title').innerText = "🪭 โรงคณิกา & หอสุราอันเลื่องชื่อ";
+        document.getElementById('modal-desc').innerText = "สถานที่สังสรรค์ของเหล่าผู้มีชื่อเสียง มีบุรุษ/หญิงงามคอยขับกล่อมบทเพลงและรินสุรา";
+        let cBox = document.getElementById('modal-choices');
+        cBox.innerHTML = `
+            <button class="choice-btn" onclick="pleasureAction(1)">ดื่มสุรารื่นเริงและฟังดนตรี (เสน่ห์ +6, ชื่อเสียง +3)</button>
+            <button class="choice-btn" onclick="pleasureAction(2)">ไถ่ตัวคนงามมาเป็นอนุ/คู่ครอง (ใช้ 150 ตำลึง)</button>
+            <button class="choice-btn" onclick="closeModal()">ออกจากโรงคณิกา</button>
+        `;
+        document.getElementById('event-modal').classList.add('active');
+    }
+
+    function pleasureAction(opt) {
+        if (opt === 1) {
+            player.charm += 6; player.repu += 3;
+            addTimeline("🪭 สังสรรค์ในโรงคณิกา ผูกมิตรกับผู้มีอิทธิพล (เสน่ห์ +6, ชื่อเสียง +3)", 'good');
+            alert("สังสรรค์สำราญใจ เสน่ห์เพิ่มขึ้น!");
+        } else {
+            if (player.money < 150) { alert("เงินไม่พอไถ่ตัว! ต้องการ 150 ตำลึง"); return; }
+            player.money -= 150;
+            let partnerName = getRandomName(player.gender === 'ชาย' ? 'หญิง' : 'ชาย');
+            player.partner = partnerName; player.partnerStatus = "อนุภรรยา (จากโรงคณิกา)";
+            addTimeline(`🪭 ใช้เงิน 150 ตำลึงไถ่ตัว '${partnerName}' จากโรงคณิกามาเป็นอนุภรรยาในเรือน`, 'good');
+            alert(`ไถ่ตัว '${partnerName}' สำเร็จ! พาเข้าเรือนเรียบร้อย`);
+        }
+        closeModal(); updateUI();
+    }
+
     function visitDoctor() {
         if (player.money < 30) { alert("เงินไม่พอ! ค่ารักษา 30 ตำลึง"); return; }
-        player.money -= 30; player.health = Math.min(100, player.health + 20);
-        addTimeline("🩺 ตรวจชีพจรหมอหลวงและดื่มยาบำรุง (สุขภาพ +20)", 'good');
-        updateUI(); alert("ร่างกายแข็งแรงขึ้น สุขภาพ +20!");
+        player.money -= 30; player.health = Math.min(100, player.health + 25);
+        addTimeline("🩺 ตรวจชีพจรหมอหลวงและดื่มโสมพันปี (สุขภาพ +25)", 'good');
+        updateUI(); alert("สุขภาพฟื้นฟูแข็งแรงขึ้นมาก!");
     }
+
     function takeCareerAction() {
-        if (player.age < 16) { alert("ต้องมีอายุ 16 ปีขึ้นไป!"); return; }
-        let req = (player.rankLevel + 1) * 20;
+        if (player.age < 16) { alert("ต้องมีอายุ 16 ปีขึ้นไปจึงจะสอบขุนนางได้!"); return; }
+        let req = (player.rankLevel + 1) * 25;
         if (player.intel >= req) {
             player.rankLevel++;
-            addTimeline(`เลื่อนยศเป็น '${getRankName()}' สำเร็จ!`, 'good');
+            addTimeline(`🏛️ สอบผ่านและได้รับการแต่งตั้งเป็น '${getRankName()}' สำเร็จ!`, 'good');
             alert(`เลื่อนยศเป็น '${getRankName()}' สำเร็จ!`);
         } else {
-            alert(`สติปัญญาไม่ถึง! ต้องการ ${req} แต้ม`);
+            alert(`สติปัญญาไม่ถึง! ต้องการ ${req} แต้ม (ปัจจุบัน ${player.intel})`);
         }
         updateUI();
     }
+
     function tryRebellion() {
         if (player.money >= 300 && player.intel >= 100) {
             player.rankLevel = 7;
-            addTimeline("👑 ก่อการกบฏยึดอำนาจสำเร็จ สถาปนาตนเป็นฮ่องเต้!", 'good');
-            alert("สำเร็จ! ทรงขึ้นครองราชย์เป็นฮ่องเต้ผู้ยิ่งใหญ่ 🎉");
+            addTimeline("👑 นำกำลังพลก่อการกบฏยึดนครหลวง สำเร็จสถาปนาตนเป็น 'ฮ่องเต้' ผู้ยิ่งใหญ่!", 'good');
+            alert("สำเร็จ! ทรงขึ้นครองราชย์เป็นฮ่องเต้ครองแผ่นดิน 🎉");
         } else {
-            alert("กำลังพล ทรัพย์สิน หรือสติปัญญาไม่เพียงพอที่จะก่อการกบฏ!");
+            alert("ทรัพย์สิน (ต้องการ 300+) หรือสติปัญญา (ต้องการ 100+) ยังไม่พอที่จะก่อการกบฏ!");
         }
         updateUI();
     }
+
     function findPartner() {
         if (player.age < 16) { alert("ต้องมีอายุ 16 ปีขึ้นไป"); return; }
+        if (player.partner) { alert("ท่านมีคู่ครองอยู่แล้ว!"); return; }
         let p = getRandomName(player.gender === 'ชาย' ? 'หญิง' : 'ชาย');
         player.partner = p; player.partnerStatus = "ฮูหยินเอก";
-        addTimeline(`💍 สมรสกับ '${p}' ครองเรือนคู่ชีวิต`, 'good');
+        addTimeline(`💍 เข้าพิธีสมรสกับ '${p}' ในฐานะ '${player.partnerStatus}' ครองเรือน`, 'good');
         alert(`แต่งงานกับ '${p}' สำเร็จ!`);
         updateUI();
     }
+
     function switchToChild(idx) {
         let child = player.children[idx];
         player.name = child.name; player.gender = child.gender; player.age = child.age;
         player.health = 100; player.rankLevel = 0; player.partner = null; player.children = [];
-        addTimeline(`✨ สลับมาสวมบทบาทเล่นเป็นทายาท '${player.name}' ไร้รอยต่อ`, 'good');
+        addTimeline(`✨ สลับมาสวมบทบาทสืบทอดชีวิตเป็นทายาท '${player.name}' ไร้รอยต่อ`, 'good');
         alert(`สลับมาเล่นเป็น '${player.name}' สำเร็จ!`);
         updateUI(); saveGame(false);
     }
+
     function rewindTime() {
-        if (!lastPlayerState) { alert("ยังไม่มีข้อมูลให้ย้อนเวลา!"); return; }
+        if (!lastPlayerState) { alert("ยังไม่มีประวัติช่วงเวลาให้ย้อนกลับไป!"); return; }
         if (player.money < 50) { alert("ต้องการ 50 ตำลึงเพื่อใช้พลังย้อนเวลา (Time-Loop)"); return; }
         player.money -= 50;
         player = JSON.parse(JSON.stringify(lastPlayerState));
@@ -533,30 +557,55 @@
         alert("ย้อนเวลากลับมา 1 ปีสำเร็จ!");
         updateUI();
     }
+
+    function triggerRandomEvent() {
+        const events = [
+            { title: "ศึกชิงอำนาจในเรือนหลัง", desc: "เกิดการกระทบกระทั่งกันระหว่างบ่าวในเรือนกับอนุภรรยา คุณจะจัดการอย่างไร?", choices: [ { text: "เข้าข้างคู่สมรส (ความสัมพันธ์แน่นแฟ้นขึ้น)", action: () => { player.charm += 4; addTimeline("จัดการปัญหาเรือนหลังด้วยความยุติธรรม เสน่ห์เพิ่มขึ้น", 'good'); } }, { text: "ลงโทษเด็ดขาดเพื่อรักษาความสงบ (คุณธรรม +5)", action: () => { player.moral += 5; addTimeline("จัดระเบียบเรือนหลังอย่างเด็ดขาด ชื่อเสียงคุณธรรมขจรขจาย", 'good'); } } ] },
+            { title: "จดหมายจากอดีตคู่ปรับ", desc: "ศัตรูเก่าส่งจดหมายมาท้าทายอำนาจและชื่อเสียงของคุณในเมืองหลวง", choices: [ { text: "เขียนกลอนโต้กลับประจานความผิด (ปัญญา +6)", action: () => { player.intel += 6; addTimeline("เขียนบทกลอนโต้กลับจนคู่ปรับเสียหน้า (สติปัญญา +6)", 'good'); } }, { text: "เผาทิ้งไม่ใส่ใจ", action: () => {} } ] }
+        ];
+        let ev = events[Math.floor(Math.random() * events.length)];
+        document.getElementById('modal-title').innerText = "⚡ เหตุการณ์ดราม่า: " + ev.title;
+        document.getElementById('modal-desc').innerText = ev.desc;
+        let cHTML = "";
+        ev.choices.forEach((c, idx) => {
+            cHTML += `<button class="choice-btn" onclick="resolveEvent(${idx})">${c.text}</button>`;
+        });
+        window.currentEventAction = ev.choices;
+        document.getElementById('modal-choices').innerHTML = cHTML;
+        document.getElementById('event-modal').classList.add('active');
+    }
+
+    function resolveEvent(idx) {
+        if(window.currentEventAction && window.currentEventAction[idx]) window.currentEventAction[idx].action();
+        document.getElementById('event-modal').classList.remove('active');
+        updateUI();
+    }
+
+    function closeModal() { document.getElementById('event-modal').classList.remove('active'); }
+
     function ageUp() {
         lastPlayerState = JSON.parse(JSON.stringify(player));
         player.age++; player.energy = 3;
         player.children.forEach(c => c.age++);
         addTimeline(`ผ่านไปอีก 1 ปี อายุครบรอบ ${player.age} ปี`);
-        if (player.partner && player.age >= 18 && player.age <= 40 && Math.random() < 0.3) {
+
+        if (player.partner && player.age >= 18 && player.age <= 45 && Math.random() < 0.3) {
             let cGen = Math.random() > 0.5 ? 'ชาย' : 'หญิง';
             let cName = getRandomName(cGen);
             player.children.push({ name: cName, gender: cGen, age: 0 });
-            addTimeline(`🎉 กำเนิดบุตร (${cName}) สืบทอดตระกูล`, 'good');
+            addTimeline(`🎉 [มงคลตระกูล] กำเนิดบุตร (${cName}) สืบทอดสายเลือด`, 'good');
         }
+
         updateUI(); saveGame(false);
+        if (Math.random() < 0.5) setTimeout(triggerRandomEvent, 400);
     }
+
     function saveGame(n=true) { localStorage.setItem('ANCIENT_LIFE_FINAL_SAVE', JSON.stringify(player)); if(n) alert("💾 บันทึกเกมสำเร็จ!"); }
     function loadGame(n=true) {
         let d = localStorage.getItem('ANCIENT_LIFE_FINAL_SAVE');
-        if(d) { 
-            player = JSON.parse(d); 
-            document.getElementById('page-setup').style.display='none'; 
-            document.getElementById('game-view').style.display='flex'; 
-            document.getElementById('main-nav').style.display='flex'; 
-            updateUI(); if(n) alert("📂 โหลดเกมสำเร็จ!"); 
-        }
+        if(d) { player = JSON.parse(d); document.getElementById('page-setup').style.display='none'; document.getElementById('game-view').style.display='flex'; document.getElementById('main-nav').style.display='flex'; updateUI(); if(n) alert("📂 โหลดเกมสำเร็จ!"); }
     }
+    function openSystemMenu() { switchTab('system', document.querySelectorAll('.nav-item')[3]); }
     function resetGameData() { if(confirm("เริ่มเล่นใหม่ทั้งหมด?")) { localStorage.removeItem('ANCIENT_LIFE_FINAL_SAVE'); location.reload(); } }
     window.onload = () => { if (localStorage.getItem('ANCIENT_LIFE_FINAL_SAVE')) loadGame(false); };
 </script>
