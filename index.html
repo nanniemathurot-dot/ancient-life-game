@@ -776,10 +776,9 @@
 </script>
 <script>
     /* ==========================================
-       ANCIENT LIFE: ALL-IN-ONE MASTER EXTENSION PATCH (V.50)
-       - รวมครบถ้วน 21 หัวข้อระบบเชิงลึกในก้อนเดียว
-       - จัดระเบียบด้วยระบบเมนูซ้อนชั้น (Nested Sub-menus) แยก 3 หมวดหลัก
-       - ระบบเศรษฐกิจสมดุล: บ่อนการพนัน, ซื้อขายที่ดิน/จวน/ทาส, ลาภลอย & ริบสมบัติ
+       ANCIENT LIFE: ALL-IN-ONE MASTER EXTENSION PATCH (V.51)
+       - รวมครบถ้วน 21 หัวข้อระบบเชิงลึก + ระบบเมนูซ้อนชั้น & เศรษฐกิจ
+       - เพิ่มระบบปุ่มกดบันทึก (Manual Save) และโหลดข้อมูล (Load Game) ด้วยตัวเอง
        ========================================== */
 
     if (typeof player !== 'undefined') {
@@ -803,7 +802,38 @@
     }
 
     // ==========================================
-    // 🏛️ หมวดที่ 1: ศูนย์กลางราชสำนัก, ขุนนาง, สอบจอหงวน & ข่าวสารแผ่นดิน (ข้อ 3, 16, 17, 18, 19, 20)
+    // 💾 ระบบ Manual Save & Load (เพิ่มใหม่ใน V.51)
+    // ==========================================
+    window.manualSaveGame = function() {
+        if (typeof player === 'undefined') return;
+        try {
+            localStorage.setItem('ancientLifeMasterSave', JSON.stringify(player));
+            addTimeline("💾 บันทึกเกมสำเร็จ", "บันทึกข้อมูลจวน คลังตระกูล และสถานะตัวละครเรียบร้อยแล้ว", "good");
+            showModal("💾 บันทึกข้อมูลสำเร็จ!", "ข้อมูลการเดินทางของตระกูลท่านถูกบันทึกเก็บไว้ในระบบเรียบร้อย สามารถปิดเกมหรือรีเฟรชได้อย่างปลอดภัย", "✨");
+        } catch (e) {
+            alert("⚠️ เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + e);
+        }
+    };
+
+    window.manualLoadGame = function() {
+        try {
+            let savedData = localStorage.getItem('ancientLifeMasterSave');
+            if (savedData) {
+                window.player = JSON.parse(savedData);
+                if (typeof updateUI === 'function') updateUI();
+                addTimeline("📂 โหลดข้อมูลสำเร็จ", "ดึงข้อมูลเซฟเดิมของตระกูลกลับมาเรียบร้อย", "good");
+                showModal("📂 โหลดเซฟสำเร็จ!", "ยินดีต้อนรับกลับสู่บันทึกประวัติศาสตร์ตระกูลของท่าน!", "🏮");
+            } else {
+                alert("⚠️ ไม่พบข้อมูลเซฟสำรองในระบบบราวเซอร์!");
+            }
+        } catch (e) {
+            alert("⚠️ ไม่สามารถโหลดข้อมูลได้: " + e);
+        }
+    };
+
+
+    // ==========================================
+    // 🏛️ หมวดที่ 1: ศูนย์กลางราชสำนัก, ขุนนาง, สอบจอหงวน & ข่าวสารแผ่นดิน
     // ==========================================
     window.openGovernmentHubModal = function() {
         if (!window.player) return;
@@ -912,7 +942,7 @@
 
 
     // ==========================================
-    // 💰 หมวดที่ 2: คลังสมบัติ, เศรษฐกิจ, บ่อนการพนัน & ซื้อขายที่ดิน/จวน (เศรษฐกิจสมดุล)
+    // 💰 หมวดที่ 2: คลังสมบัติ, เศรษฐกิจ, บ่อนการพนัน & ซื้อขายที่ดิน/จวน
     // ==========================================
     window.openEconomyAndAssetsModal = function() {
         if (!window.player) return;
@@ -972,7 +1002,7 @@
 
 
     // ==========================================
-    // 👑 หมวดที่ 3: วังหลัง, ครอบครัว, ความรัก, งานเลี้ยง, หมั้นหมาย & ลูกหลาน (ข้อ 1, 4, 5, 11, 13, 14, 15, 21)
+    // 👑 หมวดที่ 3: วังหลัง, ครอบครัว, ความรัก, งานเลี้ยง, หมั้นหมาย & ลูกหลาน
     // ==========================================
     window.openFamilyAndHaremModal = function() {
         if (typeof player === 'undefined') return;
@@ -1113,7 +1143,7 @@
 
 
     // ==========================================
-    // 🏮 ศูนย์กลางเมนูหลัก (Hub Menu) เชื่อมโยงทุกหมวดหมู่อย่างไร้รอยต่อ
+    // 🏮 ศูนย์กลางเมนูหลัก (Hub Menu) พร้อมปุ่ม Save / Load
     // ==========================================
     window.openMainActionHub = function() {
         if (!window.player) return;
@@ -1124,18 +1154,18 @@
             <button class="choice-btn" onclick="openGovernmentHubModal()">🏛️ 1. ราชสำนัก, สอบขุนนาง & กรมกอง</button>
             <button class="choice-btn" onclick="openEconomyAndAssetsModal()">💰 2. คลังสมบัติ, บ่อนการพนัน & ซื้อที่ดิน/จวน</button>
             <button class="choice-btn" onclick="openFamilyAndHaremModal()">👑 3. วังหลัง, ครอบครัว, ความรัก & ลูกหลาน</button>
-            <button class="choice-btn" style="color:#d9534f;" onclick="triggerDeathAndSuccessionModal()">🪦 4. สิ้นอายุขัย & สืบสกุลข้ามรุ่น</button>
+            <button class="choice-btn" onclick="manualSaveGame()">💾 4. บันทึกเกม (Manual Save)</button>
+            <button class="choice-btn" onclick="manualLoadGame()">📂 5. โหลดเซฟข้อมูลเดิม (Load Game)</button>
+            <button class="choice-btn" style="color:#d9534f;" onclick="triggerDeathAndSuccessionModal()">🪦 6. สิ้นอายุขัย & สืบสกุลข้ามรุ่น</button>
             <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
         `;
         document.getElementById('result-modal').classList.add('active');
     };
 
-    // ผูกเมนูลัดเข้ากับปุ่มวังหลังเดิม
     window.openAdvancedHaremModal = function() {
         openMainActionHub();
     };
 
-    // ระบบสืบทอดข้ามรุ่น (ข้อ 12) & ออฟไลน์ (ข้อ 10)
     window.triggerDeathAndSuccessionModal = function() {
         document.getElementById('res-icon').innerText = "🪦";
         document.getElementById('res-title').innerText = "🪦 สิ้นอายุขัย & สืบสกุลข้ามรุ่น";
@@ -1189,7 +1219,7 @@
         checkOfflineStatusOnLoad();
     });
 
-    console.log("✅ Ancient Life Masterpiece Master Patch V.50 Loaded Successfully!");
+    console.log("✅ Ancient Life Masterpiece Patch V.51 (With Manual Save/Load) Loaded Successfully!");
 </script>
 </body>
 </html>
