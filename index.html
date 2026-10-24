@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Ultimate Masterpiece V.4)</title>
+    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Ultimate Masterpiece V.5)</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -75,11 +75,13 @@
         .page.active { display: flex; }
 
         .timeline-container { padding: 0 10px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
-        .timeline-item { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 10px 12px; position: relative; }
+        .timeline-item { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 10px 12px; position: relative; cursor: pointer; transition: 0.1s; }
+        .timeline-item:active { background: #fdf2df; transform: scale(0.98); }
         .timeline-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--secondary-gold); border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .timeline-item.good::before { background: #2c5e3b; }
         .timeline-item.bad::before { background: #8b261d; }
-        .timeline-age { font-family: 'Kanit', sans-serif; font-size: 11px; color: var(--primary-red); font-weight: 600; margin-bottom: 2px; }
+        .timeline-age { font-family: 'Kanit', sans-serif; font-size: 11px; color: var(--primary-red); font-weight: 600; margin-bottom: 2px; display: flex; justify-content: space-between; }
+        .timeline-age span.hint { font-size: 9.5px; color: var(--text-light); font-weight: normal; }
         .timeline-desc { font-size: 12.5px; line-height: 1.5; color: var(--text-dark); }
 
         .menu-list { padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
@@ -441,17 +443,17 @@
 
         if (player.ancestralHall && player.ancestralHall.length > 0) {
             player.intel += 10; player.charm += 10; player.money += 50;
-            addTimeline("🧬 ทายาทสายเลือดตระกูลผู้ทรงเกียรติ เกิดมาพร้อมปัญญาและเสน่ห์ล้นเหลือ", 'good');
+            addTimeline("🧬 ทายาทสายเลือดตระกูลผู้ทรงเกียรติ เกิดมาพร้อมปัญญาและเสน่ห์ล้นเหลือ", "ทายาทสายเลือดตระกูลผู้ทรงเกียรติ เกิดมาพร้อมปัญญาและเสน่ห์ล้นเหลือ ได้รับการคาดหวังจากวงศ์ตระกูลอย่างสูงยิ่ง", 'good');
         }
 
         if (player.origin === 'ตระกูลขุนนางถูกใส่ร้าย') {
             player.money = 30; player.repu = 0;
-            addTimeline("💥 ถือกำเนิดในตระกูลขุนนางใหญ่ แต่ถูกศัตรูใส่ร้ายป้ายสีจนตระกูลตกต่ำ ท่านเติบโตท่ามกลางความยากลำบากในเรือน", 'bad');
+            addTimeline("💥 ถือกำเนิดในตระกูลขุนนางใหญ่ แต่ถูกศัตรูใส่ร้ายป้ายสีจนตระกูลตกต่ำ", "ถือกำเนิดในตระกูลขุนนางใหญ่ แต่ถูกศัตรูทางการเมืองใส่ร้ายป้ายสีจนตระกูลล่มสลาย ต้องเติบโตท่ามกลางความยากลำบากและสายตาดูแคลนของผู้คนในจวน", 'bad');
         } else if (player.origin === 'ทาสรับใช้') {
             player.money = 15;
-            addTimeline("⛓️ ถือกำเนิดเป็นทาสรับใช้ในจวนตระกูลใหญ่ เติบโตมาพร้อมภาระหน้าที่และการทำงานหนัก", 'bad');
+            addTimeline("⛓️ ถือกำเนิดเป็นทาสรับใช้ในจวนตระกูลใหญ่", "ถือกำเนิดเป็นทาสรับใช้ในจวนตระกูลใหญ่ เติบโตมาพร้อมภาระหน้าที่และการทำงานหนักตั้งแต่วัยเยาว์ มีความฝันที่จะไถ่ถอนตัวเป็นอิสระ", 'bad');
         } else {
-            addTimeline(`🌸 ถือกำเนิดขึ้นท่ามกลางความยินดี (${player.zodiac}, ${player.element}) ณ เมือง${player.city}`, 'good');
+            addTimeline(`🌸 ถือกำเนิดขึ้นท่ามกลางความยินดี ณ เมือง${player.city}`, `ถือกำเนิดขึ้นท่ามกลางความยินดีของครอบครัว (${player.zodiac}, ${player.element}) ณ เมือง${player.city} บรรยากาศภายในเรือนอนอบอุ่นและเปี่ยมด้วยความหวัง`, 'good');
         }
 
         document.getElementById('page-setup').style.display = 'none';
@@ -526,32 +528,48 @@
         document.getElementById('event-modal').classList.add('active');
     }
 
-    function addTimeline(text, type='') {
-        player.timeline.unshift({ age: player.age, text: text, type: type });
-        document.getElementById('timeline-feed').innerHTML = player.timeline.map(item => `
-            <div class="timeline-item ${item.type}">
-                <div class="timeline-age">[อายุ ${item.age} ปี]</div>
+    function addTimeline(shortText, detailText, type='') {
+        player.timeline.unshift({ age: player.age, text: shortText, detail: detailText || shortText, type: type });
+        renderTimelineFeed();
+    }
+
+    function renderTimelineFeed() {
+        document.getElementById('timeline-feed').innerHTML = player.timeline.map((item, index) => `
+            <div class="timeline-item ${item.type}" onclick="showTimelineDetail(${index})">
+                <div class="timeline-age">[อายุ ${item.age} ปี] <span class="hint">🔍 แตะเพื่ออ่านดีเทล</span></div>
                 <div class="timeline-desc">${item.text}</div>
             </div>
         `).join('');
     }
 
+    function showTimelineDetail(index) {
+        let item = player.timeline[index];
+        document.getElementById('modal-title').innerText = `📜 บันทึกพงศาวดาร (อายุ ${item.age} ปี)`;
+        document.getElementById('modal-desc').innerText = item.detail;
+        document.getElementById('modal-choices').innerHTML = `<button class="choice-btn" onclick="closeModal()">ปิดอ่าน</button>`;
+        document.getElementById('event-modal').classList.add('active');
+    }
+
     function doActivity(type) {
         if (player.energy <= 0) { alert("พลังงานประจำปีหมดแล้ว! กดเพิ่มอายุเพื่อข้ามไปปีถัดไป"); return; }
-        
         if (type === 'train' && player.age < 16) { alert("เจ้ายังเด็กนัก ร่างกายยังไม่เติบโตเต็มที่ (ต้องมีอายุ 16 ปีขึ้นไปจึงจะฝึกวิทยายุทธ์จริงจังได้)"); return; }
 
         player.energy--;
         if (type === 'study') { 
             player.intel += 5; 
-            let msg = player.age < 6 ? "📚 มารดาอ่านนิทานและกลอนโบราณให้ฟัง (สติปัญญา +5)" : "📚 ศึกษาตำราปราชญ์และคัมภีร์โบราณ (สติปัญญา +5)";
-            addTimeline(msg); 
+            let sText = player.age < 6 ? "📚 มารดาอ่านนิทานและกลอนโบราณให้ฟัง" : "📚 ศึกษาตำราปราชญ์และคัมภีร์โบราณ";
+            let dText = player.age < 6 ? "ในยามบ่ายอันเงียบสงบภายในเรือน มารดาโอบกอดและถ่ายทอดตัวอักษร พร้อมเล่าเรื่องราวนิทานพื้นบ้านและบทกลอนโบราณ ช่วยหล่อหลอมสติปัญญาและความเฉลียวฉลาดตั้งแต่เยาว์วัย (สติปัญญา +5)" : "ใช้เวลาทั้งวันขลุกอยู่กับตำราปรัชญาและคัมภีร์โบราณในห้องหนังสือ ขบคิดหลักธรรมและกลยุทธ์การปกครองจนแตกฉาน (สติปัญญา +5)";
+            addTimeline(sText, dText, 'good'); 
         }
-        else if (type === 'train') { player.health = Math.min(100, player.health + 5); addTimeline("⚔️ ฝึกวิทยายุทธ์ร่างกายแข็งแกร่ง (สุขภาพ +5)"); }
+        else if (type === 'train') { 
+            player.health = Math.min(100, player.health + 5); 
+            addTimeline("⚔️ ฝึกวิทยายุทธ์ร่างกายแข็งแกร่ง", "สวมชุดรัดกุมออกไปฝึกกระบี่และกระบวน우ยุทธ์กลางลานจวน เหงื่อชุ่มกายแต่ช่วยให้กล้ามเนื้อและสุขภาพร่างกายสมบูรณ์แข็งแกร่ง (สุขภาพ +5)", 'good'); 
+        }
         else if (type === 'social') { 
             player.charm += 5; 
-            let msg = player.age < 6 ? "🪕 เล่นสนุกกับเด็กๆ ในเรือน (เสน่ห์ +5)" : "🪕 เจรจาเข้าสังคมและประชันกลอนกับสหาย (เสน่ห์ +5)";
-            addTimeline(msg); 
+            let sText = player.age < 6 ? "🪕 เล่นสนุกกับเด็กๆ ในเรือน" : "🪕 เจรจาเข้าสังคมและประชันกลอนกับสหาย";
+            let dText = player.age < 6 ? "วิ่งเล่นหัวเราะร่าเริงกับเด็กรับใช้และญาติสนิทในจวน สร้างบรรยากาศครึกครื้นและเสน่ห์น่าเอ็นดู (เสน่ห์ +5)" : "เข้าร่วมงานเลี้ยงน้ำชาและงานประชันบทกลอน ณ ศาลาริมน้ำ พบปะแลกเปลี่ยนทัศนะกับเหล่าคุณชายคุณหญิงตระกูลอื่น (เสน่ห์ +5)";
+            addTimeline(sText, dText, 'good'); 
         }
         updateUI();
     }
@@ -563,15 +581,15 @@
         let luck = Math.random();
         if (luck < 0.4) {
             player.money += 80;
-            addTimeline("🗺️ สำรวจหุบเขาเซียนพบสมบัติโบราณ (เงิน +80 ตำลึง)", 'good');
+            addTimeline("🗺️ สำรวจหุบเขาเซียนพบสมบัติโบราณ", "เดินทางลึกเข้าไปในหุบเขาเซียนหมอกหนา บังเอิญพบหีบสมบัติเก่าแก่ที่ซ่อนไว้ในโพรงถ้ำ บรรจุเงินทองจำนวนมาก (เงิน +80 ตำลึง)", 'good');
             alert("สำรวจพบขุมทรัพย์เงินทอง 80 ตำลึง!");
         } else if (luck < 0.7) {
             player.relics.push("หยกมังกรโบราณ"); player.repu += 10;
-            addTimeline("🗺️ ค้นพบของล้ำค่า 'หยกมังกรโบราณ' ในถ้ำลับ (ชื่อเสียง +10)", 'good');
+            addTimeline("🗺️ ค้นพบของล้ำค่า 'หยกมังกรโบราณ'", "ปีนป่ายขึ้นไปบนหน้าผาสูงชันและค้นพบถ้ำลับโบราณ ภายในประดิษฐาน 'หยกมังกรโบราณ' เปล่งแสงเรืองรอง สร้างความฮือฮาและชื่อเสียงให้แก่ผู้พบเห็น (ชื่อเสียง +10)", 'good');
             alert("ได้รับของล้ำค่า 'หยกมังกรโบราณ'!");
         } else {
             player.health -= 10;
-            addTimeline("🗺️ เผชิญสัตว์ร้ายในป่าลึก ได้รับบาดเจ็บเล็กน้อย (สุขภาพ -10)", 'bad');
+            addTimeline("🗺️ เผชิญสัตว์ร้ายในป่าลึก ได้รับบาดเจ็บ", "ระหว่างสำรวจป่าลึก พลาดท่าถูกสุนัขป่าหรือสัตว์อสูรจู่โจม แม้จะหนีรอดมาได้แต่ก็ได้รับบาดเจ็บที่แขนขา (สุขภาพ -10)", 'bad');
             alert("เจอสัตว์ร้ายในป่า สุขภาพลดลง!");
         }
         updateUI();
@@ -586,13 +604,14 @@
             alert("🏆 ปลดล็อกฉายาใหม่: 'มหาเศรษฐีร้อยล้าน' บันทึกลงหอเกียรติยศ!");
         }
 
-        addTimeline("🏡 ซื้อเรือนหรูและคฤหาสน์ในเมืองหลวง (ชื่อเสียง +15)", 'good');
+        addTimeline("🏡 ซื้อเรือนหรูและคฤหาสน์ในเมืองหลวง", "ใช้เงินก้อนโตซื้อคฤหาสน์หลังใหญ่ใจกลางเมืองหลวง พร้อมสวนดอกไม้และบึงบัวอันงดงาม ยกระดับฐานะความมั่งคั่งของตระกูลให้เป็นที่ประจักษ์ (ชื่อเสียง +15)", 'good');
         updateUI(); alert("ครอบครองเรือนหรูเรียบร้อยแล้ว!");
     }
 
     function openTavern() {
         if (player.age < 14) { alert("เด็กน้อยยังไม่ควรเข้าไปเที่ยวเตร่ในโรงเตี๊ยมสุรา! (ต้องมีอายุ 14 ปีขึ้นไป)"); return; }
-        player.money += 20; addTimeline("🏮 แวะโรงเตี๊ยม หาข่าวกรองการค้า (เงิน +20 ตำลึง)");
+        player.money += 20; 
+        addTimeline("🏮 แวะโรงเตี๊ยม หาข่าวกรองการค้า", "แวะเวียนไปนั่งจิบชาฟังข่าวสารยุทธภพและเจรจาค้าขายเล็กๆ น้อยๆ กับพ่อค้าเรณู ได้รับผลกำไรพอกพูน (เงิน +20 ตำลึง)", 'good');
         updateUI(); alert("ได้กำไรจากการค้าขายในโรงเตี๊ยม 20 ตำลึง!");
     }
 
@@ -612,14 +631,14 @@
     function pleasureAction(opt) {
         if (opt === 1) {
             player.charm += 6; player.repu += 3;
-            addTimeline("🪭 สังสรรค์ในโรงคณิกา ผูกมิตรกับผู้มีอิทธิพล (เสน่ห์ +6)", 'good');
+            addTimeline("🪭 สังสรรค์ในโรงคณิกา ผูกมิตรกับผู้มีอิทธิพล", "เดินทางไปยังหอสุราชื่อดัง ชมการร่ายรำและประชันบทเพลง ดื่มด่ำบรรยากาศรื่นเริงพร้อมผูกมิตรกับแขกผู้มีเกียรติ (เสน่ห์ +6)", 'good');
             alert("สังสรรค์สำราญใจ เสน่ห์เพิ่มขึ้น!");
         } else {
             if (player.money < 150) { alert("เงินไม่พอไถ่ตัว! ต้องการ 150 ตำลึง"); return; }
             player.money -= 150;
             let partnerName = getRandomName(player.gender === 'ชาย' ? 'หญิง' : 'ชาย');
             player.partner = partnerName; player.partnerStatus = "อนุภรรยา (จากโรงคณิกา)";
-            addTimeline(`🪭 ใช้เงิน 150 ตำลึงไถ่ตัว '${partnerName}' มาเป็นอนุภรรยา`, 'good');
+            addTimeline(`🪭 ใช้เงิน 150 ตำลึงไถ่ตัว '${partnerName}'`, `ใช้ทรัพย์สินส่วนตัวไถ่ถอนตัว '${partnerName}' ยอดพธู/บุรุษงามออกจากหอคณิกา พามาดูแลในเรือนเป็นอนุภรรยาคู่ใจ`, 'good');
             alert(`ไถ่ตัว '${partnerName}' สำเร็จ!`);
         }
         closeModal(); updateUI();
@@ -628,7 +647,7 @@
     function visitDoctor() {
         if (player.money < 30) { alert("เงินไม่พอ! ค่ารักษา 30 ตำลึง"); return; }
         player.money -= 30; player.health = Math.min(100, player.health + 25);
-        addTimeline("🩺 ตรวจชีพจรหมอหลวงและดื่มโสม (สุขภาพ +25)", 'good');
+        addTimeline("🩺 ตรวจชีพจรหมอหลวงและดื่มโสม", "เชิญท่านหมอหลวงฝีมือดีมาตรวจชีพจรที่จวน พร้อมจัดเทียบยาโสมพันปีบำรุงธาตุ ทำให้ร่างกายที่อ่อนล้ากลับมาสดชื่นกระปรี้กระเปร่า (สุขภาพ +25)", 'good');
         updateUI(); alert("สุขภาพฟื้นฟูแข็งแรงขึ้น!");
     }
 
@@ -645,11 +664,11 @@
                 alert("🏆 ปลดล็อกฉายาใหม่: 'แม่ทัพไร้พ่าย' บันทึกลงหอเกียรติยศ!");
             }
 
-            addTimeline("🛡️ นำทัพบุกตะลุยศึกชายแดนจนได้รับชัยชนะ! (เงิน +150, ชื่อเสียง +25)", 'good');
+            addTimeline("🛡️ นำทัพบุกตะลุยศึกชายแดนจนได้รับชัยชนะ!", "นำกองกำลังทหารบุกตะลุยแนวหน้าขับไล่กองทัพข้าศึกจนแตกพ่ายกระเจิง สร้างผลงานความดีความชอบยิ่งใหญ่ เป็นที่เลื่องลือไปทั่วราชสำนัก (เงิน +150, ชื่อเสียง +25)", 'good');
             alert("ได้รับชัยชนะในศึกชายแดน! เลื่อนยศและรับรางวัลมหาศาล 🎉");
         } else {
             player.health -= 25;
-            addTimeline("🛡️ ปะทะศึกชายแดนอย่างดุเดือด กองทัพบาดเจ็บ (สุขภาพ -25)", 'bad');
+            addTimeline("🛡️ ปะทะศึกชายแดนอย่างดุเดือด กองทัพบาดเจ็บ", "สงครามชายแดนดำเนินไปอย่างดุเดือดเลือดพล่าน กองทัพปะทะกับข้าศึกจนสูญเสียหนัก แม้จะรักษาแนวรบไว้ได้แต่ท่านก็ได้รับบาดเจ็บสาหัส (สุขภาพ -25)", 'bad');
             alert("ศึกชายแดนดุเดือด ท่านได้รับบาดเจ็บกลับมา!");
         }
         updateUI();
@@ -658,7 +677,7 @@
     function respectParents() {
         player.parentsAffection = Math.min(100, player.parentsAffection + 10);
         player.moral += 3;
-        addTimeline("👴 กราบไหว้ดูแลบิดามารดาด้วยความกตัญญู (คุณธรรม +3)", 'good');
+        addTimeline("👴 กราบไหว้ดูแลบิดามารดาด้วยความกตัญญู", "เข้าพบท่านพ่อและท่านแม่เพื่อกราบไหว้ปรนนิบัติด้วยความเคารพรัก เอาใจใส่สุขภาพของท่านอย่างใกล้ชิด ได้รับคำอวยพรและรอยยิ้มด้วยความปลาบปลื้ม (คุณธรรม +3)", 'good');
         updateUI(); alert("ความกตัญญูเพิ่มขึ้น บิดามารดามอบพรคุ้มครอง!");
     }
 
@@ -667,13 +686,16 @@
         player.fateCards--;
         let rewardType = Math.random();
         if (rewardType < 0.4) {
-            player.money += 100; addTimeline("🎴 เปิดการ์ดวาสนา: สวรรค์ประทานโชคลาภ (เงิน +100 ตำลึง)", 'good');
+            player.money += 100; 
+            addTimeline("🎴 เปิดการ์ดวาสนา: สวรรค์ประทานโชคลาภ", "จู่ๆ ก็มีพ่อค้าเร่ลึกลับมอบหีบทองคำเล็กๆ ให้โดยอ้างว่าเป็นการตอบแทนบุญคุณในอดีต (เงิน +100 ตำลึง)", 'good');
             alert("โชคดีสุดๆ! ได้รับเงินทอง 100 ตำลึง");
         } else if (rewardType < 0.7) {
-            player.intel += 15; addTimeline("🎴 เปิดการ์ดวาสนา: บรรลุปัญญาญาณลึกล้ำ (สติปัญญา +15)", 'good');
+            player.intel += 15; 
+            addTimeline("🎴 เปิดการ์ดวาสนา: บรรลุปัญญาญาณลึกล้ำ", "นั่งสมาธิใต้ต้นโบตั๋นยามค่ำคืน จู่ๆ สมองก็เกิดประกายความคิดสว่างวาบ เข้าใจหลักสัจธรรมลึกซึ้ง (สติปัญญา +15)", 'good');
             alert("ปัญญาบรรเจิด! สติปัญญาเพิ่มขึ้น 15 แต้ม");
         } else {
-            player.health = 100; addTimeline("🎴 เปิดการ์ดวาสนา: โอสถทิพย์ฟื้นฟูกายา (สุขภาพเต็ม 100)", 'good');
+            player.health = 100; 
+            addTimeline("🎴 เปิดการ์ดวาสนา: โอสถทิพย์ฟื้นฟูกายา", "บังเอิญได้รับโอสถวิเศษจากนักพรตเร่ร่อน เม็ดเดียวทุเลาอาการเจ็บป่วยและฟื้นฟูร่างกายจนหมดจด (สุขภาพเต็ม 100)", 'good');
             alert("สุขภาพกลับมาสมบูรณ์เต็มร้อย!");
         }
         updateUI();
@@ -690,7 +712,7 @@
                 alert("🏆 ปลดล็อกฉายา: 'อัครเสนาบดีคู่บัลลังก์'!");
             }
 
-            addTimeline(`🏛️ สอบผ่านและได้รับการแต่งตั้งเป็น '${getRankName()}' สำเร็จ!`, 'good');
+            addTimeline(`🏛️ สอบผ่านและได้รับการแต่งตั้งเป็น '${getRankName()}'`, `เข้าร่วมการสอบคัดเลือกขุนนางหลวง ณ ท้องพระโรง ทรงตอบข้อสอบราชกิจจานุเบกษาได้อย่างฉาดฉานจนฮ่องเต้โปรดปราน ได้รับการแต่งตั้งเป็น '${getRankName()}' สมใจ`, 'good');
             alert(`เลื่อนยศเป็น '${getRankName()}' สำเร็จ!`);
         } else {
             alert(`สติปัญญาไม่ถึง! ต้องการ ${req} แต้ม`);
@@ -706,7 +728,7 @@
                 player.titles.push("👑 ฮ่องเต้ผู้กุมแผ่นดิน");
                 alert("🏆 ปลดล็อกฉายาสูงสุด: 'ฮ่องเต้ผู้กุมแผ่นดิน'!");
             }
-            addTimeline("👑 นำกำลังพลก่อการกบฏยึดนครหลวง สถาปนาตนเป็น 'ฮ่องเต้'!", 'good');
+            addTimeline("👑 นำกำลังพลก่อการกบฏยึดนครหลวง สถาปนาตนเป็นฮ่องเต้", "รวบรวมกองกำลังทหารและพันธมิตรยุทธภพเข้าปิดล้อมพระราชวังหลวง บดขยี้กองกำลังผู้ภักดีต่อราชสำนักเดิมสำเร็จ สถาปนาตนเองขึ้นเป็น 'ฮ่องเต้' ผู้ครองแผ่นดินใหม่!", 'good');
             alert("สำเร็จ! ทรงขึ้นครองราชย์เป็นฮ่องเต้ครองแผ่นดิน 🎉");
         } else {
             alert("ทรัพย์สิน (ต้องการ 300+) หรือสติปัญญา (ต้องการ 100+) ยังไม่พอที่จะก่อการกบฏ!");
@@ -719,7 +741,7 @@
         if (player.partner) { alert("ท่านมีคู่ครองอยู่แล้ว!"); return; }
         let p = getRandomName(player.gender === 'ชาย' ? 'หญิง' : 'ชาย');
         player.partner = p; player.partnerStatus = "ฮูหยินเอก";
-        addTimeline(`💍 สมรสกับ '${p}' ครองเรือนคู่ชีวิต`, 'good');
+        addTimeline(`💍 สมรสกับ '${p}' ครองเรือนคู่ชีวิต`, `จัดพิธีมงคลสมรสอย่างยิ่งใหญ่สมเกียรติ ร่วมหอลงโรงกับ '${p}' ใช้ชีวิตคู่ร่วมทุกข์ร่วมสุขสร้างครอบครัวอบอุ่นภายในจวน`, 'good');
         alert(`แต่งงานกับ '${p}' สำเร็จ!`);
         updateUI();
     }
@@ -733,7 +755,7 @@
         player.health = 100; player.rankLevel = 0; player.partner = null; player.children = [];
         player.ancestralHall = hallData; player.titles = ["ทายาทผู้สืบสานตำนาน"];
         
-        addTimeline(`✨ สลับมาสวมบทบาทสืบทอดชีวิตเป็นทายาท '${player.name}' ไร้รอยต่อ`, 'good');
+        addTimeline(`✨ สลับมาสวมบทบาทสืบทอดชีวิตเป็นทายาท '${player.name}'`, `สิ้นสุดยุคสมัยของบรรพบุรุษ สลับถ่ายทอดอำนาจและเจตนารมณ์สู่ทายาทรุ่นลูก '${player.name}' เริ่มต้นบทบาทใหม่ในแผ่นดินเดิมอย่างไร้รอยต่อ`, 'good');
         alert(`สลับมาเล่นเป็น '${player.name}' สำเร็จ!`);
         updateUI(); saveGame(false);
     }
@@ -758,7 +780,7 @@
         if (player.money < 50) { alert("ต้องการ 50 ตำลึงเพื่อใช้พลังย้อนเวลา (Time-Loop)"); return; }
         player.money -= 50;
         player = JSON.parse(JSON.stringify(lastPlayerState));
-        addTimeline("⏳ ใช้พลังย้อนเวลา (Time-Loop) กลับมาแก้ไขอดีตสำเร็จ!", 'good');
+        addTimeline("⏳ ใช้พลังย้อนเวลา (Time-Loop) กลับมาแก้ไขอดีต", "พลังแห่งห้วงเวลากาลานุสติทำงาน ย้อนเวลากลับมาแก้ไขเหตุการณ์เมื่อ 1 ปีก่อนหน้าได้สำเร็จ แก้ไขอดีตเพื่อเปลี่ยนอนาคต", 'good');
         alert("ย้อนเวลากลับมา 1 ปีสำเร็จ!");
         updateUI();
     }
@@ -781,7 +803,7 @@
 
     function executeWill(childIdx) {
         let chosenChild = player.children[childIdx];
-        addTimeline(`📜 ทำพินัยกรรมมอบสมบัติให้ '${chosenChild.name}' สืบทอดตระกูล`, 'good');
+        addTimeline(`📜 ทำพินัยกรรมมอบสมบัติให้ '${chosenChild.name}'`, `ในยามที่สังขารโรยรา ได้เรียกทายาทมารวมตัวกันเพื่อทำพินัยกรรม มอบทรัพย์สิน คฤหาสน์ และสิทธิ์สืบทอดตระกูลทั้งหมดให้แก่ '${chosenChild.name}' อย่างเป็นทางการ`, 'good');
         alert(`โอนมรดกให้ '${chosenChild.name}' เรียบร้อย!`);
         closeModal();
         switchToChild(childIdx);
@@ -811,7 +833,6 @@
 
     function closeModalAndCheckEvent() {
         closeModal();
-        // เฉพาะตัวละครที่อายุ 16 ปีขึ้นไปเท่านั้น ถึงจะมีโอกาสเจอศัตรูคู่อาฆาตตามหาตัว
         if (player.age >= 16 && Math.random() < 0.3) {
             setTimeout(triggerRivalEvent, 300);
         } else if (Math.random() < 0.4) {
@@ -836,22 +857,26 @@
     function resolveRival(opt) {
         if (opt === 1) {
             if (player.health >= 50) {
-                player.repu += 10; addTimeline("⚔️ ปะทะเดือดกับมือสังหารของอริจนได้รับชัยชนะ (ชื่อเสียง +10)", 'good');
+                player.repu += 10; 
+                addTimeline("⚔️ ปะทะเดือดกับมือสังหารจนได้รับชัยชนะ", "มือสังหารลอบบุกเข้าจวนยามวิกาล ท่านชักกระบี่เข้าปะทะอย่างดุเดือดจนสามารถสังหารและขับไล่มือสังหารไปได้ ชื่อเสียงขจรขจาย (ชื่อเสียง +10)", 'good');
                 alert("เอาชนะมือสังหารได้สำเร็จ!");
             } else {
-                player.health -= 20; addTimeline("⚔️ ร่างกายอ่อนแอ พลาดท่าบาดเจ็บจากการลอบสังหาร (สุขภาพ -20)", 'bad');
+                player.health -= 20; 
+                addTimeline("⚔️ พลาดท่าบาดเจ็บจากการลอบสังหาร", "ร่างกายอ่อนล้า พลาดท่าถูกมือสังหารของอริลอบทำร้ายจนได้รับบาดเจ็บสาหัส ต้องรีบรักษาตัว (สุขภาพ -20)", 'bad');
                 alert("พลาดท่าได้รับบาดเจ็บ!");
             }
         } else if (opt === 2) {
-            player.intel += 10; addTimeline("🧠 ซ้อนแผนจับกุมมือสังหารและส่งทางการจัดการได้สำเร็จ (สติปัญญา +10)", 'good');
+            player.intel += 10; 
+            addTimeline("🧠 ซ้อนแผนจับกุมมือสังหารของอริ", "ไหวพริบเป็นเลิศ รู้ทันแผนการลอบสังหาร จึงวางกำลังซุ่มล้อมจับกุมมือสังหารไว้ได้คาหนังคาเขา ส่งตัวให้ทางการลงโทษ (สติปัญญา +10)", 'good');
             alert("ซ้อนแผนเล่นงานอริสำเร็จอย่างงดงาม!");
         } else {
             if (player.money >= 50) {
-                player.money -= 50; addTimeline("💰 จ่ายสินบน 50 ตำลึงซื้อความสงบสุขชั่วคราว", 'bad');
+                player.money -= 50; 
+                addTimeline("💰 จ่ายสินบนซื้อความสงบสุขจากอริ", "ยอมเสียเงินทอง 50 ตำลึงติดสินบนคนกลางเพื่อเจรจาสงบศึกชั่วคราว ตัดปัญหาความวุ่นวายกวนใจ", 'bad');
                 alert("ยอมเสียเงินเพื่อความสงบสุข");
             } else {
                 player.health -= 15; player.money = 0;
-                addTimeline("💥 เงินไม่พอจ่าย ถูกมือสังหารทำร้ายข้าวของเสียหาย (สุขภาพ -15)", 'bad');
+                addTimeline("💥 เงินไม่พอจ่าย ถูกมือสังหารทำร้ายจวนพัง", "ทรัพย์สินเงินทองไม่พอจ่ายสินบน ทำให้อริโกรธส่งคนมาทุบทำลายข้าวของเสียหายยับเยิน (สุขภาพ -15)", 'bad');
                 alert("เงินไม่พอ! ถูกทำร้ายข้าวของเสียหาย");
             }
         }
@@ -860,8 +885,8 @@
 
     function triggerRandomEvent() {
         const events = [
-            { title: "ศึกชิงอำนาจในเรือนหลัง", desc: "เกิดการกระทบกระทั่งกันระหว่างบ่าวในเรือนกับคนรับใช้ คุณจะจัดการอย่างไร?", choices: [ { text: "จัดการด้วยความเมตตา (คุณธรรม +4)", action: () => { player.moral += 4; addTimeline("ไกล่เกลี่ยข้อพิพาทในเรือนด้วยความเมตตา (คุณธรรม +4)", 'good'); } }, { text: "ลงโทษเด็ดขาดรักษาความสงบ (ชื่อเสียง +5)", action: () => { player.repu += 5; addTimeline("จัดระเบียบเรือนด้วยความเด็ดขาด ชื่อเสียงขจรขจาย", 'good'); } } ] },
-            { title: "งานเทศกาลโคมไฟเมืองหลวง", desc: "มีการจัดงานเทศกาลโคมไฟเฉลิมฉลองอันครึกครื้น ท่านจะทำอย่างไร?", choices: [ { text: "เดินชมงานพบปะสหาย (เสน่ห์ +5)", action: () => { player.charm += 5; addTimeline("เที่ยวชมงานเทศกาลโคมไฟ ผูกมิตรกับผู้คน (เสน่ห์ +5)", 'good'); } }, { text: "แวะโรงประมูลซื้อของแปลก (เสีย 20 ตำลึง สุ่มโชค)", action: () => { player.money = Math.max(0, player.money - 20); player.intel += 5; addTimeline("ซื้อคัมภีร์โบราณจากงานประมูล (สติปัญญา +5)", 'good'); } } ] }
+            { title: "ศึกชิงอำนาจในเรือนหลัง", desc: "เกิดการกระทบกระทั่งกันระหว่างบ่าวในเรือนกับคนรับใช้ คุณจะจัดการอย่างไร?", choices: [ { text: "จัดการด้วยความเมตตา (คุณธรรม +4)", action: () => { player.moral += 4; addTimeline("ไกล่เกลี่ยข้อพิพาทในเรือนด้วยความเมตตา", "เกิดความขัดแย้งย่อยๆ ระหว่างบ่าวในเรือน ท่านตัดสินใจไกล่เกลี่ยด้วยความยุติธรรมและเมตตา ได้รับความจงรักภักดี (คุณธรรม +4)", 'good'); } }, { text: "ลงโทษเด็ดขาดรักษาความสงบ (ชื่อเสียง +5)", action: () => { player.repu += 5; addTimeline("ลงโทษบ่าวผู้กระทำผิดอย่างเด็ดขาด", "ใช้กฎระเบียบของจวนลงโทษบ่าวที่สร้างความวุ่นวายอย่างเด็ดขาด ทำให้ทุกคนเกรงกลัวและรักษาความสงบเรียบร้อยไว้ได้ (ชื่อเสียง +5)", 'good'); } } ] },
+            { title: "งานเทศกาลโคมไฟเมืองหลวง", desc: "มีการจัดงานเทศกาลโคมไฟเฉลิมฉลองอันครึกครื้น ท่านจะทำอย่างไร?", choices: [ { text: "เดินชมงานพบปะสหาย (เสน่ห์ +5)", action: () => { player.charm += 5; addTimeline("เที่ยวชมงานเทศกาลโคมไฟเมืองหลวง", "เดินชมแสงสีเสียงและโคมไฟนับพันดวงในงานเทศกาล ร่วมทายปริศนากลอนโคมไฟจนเป็นที่สะดุดตาของผู้คน (เสน่ห์ +5)", 'good'); } }, { text: "แวะโรงประมูลซื้อของแปลก (เสีย 20 ตำลึง สุ่มโชค)", action: () => { player.money = Math.max(0, player.money - 20); player.intel += 5; addTimeline("ประมูลคัมภีร์โบราณในงานเทศกาล", "เข้าร่วมงานประมูลลับและสู้ราคาคว้าคัมภีร์โบราณแปลกตามาศึกษาต่อยอดความรู้ (สติปัญญา +5)", 'good'); } } ] }
         ];
         let ev = events[Math.floor(Math.random() * events.length)];
         document.getElementById('modal-title').innerText = "⚡ เหตุการณ์ดราม่า: " + ev.title;
@@ -890,11 +915,11 @@
         
         if (player.seasonIndex === 3) {
             player.health = Math.max(0, player.health - 5);
-            addTimeline("❄️ เข้าสู่ฤดูหนาวอันเหน็บหนาว สุขภาพร่างกายอ่อนล้าลง (-5)", 'bad');
+            addTimeline("❄️ เข้าสู่ฤดูหนาวอันเหน็บหนาว", "ลมหนาวพัดโชยหิมะโปรยปรายทั่วเมืองฉางอัน อากาศหนาวเหน็บส่งผลกระทบต่อร่างกายผู้คน ทำให้สุขภาพอ่อนล้าลงเล็กน้อย (สุขภาพ -5)", 'bad');
         }
 
         player.children.forEach(c => c.age++);
-        addTimeline(`ผ่านไปอีก 1 ปี เข้าสู่ ${seasons[player.seasonIndex]} อายุครบรอบ ${player.age} ปี`);
+        addTimeline(`ผ่านไปอีก 1 ปี เข้าสู่ ${seasons[player.seasonIndex]} อายุครบรอบ ${player.age} ปี`, `กาลเวลาหมุนผ่านเข้าสู่ปีที่ ${player.age} ฤดูกาลผันเปลี่ยน หมุนเวียนไปตามวัฏจักรแห่งฟ้าดิน`);
 
         if (player.age >= 60 && player.children.length > 0 && Math.random() < 0.4) {
             triggerWillModal();
@@ -905,7 +930,7 @@
             let cGen = Math.random() > 0.5 ? 'ชาย' : 'หญิง';
             let cName = getRandomName(cGen);
             player.children.push({ name: cName, gender: cGen, age: 0 });
-            addTimeline(`🎉 [มงคลตระกูล] กำเนิดบุตร (${cName}) สืบทอดสายเลือด`, 'good');
+            addTimeline(`🎉 [มงคลตระกูล] กำเนิดบุตร (${cName})`, `เสียงร้องแรกคลอดดังขึ้นก้องเรือน คู่สมรสให้กำเนิดทายาทน้อย '${cName}' (${cGen}) เพิ่มความปีติยินดีและสืบสานสายเลือดให้แก่ตระกูล`, 'good');
         }
 
         updateUI(); saveGame(false);
@@ -914,12 +939,10 @@
 
     function saveGame(n=true) { localStorage.setItem('ANCIENT_LIFE_FINAL_SAVE', JSON.stringify(player)); if(n) alert("💾 บันทึกเกมสำเร็จ!"); }
     
-    // ระบบโหลดเกมพร้อม Auto-Patch (เติมข้อมูลใหม่ให้เซฟเก่าอัตโนมัติ)
     function loadGame(n=true) {
         let d = localStorage.getItem('ANCIENT_LIFE_FINAL_SAVE');
         if(d) { 
             let loadedPlayer = JSON.parse(d);
-            // เติมฟีเจอร์ใหม่อัตโนมัติถ้าเซฟเก่ายังไม่มี
             if (!loadedPlayer.parents) {
                 loadedPlayer.parents = {
                     father: { name: "มู่หรงเทียน", profession: "อดีตขุนนางกรมการคลัง", age: 52, status: "สุขภาพแข็งแรง" },
@@ -930,13 +953,20 @@
             if (!loadedPlayer.rival) loadedPlayer.rival = "เฉินเทียน (คู่ปรับตระกูล)";
             if (!loadedPlayer.titles) loadedPlayer.titles = ["ผู้เริ่มต้นเส้นทางชะตา"];
             if (!loadedPlayer.ancestralHall) loadedPlayer.ancestralHall = [];
+            
+            // อัปเกรด timeline ให้มีฟิลด์ detail ถ้าของเดิมไม่มี
+            if (loadedPlayer.timeline) {
+                loadedPlayer.timeline.forEach(t => {
+                    if (!t.detail) t.detail = t.text;
+                });
+            }
 
             player = loadedPlayer;
             document.getElementById('page-setup').style.display='none'; 
             document.getElementById('game-view').style.display='flex'; 
             document.getElementById('main-nav').style.display='flex'; 
             updateUI(); 
-            if(n) alert("📂 โหลดเซฟเดิมและอัปเดตฟีเจอร์ใหม่สำเร็จ!"); 
+            if(n) alert("📂 โหลดเซฟเดิมและอัปเดตฟีเจอร์คลิกดูดีเทลไทม์ไลน์สำเร็จ!"); 
         } else {
             if(n) alert("ไม่พบข้อมูลเซฟเกมเดิม!");
         }
