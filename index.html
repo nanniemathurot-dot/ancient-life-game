@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Ultimate Edition)</title>
+    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Legendary Edition)</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #f3e9dc;
-            --card-bg: #fffbf5;
+            --bg-main: #f4eae1;
+            --card-bg: #fffbf7;
             --primary-red: #8b261d;
             --secondary-gold: #c59b27;
-            --text-dark: #2c1d11;
-            --text-light: #7c6853;
-            --border-color: #e2d2bc;
-            --shadow: 0 6px 20px rgba(139, 38, 29, 0.12);
+            --dark-gold: #947112;
+            --text-dark: #2b1810;
+            --text-light: #7d6b5d;
+            --border-color: #e6d5c3;
+            --shadow: 0 4px 15px rgba(139, 38, 29, 0.08);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; user-select: none; }
@@ -28,78 +29,84 @@
 
         header {
             background: linear-gradient(180deg, #99281e 0%, #5e150f 100%);
-            color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--secondary-gold); z-index: 20; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            color: #fff; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--secondary-gold); z-index: 20; flex-shrink: 0;
         }
-        header h1 { font-family: 'Kanit', sans-serif; font-size: 16px; font-weight: 600; color: #ffeabf; }
+        header h1 { font-family: 'Kanit', sans-serif; font-size: 15px; font-weight: 600; color: #ffeabf; }
         .header-btns { display: flex; gap: 8px; }
-        .icon-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .icon-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 
-        .content-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; padding-bottom: 75px; }
+        /* Main View Container */
+        .content-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; padding-bottom: 120px; }
         
+        /* Persistent Profile Card */
         .profile-card {
-            background: var(--card-bg); margin: 12px 12px 6px 12px; padding: 12px; border-radius: 18px;
+            background: var(--card-bg); margin: 8px 10px 4px 10px; padding: 10px 12px; border-radius: 14px;
             border: 1px solid var(--border-color); box-shadow: var(--shadow);
-            display: flex; gap: 12px; align-items: center; position: relative;
+            display: flex; gap: 10px; align-items: center; flex-shrink: 0;
         }
         .avatar-box {
-            width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--secondary-gold);
+            width: 62px; height: 62px; border-radius: 50%; border: 2px solid var(--secondary-gold);
             background: #f7edd9; display: flex; justify-content: center; align-items: center;
-            font-size: 42px; flex-shrink: 0; position: relative;
+            font-size: 34px; flex-shrink: 0; position: relative;
         }
-        .gender-badge { position: absolute; bottom: -2px; right: -2px; background: var(--primary-red); color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; border: 1px solid white; font-weight: 600; }
-        .profile-info { flex: 1; }
-        .profile-info h2 { font-family: 'Kanit', sans-serif; font-size: 18px; color: var(--primary-red); }
-        .profile-info .sub-text { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-        .profile-info .rank-text { font-size: 11px; font-weight: 600; color: #855b08; margin-top: 4px; display: inline-block; background: #fff3d6; padding: 2px 8px; border-radius: 6px; border: 1px solid #e2c88d; }
+        .gender-badge { position: absolute; bottom: -2px; right: -2px; background: var(--primary-red); color: white; font-size: 9px; padding: 1px 5px; border-radius: 8px; border: 1px solid white; font-weight: 600; }
+        .profile-info { flex: 1; min-width: 0; }
+        .profile-info h2 { font-family: 'Kanit', sans-serif; font-size: 16px; color: var(--primary-red); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .profile-info .sub-text { font-size: 11px; color: var(--text-light); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .profile-info .rank-text { font-size: 10px; font-weight: 600; color: #855b08; margin-top: 3px; display: inline-block; background: #fff3d6; padding: 1px 6px; border-radius: 5px; border: 1px solid #e2c88d; }
 
-        .energy-bar-container { margin: 0 12px 8px 12px; background: #ebdcc9; border-radius: 10px; padding: 6px 12px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .energy-title { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--primary-red); font-weight: 600; }
+        /* Energy Bar */
+        .energy-bar-container { margin: 0 10px 6px 10px; background: #ebdcc9; border-radius: 8px; padding: 5px 10px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .energy-title { font-family: 'Kanit', sans-serif; font-size: 11px; color: var(--primary-red); font-weight: 600; }
         .energy-dots { display: flex; gap: 4px; }
-        .energy-dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; border: 1px solid #aaa; }
-        .energy-dot.active { background: #2c5e3b; border-color: #1b3d26; box-shadow: 0 0 5px rgba(44,94,59,0.5); }
+        .energy-dot { width: 10px; height: 10px; border-radius: 50%; background: #ccc; border: 1px solid #aaa; }
+        .energy-dot.active { background: #2c5e3b; border-color: #1b3d26; box-shadow: 0 0 4px rgba(44,94,59,0.5); }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 12px 10px 12px; }
-        .stat-item { background: var(--card-bg); padding: 6px 8px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center; }
-        .stat-item .label { font-size: 10px; color: var(--text-light); }
-        .stat-item .val { font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 600; color: var(--primary-red); }
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 0 10px 6px 10px; flex-shrink: 0; }
+        .stat-item { background: var(--card-bg); padding: 4px 6px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-item .label { font-size: 9px; color: var(--text-light); }
+        .stat-item .val { font-family: 'Kanit', sans-serif; font-size: 12px; font-weight: 600; color: var(--primary-red); }
 
+        /* Page Layouts */
         .page { display: none; flex-direction: column; flex: 1; }
         .page.active { display: flex; }
 
-        .timeline-container { padding: 0 12px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
-        .timeline-item { background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border-color); padding: 12px; position: relative; }
-        .timeline-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--secondary-gold); border-top-left-radius: 14px; border-bottom-left-radius: 14px; }
+        .timeline-container { padding: 0 10px 10px 10px; display: flex; flex-direction: column; gap: 8px; }
+        .timeline-item { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 10px 12px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--secondary-gold); border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
         .timeline-item.good::before { background: #2c5e3b; }
         .timeline-item.bad::before { background: #8b261d; }
-        .timeline-age { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--primary-red); font-weight: 600; margin-bottom: 4px; }
-        .timeline-desc { font-size: 13px; line-height: 1.6; color: var(--text-dark); }
+        .timeline-age { font-family: 'Kanit', sans-serif; font-size: 11px; color: var(--primary-red); font-weight: 600; margin-bottom: 2px; }
+        .timeline-desc { font-size: 12.5px; line-height: 1.5; color: var(--text-dark); }
 
-        .menu-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
-        .section-header { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--text-light); margin-top: 6px; margin-bottom: 2px; }
+        .menu-list { padding: 6px 10px; display: flex; flex-direction: column; gap: 6px; }
+        .section-header { font-family: 'Kanit', sans-serif; font-size: 11px; color: var(--text-light); margin-top: 4px; margin-bottom: 1px; }
         .action-card {
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px;
-            padding: 12px; display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; transition: 0.15s;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 10px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: 0.12s;
         }
         .action-card:active { transform: scale(0.98); background: #fbeedb; }
-        .action-card .info h4 { font-family: 'Kanit', sans-serif; font-size: 14px; color: var(--text-dark); }
-        .action-card .info p { font-size: 11px; color: var(--text-light); margin-top: 2px; }
-        .action-card .icon { font-size: 24px; margin-right: 12px; }
+        .action-card .info h4 { font-family: 'Kanit', sans-serif; font-size: 13px; color: var(--text-dark); }
+        .action-card .info p { font-size: 10.5px; color: var(--text-light); margin-top: 1px; }
+        .action-card .icon { font-size: 20px; margin-right: 10px; }
         .action-left { display: flex; align-items: center; }
 
-        .btn { background: var(--primary-red); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-family: 'Kanit', sans-serif; font-size: 13px; cursor: pointer; text-align: center; }
+        .btn { background: var(--primary-red); color: white; border: none; padding: 9px 14px; border-radius: 10px; font-family: 'Kanit', sans-serif; font-size: 12.5px; cursor: pointer; text-align: center; }
         .btn-gold { background: linear-gradient(135deg, #d4af37 0%, #a37c15 100%); color: #fff; font-weight: 600; }
         .btn-block { width: 100%; display: block; }
 
+        /* Fixed Bottom Controls */
         .age-up-bar {
-            position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 430px; padding: 8px 12px; background: rgba(243, 233, 220, 0.95);
-            border-top: 1px solid var(--border-color); z-index: 15;
+            position: absolute; bottom: 58px; left: 0; right: 0;
+            padding: 6px 10px; background: rgba(244, 234, 225, 0.95);
+            border-top: 1px solid var(--border-color); z-index: 15; backdrop-filter: blur(4px);
         }
 
         nav.bottom-nav {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 58px;
             background: #23120b; display: flex; border-top: 2px solid var(--secondary-gold); z-index: 20;
         }
         .nav-item {
@@ -107,27 +114,28 @@
             color: #9c8473; font-size: 10px; cursor: pointer; font-family: 'Kanit', sans-serif;
         }
         .nav-item.active { color: #ffe082; font-weight: 600; }
-        .nav-item .nav-icon { font-size: 19px; margin-bottom: 2px; }
+        .nav-item .nav-icon { font-size: 17px; margin-bottom: 1px; }
 
+        /* Modal */
         .modal {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center;
-            padding: 20px; z-index: 100; backdrop-filter: blur(4px);
+            padding: 16px; z-index: 100; backdrop-filter: blur(4px);
         }
         .modal.active { display: flex; }
         .modal-box {
-            background: var(--card-bg); width: 100%; max-width: 370px; border-radius: 20px;
-            border: 2px solid var(--secondary-gold); padding: 20px; box-shadow: 0 12px 35px rgba(0,0,0,0.6);
-            max-height: 82vh; overflow-y: auto;
+            background: var(--card-bg); width: 100%; max-width: 360px; border-radius: 18px;
+            border: 2px solid var(--secondary-gold); padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            max-height: 80vh; overflow-y: auto;
         }
-        .modal-box h3 { font-family: 'Kanit', sans-serif; color: var(--primary-red); font-size: 18px; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; }
-        .modal-box p { font-size: 13px; line-height: 1.6; color: var(--text-dark); margin-bottom: 16px; }
-        .choice-btn { width: 100%; padding: 11px 14px; margin-bottom: 8px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; text-align: left; font-size: 13px; cursor: pointer; color: var(--text-dark); font-family: 'Sarabun', sans-serif; display: block; }
+        .modal-box h3 { font-family: 'Kanit', sans-serif; color: var(--primary-red); font-size: 17px; margin-bottom: 6px; border-bottom: 1px dashed var(--border-color); padding-bottom: 6px; }
+        .modal-box p { font-size: 12.5px; line-height: 1.5; color: var(--text-dark); margin-bottom: 14px; white-space: pre-line; }
+        .choice-btn { width: 100%; padding: 10px 12px; margin-bottom: 6px; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; text-align: left; font-size: 12.5px; cursor: pointer; color: var(--text-dark); font-family: 'Sarabun', sans-serif; display: block; }
         .choice-btn:hover { background: #fdf2df; border-color: var(--secondary-gold); color: var(--primary-red); }
 
-        .setup-form { display: flex; flex-direction: column; gap: 10px; padding: 12px 16px; }
-        .form-group label { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--primary-red); margin-bottom: 3px; display: block; }
-        .form-group input, .form-group select { width: 100%; padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 10px; background: #fff; font-size: 13px; outline: none; }
+        .setup-form { display: flex; flex-direction: column; gap: 8px; padding: 10px 14px; }
+        .form-group label { font-family: 'Kanit', sans-serif; font-size: 11.5px; color: var(--primary-red); margin-bottom: 2px; display: block; }
+        .form-group input, .form-group select { width: 100%; padding: 7px 9px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff; font-size: 12.5px; outline: none; }
     </style>
 </head>
 <body>
@@ -144,13 +152,13 @@
     <div class="content-body">
         <!-- SETUP PAGE -->
         <div id="page-setup" class="page active">
-            <div style="text-align: center; padding: 14px 16px 0 16px;">
-                <h2 style="font-family:'Kanit'; color:var(--primary-red); font-size:20px;">จุติชีวิตใหม่ในแผ่นดินโบราณ</h2>
+            <div style="text-align: center; padding: 12px 14px 0 14px;">
+                <h2 style="font-family:'Kanit'; color:var(--primary-red); font-size:19px;">จุติชีวิตใหม่ในแผ่นดินโบราณ</h2>
                 <p style="font-size:11px; color:var(--text-light); margin-top:2px;">เลือกกำหนดเอง หรือให้สวรรค์สุ่มลิขิตชะตา</p>
             </div>
 
-            <div style="padding: 0 16px; margin-top: 10px;">
-                <button class="btn btn-block" style="background:#2c5e3b; margin-bottom:6px;" onclick="randomizeCharacter()">🎲 สุ่มชะตาจุติอัตโนมัติ (Random Fate)</button>
+            <div style="padding: 0 14px; margin-top: 8px;">
+                <button class="btn btn-block" style="background:#2c5e3b; margin-bottom:4px; padding:8px;" onclick="randomizeCharacter()">🎲 สุ่มชะตาจุติอัตโนมัติ (Random Fate)</button>
             </div>
 
             <div class="setup-form">
@@ -181,27 +189,27 @@
                         <option value="เชื้อพระวงศ์">เชื้อพระวงศ์ (สูงศักดิ์แต่วังวนอันตราย)</option>
                     </select>
                 </div>
-                <div style="display:flex; gap:8px;">
+                <div style="display:flex; gap:6px;">
                     <div class="form-group" style="flex:1;">
                         <label>ธาตุประจำตัว</label>
                         <select id="setup-element">
-                            <option value="ธาตุทอง (ทรัพย์สิน)">ธาตุทอง (โบนัสเงินทอง)</option>
+                            <option value="ธาตุทอง (ทรัพย์สิน)">ธาตุทอง (โบนัสเงิน)</option>
                             <option value="ธาตุไม้ (สุขภาพ)">ธาตุไม้ (โบนัสสุขภาพ)</option>
                             <option value="ธาตุไฟ (เสน่ห์)">ธาตุไฟ (โบนัสเสน่ห์)</option>
-                            <option value="ธาตุน้ำ (ปัญญา)">ธาตุน้ำ (โบนัสสติปัญญา)</option>
+                            <option value="ธาตุน้ำ (ปัญญา)">ธาตุน้ำ (โบนัสปัญญา)</option>
                         </select>
                     </div>
                     <div class="form-group" style="flex:1;">
                         <label>ฤดูกาลกำเนิด</label>
                         <select id="setup-season">
-                            <option value="ฤดูใบไม้ผลิ (ดอกเหมย)">ฤดูใบไม้ผลิ</option>
-                            <option value="ฤดูร้อน (แสงแดด)">ฤดูร้อน</option>
-                            <option value="ฤดูใบไม้ร่วง (รวงข้าว)">ฤดูใบไม้ร่วง</option>
-                            <option value="ฤดูหนาว (หิมะ)">ฤดูหนาว</option>
+                            <option value="ฤดูใบไม้ผลิ">ฤดูใบไม้ผลิ</option>
+                            <option value="ฤดูร้อน">ฤดูร้อน</option>
+                            <option value="ฤดูใบไม้ร่วง">ฤดูใบไม้ร่วง</option>
+                            <option value="ฤดูหนาว">ฤดูหนาว</option>
                         </select>
                     </div>
                 </div>
-                <div style="display:flex; gap:8px;">
+                <div style="display:flex; gap:6px;">
                     <div class="form-group" style="flex:1;">
                         <label>เพศ</label>
                         <select id="setup-gender">
@@ -214,7 +222,7 @@
                         <input type="text" id="setup-name" value="หลี่เฟิง">
                     </div>
                 </div>
-                <button class="btn btn-gold btn-block" style="margin-top:6px; padding:12px; font-size:15px;" onclick="initGame()">เริ่มต้นชีวิตใหม่ 📜</button>
+                <button class="btn btn-gold btn-block" style="margin-top:4px; padding:10px; font-size:14px;" onclick="initGame()">เริ่มต้นชีวิตใหม่ 📜</button>
             </div>
         </div>
 
@@ -266,6 +274,11 @@
                         <div class="action-left"><span class="icon">🪕</span><div class="info"><h4>เจรจาเข้าสังคม / ศิลปะ</h4><p>พบปะสหาย เพิ่มเสน่ห์และคอนเนกชัน</p></div></div>
                     </div>
 
+                    <div class="section-header">ท่องยุทธภพ & สำนักยุทธ์</div>
+                    <div class="action-card" onclick="openSectMenu()">
+                        <div class="action-left"><span class="icon">⛩️</span><div class="info"><h4>เข้าร่วมสำนักยุทธ์ / ฝึกวิชา</h4><p id="sect-desc">ฝากตัวเป็นศิษย์สำนักใหญ่</p></div></div>
+                    </div>
+
                     <div class="section-header">มินิเกม & สถานที่ในเมือง</div>
                     <div class="action-card" onclick="openGambling()">
                         <div class="action-left"><span class="icon">🀄</span><div class="info"><h4>โรงเตี๊ยม & เสี่ยงโชคแทงเต๋า</h4><p>แทงเต๋า สูง-ต่ำ เสี่ยงทายเงินตำลึง</p></div></div>
@@ -293,7 +306,7 @@
                 </div>
             </div>
 
-            <!-- TAB 3: FAMILY -->
+            <!-- TAB 3: FAMILY & RELATIONSHIPS -->
             <div id="page-family" class="page">
                 <div class="menu-list">
                     <div class="action-card" onclick="findPartner()">
@@ -302,14 +315,19 @@
                     <div class="action-card" onclick="interactFamily()">
                         <div class="action-left"><span class="icon">🍶</span><div class="info"><h4>กตัญญูเลี้ยงดู / พบปะสหาย</h4><p>กระชับความสัมพันธ์กับคนในเรือนและมิตร</p></div></div>
                     </div>
-                    <div class="section-header">ผังตระกูลและสมบัติที่ครอบครอง</div>
-                    <div id="family-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+                    <div class="section-header">ผังตระกูล สมบัติ และคู่ปรับ</div>
+                    <div id="family-list" style="display:flex; flex-direction:column; gap:6px;"></div>
                 </div>
             </div>
 
-            <!-- TAB 4: SYSTEM -->
+            <!-- TAB 4: SYSTEM & ACHIEVEMENTS -->
             <div id="page-system" class="page">
                 <div class="menu-list">
+                    <div class="section-header">ฉายาเกียรติยศ & ความสำเร็จ</div>
+                    <div class="action-card" onclick="showAchievements()">
+                        <div class="action-left"><span class="icon">🏆</span><div class="info"><h4>ดูเกียรติยศ & ฉายานาม</h4><p id="ui-title-text">ฉายาปัจจุบัน: สามัญชนผู้เริ่มต้น</p></div></div>
+                    </div>
+
                     <div class="section-header">ระบบจัดการเกม (Save / Load)</div>
                     <div class="action-card" onclick="saveGame(true)">
                         <div class="action-left"><span class="icon">💾</span><div class="info"><h4>บันทึกเกม (Save Game)</h4><p>บันทึกลงเบราว์เซอร์ปัจจุบัน</p></div></div>
@@ -329,7 +347,7 @@
                 </div>
             </div>
 
-            <!-- AGE UP BAR -->
+            <!-- FIXED AGE UP BAR -->
             <div class="age-up-bar">
                 <button class="btn btn-gold btn-block" onclick="ageUp()">เพิ่มอายุขึ้น 1 ปี (ผ่านไปอีกปี) ⏳</button>
             </div>
@@ -422,12 +440,21 @@
 
     let player = {
         name: "หลี่เฟิง", dynasty: "ราชวงศ์เซียว", city: "ฉางอัน", origin: "ตระกูลขุนนาง", gender: "ชาย",
-        element: "ธาตุทอง (ทรัพย์สิน)", season: "ฤดูใบไม้ผลิ (ดอกเหมย)",
+        element: "ธาตุทอง (ทรัพย์สิน)", season: "ฤดูใบไม้ผลิ",
         age: 0, energy: 3, health: 100, intel: 50, charm: 50, moral: 50, repu: 10, money: 100,
-        rankLevel: 0, partner: null, parentsAffection: 80, properties: [], relics: [], children: [], timeline: []
+        rankLevel: 0, partner: null, rivalName: null, sect: null, sectLevel: 0, parentsAffection: 80, properties: [], relics: [], children: [], timeline: []
     };
 
     function getRankName() { return player.gender === 'ชาย' ? maleRanks[player.rankLevel] : femaleRanks[player.rankLevel]; }
+
+    function getTitleName() {
+        if (player.rankLevel >= 6) return player.gender === 'ชาย' ? "อัครมหาเสนาบดีผู้ครองแผ่นดิน" : "พระอัครมเหสีฮองเฮาผู้ยิ่งใหญ่";
+        if (player.money >= 2000) return "คหบดีมหาเศรษฐีร้อยล้าน";
+        if (player.intel >= 150) return "มหาปัญญาชนยอดกวีเอก";
+        if (player.moral >= 150) return "ขุนนางผู้ทรงคุณธรรมเปี่ยมบารมี";
+        if (player.sectLevel >= 3) return "จอมยุทธ์ผู้พิชิตยุทธภพ";
+        return "สามัญชนผู้สร้างตำนาน";
+    }
 
     function initGame() {
         player.name = document.getElementById('setup-name').value || "หลี่เฟิง";
@@ -440,8 +467,9 @@
         
         player.age = 0; player.energy = 3; player.rankLevel = 0; player.timeline = [];
         player.properties = []; player.relics = []; player.parentsAffection = 80;
+        player.sect = null; player.sectLevel = 0;
+        player.rivalName = getRandomName(player.gender);
 
-        // Element Stat Buffs
         if (player.element.includes("ทอง")) player.money += 200;
         if (player.element.includes("ไม้")) player.health += 10;
         if (player.element.includes("ไฟ")) player.charm += 10;
@@ -477,6 +505,9 @@
         document.getElementById('st-repu').innerText = player.repu;
         document.getElementById('st-money').innerText = player.money + " ตำลึง";
 
+        document.getElementById('ui-title-text').innerText = `ฉายาปัจจุบัน: ${getTitleName()}`;
+        document.getElementById('sect-desc').innerText = player.sect ? `สำนัก: ${player.sect} (ระดับ ${player.sectLevel})` : "ฝากตัวเป็นศิษย์สำนักใหญ่";
+
         let dots = document.getElementById('energy-dots').children;
         for (let i = 0; i < 3; i++) {
             if (i < player.energy) dots[i].classList.add('active');
@@ -498,6 +529,7 @@
         }
 
         let famHTML = `<div class="action-card"><div class="action-left"><span class="icon">👴</span><div class="info"><h4>ท่านพ่อและท่านแม่</h4><p>ความกตัญญูกตเวที: ${player.parentsAffection}%</p></div></div></div>`;
+        famHTML += `<div class="action-card"><div class="action-left"><span class="icon">⚔️</span><div class="info"><h4>${player.rivalName} (คู่ปรับประจำตัว)</h4><p>คอยจ้องนินทาและขัดขวางยศตำแหน่ง</p></div></div></div>`;
         if (player.partner) famHTML += `<div class="action-card"><div class="action-left"><span class="icon">❤️</span><div class="info"><h4>${player.partner}</h4><p>คู่ครองสมรสถูกต้องตามประเพณี</p></div></div></div>`;
         
         if(player.properties.length > 0) {
@@ -538,6 +570,61 @@
             addTimeline(`เข้าร่วมงานเลี้ยงจิบชาประชันบทกวีกับสหายในเมือง${player.city} (เสน่ห์ +${g})`);
         }
         updateUI();
+    }
+
+    // --- WUXIA SECT SYSTEM ---
+    function openSectMenu() {
+        if (player.age < 10) { alert("ต้องมีอายุอย่างน้อย 10 ปีขึ้นไป จึงจะกราบเข้าสำนักยุทธ์ได้!"); return; }
+        document.getElementById('modal-title').innerText = "⛩️ สำนักยุทธ์ท่องยุทธภพ";
+        if (!player.sect) {
+            document.getElementById('modal-desc').innerText = "เลือกกราบเข้าเป็นศิษย์สำนักยุทธ์ใหญ่ในยุทธภพ:";
+            let cBox = document.getElementById('modal-choices');
+            cBox.innerHTML = `
+                <button class="choice-btn" onclick="joinSect('สำนักกระบี่เซียน')">⚔️ สำนักกระบี่เซียน (เน้นสติปัญญาและคุณธรรม)</button>
+                <button class="choice-btn" onclick="joinSect('พรรคกระยาจก')">🏮 พรรคกระยาจก (เน้นคอนเนกชันและเงินทอง)</button>
+                <button class="choice-btn" onclick="joinSect('พรรคพยัคฆ์คำรณ')">🐯 พรรคพยัคฆ์คำรณ (เน้นกำลังภายในและสุขภาพ)</button>
+                <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+            `;
+        } else {
+            document.getElementById('modal-desc').innerText = `ปัจจุบันท่านเป็นศิษย์ '${player.sect}' (ระดับวิชา: ${player.sectLevel})\nฝึกฝนวิชาประจำสำนักเพื่อเพิ่มสถานะก้าวกระโดด (ใช้พลังงาน ⚡ 1 แต้ม)`;
+            let cBox = document.getElementById('modal-choices');
+            cBox.innerHTML = `
+                <button class="choice-btn" onclick="trainSect()">🥋 ฝึกฝนวิชาสำนักยุทธ์ (ใช้พลังงาน 1 แต้ม)</button>
+                <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+            `;
+        }
+        document.getElementById('event-modal').classList.add('active');
+    }
+
+    function joinSect(sectName) {
+        player.sect = sectName;
+        player.sectLevel = 1;
+        addTimeline(`⛩️ กราบฝากตัวเป็นศิษย์ '${sectName}' ในยุทธภพสำเร็จ`, 'good');
+        alert(`เข้าสำนัก '${sectName}' เรียบร้อยแล้ว!`);
+        closeModal();
+        updateUI();
+    }
+
+    function trainSect() {
+        if (player.energy <= 0) { alert("พลังงานประจำปีหมดแล้ว!"); return; }
+        player.energy--;
+        player.sectLevel++;
+        if (player.sect === 'สำนักกระบี่เซียน') { player.intel += 8; player.moral += 4; }
+        else if (player.sect === 'พรรคกระยาจก') { player.money += 40; player.repu += 3; }
+        else { player.health = Math.min(100, player.health + 8); player.repu += 5; }
+
+        addTimeline(`🥋 ฝึกฝนเคล็ดวิชา '${player.sect}' เลื่อนเป็นระดับ ${player.sectLevel} สำเร็จ!`, 'good');
+        alert("ฝึกฝนวิชาสำนักยุทธ์ก้าวหน้า!");
+        closeModal();
+        updateUI();
+    }
+
+    function showAchievements() {
+        document.getElementById('modal-title').innerText = "🏆 ฉายาเกียรติยศ & Achievements";
+        document.getElementById('modal-desc').innerText = `ฉายานามปัจจุบันของคุณคือ:\n✨ '${getTitleName()}' ✨\n\n- ระดับยศตำแหน่ง: ${getRankName()}\n- ทรัพย์สินรวม: ${player.money} ตำลึง\n- วิชาสำนักยุทธ์: ${player.sect || 'ไม่มี'} (ระดับ ${player.sectLevel})`;
+        let cBox = document.getElementById('modal-choices');
+        cBox.innerHTML = `<button class="choice-btn" onclick="closeModal()">ตกลง</button>`;
+        document.getElementById('event-modal').classList.add('active');
     }
 
     function openGambling() {
@@ -679,13 +766,20 @@
             addTimeline("👶 [พิธีจับติ้วขวบปีแรก] ยื่นมือจับ 'พู่กันและตำราโบราณ' ญาติผู้ใหญ่ทำนายว่าจะเติบโตเป็นปัญญาชนผู้ยิ่งใหญ่!", 'good');
         } else if (player.age === 15) {
             addTimeline(`🌸 [พิธีปักปิ่น/สวมกววก] ผ่านพิธีเข้าสู่วัยผู้ใหญ่อย่างสมเกียรติ ณ เมือง${player.city}`, 'good');
-        } else if (Math.random() < 0.5) {
-            if (Math.random() > 0.5) {
-                player.money += 25;
-                addTimeline("✨ [สิริมงคลประจำปี] กิจการและโชคลาภราบรื่น ได้รับเงินอวยพร (เงินทอง +25 ตำลึง)", 'good');
-            } else {
-                player.health -= 5;
-                addTimeline("🌧️ [เคราะห์กรรมประจำปี] ลมป่วยด้วยอากาศแปรปรวน ต้องนอนพักฟื้นในเรือน (สุขภาพ -5)", 'bad');
+        } else {
+            // Rival Conflict Event
+            if (player.age >= 16 && Math.random() < 0.25) {
+                addTimeline(`⚔️ [มรสุมคู่ปรับ] '${player.rivalName}' แอบใส่ร้ายและปล่อยข่าวลือใส่คุณในตลาด (ชื่อเสียง -3)`, 'bad');
+                player.repu = Math.max(0, player.repu - 3);
+            }
+            else if (Math.random() < 0.5) {
+                if (Math.random() > 0.45) {
+                    player.money += 25;
+                    addTimeline("✨ [สิริมงคลประจำปี] กิจการและโชคลาภราบรื่น ได้รับเงินอวยพร (เงินทอง +25 ตำลึง)", 'good');
+                } else {
+                    player.health -= 5;
+                    addTimeline("🌧️ [เคราะห์กรรมประจำปี] ลมป่วยด้วยอากาศแปรปรวน ต้องนอนพักฟื้นในเรือน (สุขภาพ -5)", 'bad');
+                }
             }
         }
 
