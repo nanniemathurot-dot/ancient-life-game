@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Masterpiece Ultimate Edition)</title>
+    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Ultimate Masterpiece V.2)</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,7 @@
             color: #fff; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 2px solid var(--secondary-gold); z-index: 20; flex-shrink: 0;
         }
-        header h1 { font-family: 'Kanit', sans-serif; font-size: 13.5px; font-weight: 600; color: #ffeabf; }
+        header h1 { font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 600; color: #ffeabf; }
         .header-btns { display: flex; gap: 8px; }
         .icon-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
 
@@ -330,6 +330,11 @@
             <!-- TAB 4: SYSTEM & ACHIEVEMENTS -->
             <div id="page-system" class="page">
                 <div class="menu-list">
+                    <div class="section-header">🏛️ หอเกียรติยศตระกูล & ฉายาตำนาน</div>
+                    <div class="action-card" onclick="openAncestralHall()">
+                        <div class="action-left"><span class="icon">📜</span><div class="info"><h4>ดูประวัติ & ฉายาบรรพบุรุษ</h4><p>ตรวจสอบเกียรติยศและโบนัสสายเลือด</p></div></div>
+                    </div>
+
                     <div class="section-header">การ์ดโชคชะตา & วาสนา (Fate Cards)</div>
                     <div class="action-card" onclick="useFateCard()">
                         <div class="action-left"><span class="icon">🎴</span><div class="info"><h4>เปิดใช้งานการ์ดโชคชะตาพิเศษ</h4><p>สุ่มรับพลังพิเศษพลิกสถานการณ์</p></div></div>
@@ -364,7 +369,7 @@
         <div class="nav-item active" onclick="switchTab('timeline', this)"><span class="nav-icon">📜</span><span>ภาพรวม</span></div>
         <div class="nav-item" onclick="switchTab('activities', this)"><span class="nav-icon">⚡</span><span>กิจกรรม</span></div>
         <div class="nav-item" onclick="switchTab('family', this)"><span class="nav-icon">👨‍👩‍👧</span><span>ตระกูล</span></div>
-        <div class="nav-item" onclick="switchTab('system', this)"><span class="nav-icon">🎴</span><span>วาสนา/ระบบ</span></div>
+        <div class="nav-item" onclick="switchTab('system', this)"><span class="nav-icon">🏛️</span><span>เกียรติยศ/ระบบ</span></div>
     </nav>
 
     <!-- MODAL -->
@@ -411,7 +416,8 @@
         zodiac: "ปีมะโรง (มังกร)", element: "ธาตุทอง", seasonIndex: 0, age: 0, energy: 3, health: 100, 
         intel: 50, charm: 50, moral: 50, repu: 10, money: 100, rankLevel: 0, partner: null, partnerStatus: null, 
         parentsName: "ท่านพ่อและท่านแม่", parentsAffection: 80, sect: null, sectLevel: 0,
-        properties: [], relics: [], fateCards: 2, children: [], timeline: []
+        properties: [], relics: [], fateCards: 2, children: [], timeline: [],
+        titles: ["ผู้เริ่มต้นเส้นทางชะตา"], ancestralHall: []
     };
 
     function getRankName() { return player.gender === 'ชาย' ? maleRanks[player.rankLevel] : femaleRanks[player.rankLevel]; }
@@ -424,6 +430,12 @@
         player.gender = document.getElementById('setup-gender').value;
         player.zodiac = document.getElementById('setup-zodiac').value;
         player.element = document.getElementById('setup-element').value;
+
+        // เช็กโบนัสสายเลือดจากหอเกียรติยศรุ่นก่อน
+        if (player.ancestralHall && player.ancestralHall.length > 0) {
+            player.intel += 10; player.charm += 10; player.money += 50;
+            addTimeline("🧬 ทายาทสายเลือดตระกูลผู้ทรงเกียรติ เกิดมาพร้อมปัญญาและเสน่ห์ล้นเหลือ (+สติปัญญา, +เสน่ห์)", 'good');
+        }
 
         if (player.origin === 'ตระกูลขุนนางถูกใส่ร้าย') {
             player.money = 30; player.repu = 0;
@@ -500,7 +512,7 @@
         let luck = Math.random();
         if (luck < 0.4) {
             player.money += 80;
-            addTimeline("🗺️ สำรวจหุบเขาเซียนพบถอดสมบัติโบราณ (เงิน +80 ตำลึง)", 'good');
+            addTimeline("🗺️ สำรวจหุบเขาเซียนพบสมบัติโบราณ (เงิน +80 ตำลึง)", 'good');
             alert("สำรวจพบขุมทรัพย์เงินทอง 80 ตำลึง!");
         } else if (luck < 0.7) {
             player.relics.push("หยกมังกรโบราณ"); player.repu += 10;
@@ -517,6 +529,13 @@
     function buyProperty() {
         if (player.money < 200) { alert("เงินไม่พอ! ซื้อเรือนหรูต้องใช้ 200 ตำลึง"); return; }
         player.money -= 200; player.properties.push("เรือนหรูเมืองหลวง"); player.repu += 15;
+        
+        // เช็กปลดล็อกฉายาเศรษฐี
+        if (!player.titles.includes("มหาเศรษฐีร้อยล้าน")) {
+            player.titles.push("มหาเศรษฐีร้อยล้าน");
+            alert("🏆 ปดล็อกฉายาใหม่: 'มหาเศรษฐีร้อยล้าน' บันทึกลงหอเกียรติยศตระกูล!");
+        }
+
         addTimeline("🏡 ซื้อเรือนหรูและคฤหาสน์ในเมืองหลวง (ชื่อเสียง +15)", 'good');
         updateUI(); alert("ครอบครองเรือนหรูเรียบร้อยแล้ว!");
     }
@@ -568,6 +587,12 @@
         let success = player.health >= 70 && Math.random() > 0.3;
         if (success) {
             player.money += 150; player.repu += 25; player.rankLevel = Math.min(maleRanks.length - 2, player.rankLevel + 1);
+            
+            if (!player.titles.includes("แม่ทัพไร้พ่าย")) {
+                player.titles.push("แม่ทัพไร้พ่าย");
+                alert("🏆 ปลดล็อกฉายาใหม่: 'แม่ทัพไร้พ่าย' บันทึกลงหอเกียรติยศ!");
+            }
+
             addTimeline("🛡️ นำทัพบุกตะลุยศึกชายแดนจนได้รับชัยชนะ! (เงิน +150, ชื่อเสียง +25)", 'good');
             alert("ได้รับชัยชนะในศึกชายแดน! เลื่อนยศและรับรางวัลมหาศาล 🎉");
         } else {
@@ -607,6 +632,12 @@
         let req = (player.rankLevel + 1) * 25;
         if (player.intel >= req) {
             player.rankLevel++;
+            
+            if (player.rankLevel >= 6 && !player.titles.includes("อัครเสนาบดีคู่บัลลังก์")) {
+                player.titles.push("อัครเสนาบดีคู่บัลลังก์");
+                alert("🏆 ปลดล็อกฉายา: 'อัครเสนาบดีคู่บัลลังก์'!");
+            }
+
             addTimeline(`🏛️ สอบผ่านและได้รับการแต่งตั้งเป็น '${getRankName()}' สำเร็จ!`, 'good');
             alert(`เลื่อนยศเป็น '${getRankName()}' สำเร็จ!`);
         } else {
@@ -618,6 +649,10 @@
     function tryRebellion() {
         if (player.money >= 300 && player.intel >= 100) {
             player.rankLevel = 7;
+            if (!player.titles.includes("👑 ฮ่องเต้ผู้กุมแผ่นดิน")) {
+                player.titles.push("👑 ฮ่องเต้ผู้กุมแผ่นดิน");
+                alert("🏆 ปลดล็อกฉายาสูงสุด: 'ฮ่องเต้ผู้กุมแผ่นดิน'!");
+            }
             addTimeline("👑 นำกำลังพลก่อการกบฏยึดนครหลวง สถาปนาตนเป็น 'ฮ่องเต้'!", 'good');
             alert("สำเร็จ! ทรงขึ้นครองราชย์เป็นฮ่องเต้ครองแผ่นดิน 🎉");
         } else {
@@ -638,11 +673,33 @@
 
     function switchToChild(idx) {
         let child = player.children[idx];
+        
+        // บันทึกฉายาลงหอเกียรติยศก่อนสลับตัว
+        let hallData = player.ancestralHall || [];
+        hallData.push({ name: player.name, titles: [...player.titles] });
+
         player.name = child.name; player.gender = child.gender; player.age = child.age;
         player.health = 100; player.rankLevel = 0; player.partner = null; player.children = [];
+        player.ancestralHall = hallData; player.titles = ["ทายาทผู้สืบสานตำนาน"];
+        
         addTimeline(`✨ สลับมาสวมบทบาทสืบทอดชีวิตเป็นทายาท '${player.name}' ไร้รอยต่อ`, 'good');
-        alert(`สลับมาเล่นเป็น '${player.name}' สำเร็จ!`);
+        alert(`สลับมาเล่นเป็น '${player.name}' สำเร็จ! (ได้รับโบนัสสายเลือดตระกูล)`);
         updateUI(); saveGame(false);
+    }
+
+    function openAncestralHall() {
+        let text = "🏛️ หอเกียรติยศบรรพบุรุษตระกูล:\n\n";
+        if (player.ancestralHall.length === 0) {
+            text += "ยังไม่มีบันทึกบรรพบุรุษในหอเกียรติยศ (ต้องสลับเล่นรุ่นลูกหรือทำพินัยกรรมก่อน)";
+        } else {
+            player.ancestralHall.forEach((h, idx) => {
+                text += `• รุ่นที่ ${idx+1}: ท่าน ${h.name}\n  ฉายา: ${h.titles.join(', ')}\n\n`;
+            });
+        }
+        document.getElementById('modal-title').innerText = "🏛️ หอเกียรติยศตระกูล";
+        document.getElementById('modal-desc').innerText = text;
+        document.getElementById('modal-choices').innerHTML = `<button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>`;
+        document.getElementById('event-modal').classList.add('active');
     }
 
     function rewindTime() {
@@ -657,7 +714,7 @@
 
     function triggerWillModal() {
         document.getElementById('modal-title').innerText = "📜 ทำพินัยกรรมมรดกตระกูล";
-        document.getElementById('modal-desc').innerText = `สังขารล่วงโรย (อายุ ${player.age} ปี) ท่านต้องตัดสินใจมอบทรัพย์สินและคฤหาสน์ให้แก่ทายาท!`;
+        document.getElementById('modal-desc').innerText = `สังขารล่วงโรย (อายุ ${player.age} ปี) ท่านต้องตัดสินใจมอบทรัพย์สินให้แก่ทายาท!`;
         let cBox = document.getElementById('modal-choices');
         if (player.children.length > 0) {
             let html = "";
@@ -677,6 +734,77 @@
         alert(`โอนมรดกให้ '${chosenChild.name}' เรียบร้อย!`);
         closeModal();
         switchToChild(childIdx);
+    }
+
+    function triggerStoryNarration() {
+        let storyTitle = `📖 บันทึกพงศาวดาร: ปีที่ ${player.age}`;
+        let storyDesc = `ผ่านพ้นไปอีกหนึ่งปีในแผ่นดิน${player.dynasty} ชีวิตของ '${player.name}' ดำเนินมาถึงวัย ${player.age} ปีแล้ว\n\n`;
+        
+        if (player.age < 12) {
+            storyDesc += "ในช่วงวัยเยาว์นี้ เสียงหัวเราะและการเรียนรู้ในเรือนคือสิ่งสำคัญ สติปัญญาและร่างกายกำลังเติบโต...";
+        } else if (player.age < 25) {
+            storyDesc += "วัยฉกรรจ์และช่วงเวลาแห่งการสร้างตัว โลกภายนอกเต็มไปด้วยโอกาส การสอบขุนนางหรือท่องยุทธภพรออยู่!";
+        } else if (player.age < 50) {
+            storyDesc += "วัยแห่งการสร้างความยิ่งใหญ่ อำนาจ วาสนา และครอบครัวคือสิ่งที่ท่านต้องประคับประคอง...";
+        } else {
+            storyDesc += "สังขารเริ่มร่วงโรย ความทรงจำและทายาทคือสิ่งล้ำค่าที่สุดที่ท่านได้สร้างไว้ในแผ่นดินนี้...";
+        }
+
+        document.getElementById('modal-title').innerText = storyTitle;
+        document.getElementById('modal-desc').innerText = storyDesc;
+        document.getElementById('modal-choices').innerHTML = `<button class="choice-btn" onclick="closeModalAndCheckEvent()">ดำเนินชีวิตต่อ...</button>`;
+        document.getElementById('event-modal').classList.add('active');
+    }
+
+    function closeModalAndCheckEvent() {
+        closeModal();
+        if (Math.random() < 0.4) {
+            setTimeout(triggerRivalEvent, 300); // โอกาสเจอศัตรูคู่อาฆาต
+        } else if (Math.random() < 0.5) {
+            setTimeout(triggerRandomEvent, 300);
+        }
+    }
+
+    // ระบบศัตรูคู่อาฆาต & การล้างแค้น
+    function triggerRivalEvent() {
+        const rivalNames = ["เฉินเทียน", "ไป๋หู่", "สำนักมารโลหิต"];
+        let rival = rivalNames[Math.floor(Math.random() * rivalNames.length)];
+        
+        document.getElementById('modal-title').innerText = "⚔️ ภัยคุกคามจากศัตรูคู่อาฆาต!";
+        document.getElementById('modal-desc').innerText = `อริเก่า '${rival'}' ส่งมือสังหารและจดหมายท้าทายมายังจวนของท่าน เพื่อสะสางความแค้นในอดีต! ท่านจะรับมืออย่างไร?`;
+        
+        let cBox = document.getElementById('modal-choices');
+        cBox.innerHTML = `
+            <button class="choice-btn" onclick="resolveRival(1)">ใช้กำลังปะทะมือสังหาร (ลุ้นสุขภาพ & ชื่อเสียง +10)</button>
+            <button class="choice-btn" onclick="resolveRival(2)">ใช้สติปัญญาซ้อนแผนเล่นงานอริ (สติปัญญา +10)</button>
+            <button class="choice-btn" onclick="resolveRival(3)">จ่ายสินบนสงบศึก (เสีย 50 ตำลึง)</button>
+        `;
+        document.getElementById('event-modal').classList.add('active');
+    }
+
+    function resolveRival(opt) {
+        if (opt === 1) {
+            if (player.health >= 50) {
+                player.repu += 10; addTimeline("⚔️ ปะทะเดือดกับมือสังหารของอริจนได้รับชัยชนะ ชื่อเสียงขจรขจาย (ชื่อเสียง +10)", 'good');
+                alert("เอาชนะมือสังหารได้สำเร็จ!");
+            } else {
+                player.health -= 20; addTimeline("⚔️ ร่างกายอ่อนแอ พลาดท่าบาดเจ็บจากการลอบสังหาร (สุขภาพ -20)", 'bad');
+                alert("พลาดท่าได้รับบาดเจ็บ!");
+            }
+        } else if (opt === 2) {
+            player.intel += 10; addTimeline("🧠 ซ้อนแผนจับกุมมือสังหารและส่งทางการจัดการได้สำเร็จ (สติปัญญา +10)", 'good');
+            alert("ซ้อนแผนเล่นงานอริสำเร็จอย่างงดงาม!");
+        } else {
+            if (player.money >= 50) {
+                player.money -= 50; addTimeline("💰 จ่ายสินบน 50 ตำลึงซื้อความสงบสุขชั่วคราว", 'bad');
+                alert("ยอมเสียเงินเพื่อความสงบสุข");
+            } else {
+                player.health -= 15; player.money = 0;
+                addTimeline("💥 เงินไม่พอจ่าย ถูกมือสังหารทำร้ายข้าวของเสียหาย (สุขภาพ -15)", 'bad');
+                alert("เงินไม่พอ! ถูกทำร้ายข้าวของเสียหาย");
+            }
+        }
+        closeModal(); updateUI();
     }
 
     function triggerRandomEvent() {
@@ -709,7 +837,6 @@
         player.age++; player.energy = 3;
         player.seasonIndex = (player.seasonIndex + 1) % 4;
         
-        // ฤดูหนาวสุขภาพลดลงเล็กน้อย
         if (player.seasonIndex === 3) {
             player.health = Math.max(0, player.health - 5);
             addTimeline("❄️ เข้าสู่ฤดูหนาวอันเหน็บหนาว สุขภาพร่างกายอ่อนล้าลง (-5)", 'bad');
@@ -731,7 +858,7 @@
         }
 
         updateUI(); saveGame(false);
-        if (Math.random() < 0.5) setTimeout(triggerRandomEvent, 400);
+        triggerStoryNarration();
     }
 
     function saveGame(n=true) { localStorage.setItem('ANCIENT_LIFE_FINAL_SAVE', JSON.stringify(player)); if(n) alert("💾 บันทึกเกมสำเร็จ!"); }
