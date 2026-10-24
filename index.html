@@ -3440,6 +3440,42 @@
             }
         }, 1500);
     });
+</script> 
+<!-- ==========================================================================
+     🌸 MASTER UNIFIED PANEL FIX (รวมทุกปุ่มให้เป็นระเบียบ ไม่ล้นจอ) 🌸
+     ========================================================== -->
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            // ลบกล่องแยกอันเก่าที่ทำให้หน้าจอซ้อนกันออกทั้งหมดก่อน
+            ['random-story-panel', 'theme-switcher-panel', 'imperial-throne-panel', 'economy-assets-panel', 'family-adoption-panel'].forEach(id => {
+                let oldEl = document.getElementById(id);
+                if (oldEl) oldEl.remove();
+            });
+
+            // สร้างกล่องแผงควบคุมหลักอันเดียวแบบจัดเรียงแนวตั้งสวยงาม
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('master-mega-panel')) {
+                let masterDiv = document.createElement('div');
+                masterDiv.id = 'master-mega-panel';
+                masterDiv.style.cssText = "background: #fdf8f6; border: 2px solid #ea580c; padding: 15px; border-radius: 12px; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; width: 100%; box-sizing: border-box;";
+                
+                masterDiv.innerHTML = `
+                    <div style="font-weight: bold; font-size: 16px; color: #c2410c; text-align: center; margin-bottom: 5px;">✨ เมนูพิเศษ & ระบบเสริมทั้งหมด</div>
+                    
+                    <button class="choice-btn" style="background: #fce7f3; color: #be185d; border-color: #f472b6; width: 100%; margin: 0;" onclick="triggerRandomStoryEvent()">📖 สุ่มเหตุการณ์เนื้อเรื่อง (ตลาดหลวง, เทศกาล, วิกฤต)</button>
+                    <button class="choice-btn" style="background: #f3e8ff; color: #7e22ce; border-color: #a855f7; width: 100%; margin: 0;" onclick="toggleGameTheme()">🎨 สลับโหมดสี (คลาสสิก ⇄ พาสเทลสดใส)</button>
+                    <button class="choice-btn" style="background: #fef3c7; color: #92400e; border-color: #d97706; width: 100%; margin: 0;" onclick="foundNewDynasty()">👑 สถาปนาราชวงศ์ใหม่ขึ้นเป็นฮ่องเต้</button>
+                    <button class="choice-btn" style="background: #fef3c7; color: #92400e; border-color: #d97706; width: 100%; margin: 0;" onclick="openImperialDecreeMenu()">📜 ท้องพระโรง: ออกราชโองการ & วังหลัง</button>
+                    <button class="choice-btn" style="background: #ffedd5; color: #c2410c; border-color: #ea580c; width: 100%; margin: 0;" onclick="openAssetMarket()">🌾 ตลาดซื้อขายที่ดิน, ไร่นา, ม้าศึก & บ่าวรับใช้</button>
+                    <button class="choice-btn" style="background: #ffedd5; color: #c2410c; border-color: #ea580c; width: 100%; margin: 0;" onclick="openCasinoEvent()">🎲 เสี่ยงโชคโรงพนันใต้ดิน</button>
+                    <button class="choice-btn" style="background: #ffe4e6; color: #be123c; border-color: #f43f5e; width: 100%; margin: 0;" onclick="openWeddingMenu()">💒 จัดพิธีมงคลสมรส / แต่งงาน</button>
+                    <button class="choice-btn" style="background: #ffe4e6; color: #be123c; border-color: #f43f5e; width: 100%; margin: 0;" onclick="openAdoptionMenu()">👶 สถานรับเลี้ยงเด็ก: รับบุตรบุญธรรม</button>
+                `;
+                actionContainer.appendChild(masterDiv);
+            }
+        }, 1500);
+    });
 </script>   
 </body>
 </html>
