@@ -607,6 +607,83 @@
     };
 
     console.log("✅ Ancient Life Advanced Extension Patch V.35 Loaded Successfully!");
+</script>
+<script>
+    /* ==========================================
+       ANCIENT LIFE: BALANCE & STORY TIMELINE PATCH (V.36)
+       - ระบบบาลานซ์ค่าสกิลและการเติบโตตามประเพณี
+       - ระบบไทม์ไลน์เนื้อเรื่องเชิงลึก & อีเวนต์ตามวัย
+       - ระบบตัวบอกฤดูกาลและสถานะสังคมโบราณ
+       ========================================== */
+
+    if (typeof player !== 'undefined') {
+        player.skillProgressionRate = 1.0; // ตัวคูณบาลานซ์ความยาก-ง่าย
+        player.storyFlags = player.storyFlags || {};
+    }
+
+    // ฟังก์ชันพัฒนาสกิลแบบมีบาลานซ์ตามอายุและประเพณี
+    window.trainBalancedSkill = function(type) {
+        if (!window.player) return;
+        
+        // เงื่อนไขประเพณีและอายุ
+        if (type === 'scholarship') {
+            if (player.age < 6) {
+                alert("เด็กวัยนี้ยังเล็กเกินไปสำหรับการศึกษาตำราปราชญ์อย่างหนัก!");
+                return;
+            }
+            let gain = Math.floor(5 * player.skillProgressionRate);
+            player.skills.scholarship = (player.skills.scholarship || 10) + gain;
+            player.intel = Math.min(100, player.intel + gain);
+            addTimeline("📚 ศึกษาตำราตามหลักประเพณี", `ฝึกฝนวิชาความรู้ สติปัญญาเพิ่มขึ้น (+${gain}) สมดุลกับวัย`, "good");
+            showModal("📚 บัณฑิตก้าวหน้า", `ความรู้ปราชญ์เพิ่มขึ้น สอดคล้องกับค่านิยมการสอบจอหงวน`, "📖");
+        } 
+        else if (type === 'martial') {
+            if (player.age < 12) {
+                alert("ร่างกายยังไม่เติบโตเต็มที่ ควรเน้นการพักผ่อนและพื้นฐานเบื้องต้น!");
+                return;
+            }
+            let gain = Math.floor(5 * player.skillProgressionRate);
+            player.skills.martial = (player.skills.martial || 10) + gain;
+            player.health = Math.min(100, player.health + 3);
+            addTimeline("⚔️ ฝึกยุทธ์เสริมสร้างร่างกาย", `ฝึกฝนกระบวนท่าตามวิถียุทธภพ ความชำนาญเพิ่มขึ้น (+${gain})`, "good");
+            showModal("⚔️ ยุทธ์ศาสตร์สมดุล", `ร่างกายแข็งแกร่งขึ้น พร้อมรับมือเหตุการณ์ภายนอก`, "🗡️");
+        }
+        else if (type === 'business') {
+            if (player.age < 14) {
+                alert("ยังไม่ถึงวัยออกเรือนหรือทำธุรกิจการค้าด้วยตนเอง!");
+                return;
+            }
+            let gain = Math.floor(25 * player.skillProgressionRate);
+            player.money += gain;
+            addTimeline("💰 บริหารการค้าตลาดเมืองหลวง", `ค้าขายได้กำไรเหมาะสมตามกลไกตลาด (+${gain} ตำลึง)`, "good");
+            showModal("💰 กำไรสมดุล", `การค้าขายเจริญรุ่งเรืองแบบไม่ยากหรือเว่อร์จนเกินไป`, "📈");
+        }
+        
+        if (typeof updateUI === 'function') updateUI();
+    };
+
+    // ระบบเช็กอีเวนต์เนื้อเรื่องตามไทม์ไลน์อายุ
+    window.checkStoryMilestones = function() {
+        if (!window.player) return;
+        
+        if (player.age === 6 && !player.storyFlags.age6) {
+            player.storyFlags.age6 = true;
+            addTimeline("📜 เข้าสู่วัยเรียนรู้", "เริ่มเข้าสำนักศึกษาเพื่อเรียนรู้ตัวอักษรและประเพณีโบราณ", "good");
+        } else if (player.age === 16 && !player.storyFlags.age16) {
+            player.storyFlags.age16 = true;
+            addTimeline("🏮 วัยปักปิ่น / สวมกوان", "เข้าสู่วัยหนุ่มสาวเต็มตัว สามารถตบแต่งออกเรือนและสอบขุนนางได้", "good");
+            showModal("🏮 พิธีบรรลุนิติภาวะ", "ท่านเติบโตเป็นผู้ใหญ่แล้ว ประตูสู่เส้นทางราชการและวังหลังเปิดออก", "✨");
+        }
+    };
+
+    // ผูกเข้ากับฟังก์ชัน ageUp เดิมอัตโนมัติ
+    const originalAgeUp = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUp === 'function') originalAgeUp();
+        checkStoryMilestones();
+    };
+
+    console.log("✅ Ancient Life Balance & Story Timeline Patch V.36 Loaded Successfully!");
 </script>    
 </body>
 </html>
