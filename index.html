@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Ultimate Masterpiece V.2)</title>
+    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Ultimate Masterpiece V.3)</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -415,8 +415,12 @@
         name: "มู่หรงเฟิง", dynasty: "ราชวงศ์เซียว", city: "ฉางอัน", origin: "ตระกูลขุนนางถูกใส่ร้าย", gender: "ชาย",
         zodiac: "ปีมะโรง (มังกร)", element: "ธาตุทอง", seasonIndex: 0, age: 0, energy: 3, health: 100, 
         intel: 50, charm: 50, moral: 50, repu: 10, money: 100, rankLevel: 0, partner: null, partnerStatus: null, 
-        parentsName: "ท่านพ่อและท่านแม่", parentsAffection: 80, sect: null, sectLevel: 0,
-        properties: [], relics: [], fateCards: 2, children: [], timeline: [],
+        parents: {
+            father: { name: "มู่หรงเทียน", profession: "อดีตขุนนางกรมการคลัง", age: 52, status: "สุขภาพแข็งแรง" },
+            mother: { name: "ไป๋ฮุ่ยเซียน", profession: "คุณหนูตระกูลกวี", age: 48, status: "ดูแลเรือน" }
+        },
+        parentsAffection: 80, bestFriend: "หลินเฟิง (บัณฑิตคู่ซี้)", rival: "เฉินเทียน (คู่ปรับตระกูล)",
+        sect: null, sectLevel: 0, properties: [], relics: [], fateCards: 2, children: [], timeline: [],
         titles: ["ผู้เริ่มต้นเส้นทางชะตา"], ancestralHall: []
     };
 
@@ -431,10 +435,9 @@
         player.zodiac = document.getElementById('setup-zodiac').value;
         player.element = document.getElementById('setup-element').value;
 
-        // เช็กโบนัสสายเลือดจากหอเกียรติยศรุ่นก่อน
         if (player.ancestralHall && player.ancestralHall.length > 0) {
             player.intel += 10; player.charm += 10; player.money += 50;
-            addTimeline("🧬 ทายาทสายเลือดตระกูลผู้ทรงเกียรติ เกิดมาพร้อมปัญญาและเสน่ห์ล้นเหลือ (+สติปัญญา, +เสน่ห์)", 'good');
+            addTimeline("🧬 ทายาทสายเลือดตระกูลผู้ทรงเกียรติ เกิดมาพร้อมปัญญาและเสน่ห์ล้นเหลือ", 'good');
         }
 
         if (player.origin === 'ตระกูลขุนนางถูกใส่ร้าย') {
@@ -478,13 +481,42 @@
             else dots[i].classList.remove('active');
         }
 
-        let famHTML = `<div class="action-card"><div class="action-left"><span class="icon">👴</span><div class="info"><h4>${player.parentsName}</h4><p>ความกตัญญู: ${player.parentsAffection}%</p></div></div></div>`;
+        let famHTML = `
+            <div class="action-card" onclick="openParentsDossier()">
+                <div class="action-left"><span class="icon">👴</span>
+                    <div class="info"><h4>บิดา: ${player.parents.father.name} / มารดา: ${player.parents.mother.name}</h4><p>🔍 คลิกดูประวัติครอบครัว & ความกตัญญู (${player.parentsAffection}%)</p></div>
+                </div>
+            </div>
+            <div class="action-card">
+                <div class="action-left"><span class="icon">🤝</span>
+                    <div class="info"><h4>สหายสนิท: ${player.bestFriend}</h4><p>อริคู่ปรับ: ${player.rival}</p></div>
+                </div>
+            </div>
+        `;
+        
         famHTML += player.partner ? `<div class="action-card"><div class="action-left"><span class="icon">❤️</span><div class="info"><h4>คู่ครอง: ${player.partner} (${player.partnerStatus})</h4><p>ร่วมทุกข์ร่วมสุขในเรือนหลัง</p></div></div></div>` : `<div class="action-card"><div class="action-left"><span class="icon">👤</span><div class="info"><h4>ยังไม่มีคู่ครอง</h4><p>ไปที่เมนูหมั้นหมายเพื่อหาคู่</p></div></div></div>`;
         
         player.children.forEach((c, i) => {
             famHTML += `<div class="action-card" onclick="switchToChild(${i})"><div class="action-left"><span class="icon">👶</span><div class="info"><h4>บุตร: ${c.name} (${c.gender}) - อายุ ${c.age} ปี</h4><p>👑 คลิกเพื่อสลับเล่นเป็นทายาทคนนี้ทันที!</p></div></div></div>`;
         });
         document.getElementById('family-list').innerHTML = famHTML;
+    }
+
+    // ดูประวัติพ่อแม่และญาติมิตร
+    function openParentsDossier() {
+        let f = player.parents.father;
+        let m = player.parents.mother;
+        let text = `📜 ข้อมูลพื้นเพครอบครัวตระกูล:\n\n`;
+        text += `👴 บิดา: ${f.name}\n• อาชีพ: ${f.profession}\n• อายุ: ${f.age + player.age} ปี\n• สถานะ: ${f.status}\n\n`;
+        text += `👵 มารดา: ${m.name}\n• พื้นเพ: ${m.profession}\n• อายุ: ${m.age + player.age} ปี\n• สถานะ: ${m.status}\n\n`;
+        text += `❤️ ความกตัญญูต่อท่าน: ${player.parentsAffection}%\n`;
+        text += `🤝 สหายสนิท: ${player.bestFriend}\n`;
+        text += `⚔️ อริศัตรู: ${player.rival}`;
+
+        document.getElementById('modal-title').innerText = "👴 ผังครอบครัว & ประวัติบิดามารดา";
+        document.getElementById('modal-desc').innerText = text;
+        document.getElementById('modal-choices').innerHTML = `<button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>`;
+        document.getElementById('event-modal').classList.add('active');
     }
 
     function addTimeline(text, type='') {
@@ -530,10 +562,9 @@
         if (player.money < 200) { alert("เงินไม่พอ! ซื้อเรือนหรูต้องใช้ 200 ตำลึง"); return; }
         player.money -= 200; player.properties.push("เรือนหรูเมืองหลวง"); player.repu += 15;
         
-        // เช็กปลดล็อกฉายาเศรษฐี
         if (!player.titles.includes("มหาเศรษฐีร้อยล้าน")) {
             player.titles.push("มหาเศรษฐีร้อยล้าน");
-            alert("🏆 ปดล็อกฉายาใหม่: 'มหาเศรษฐีร้อยล้าน' บันทึกลงหอเกียรติยศตระกูล!");
+            alert("🏆 ปลดล็อกฉายาใหม่: 'มหาเศรษฐีร้อยล้าน' บันทึกลงหอเกียรติยศ!");
         }
 
         addTimeline("🏡 ซื้อเรือนหรูและคฤหาสน์ในเมืองหลวง (ชื่อเสียง +15)", 'good');
@@ -673,8 +704,6 @@
 
     function switchToChild(idx) {
         let child = player.children[idx];
-        
-        // บันทึกฉายาลงหอเกียรติยศก่อนสลับตัว
         let hallData = player.ancestralHall || [];
         hallData.push({ name: player.name, titles: [...player.titles] });
 
@@ -683,14 +712,14 @@
         player.ancestralHall = hallData; player.titles = ["ทายาทผู้สืบสานตำนาน"];
         
         addTimeline(`✨ สลับมาสวมบทบาทสืบทอดชีวิตเป็นทายาท '${player.name}' ไร้รอยต่อ`, 'good');
-        alert(`สลับมาเล่นเป็น '${player.name}' สำเร็จ! (ได้รับโบนัสสายเลือดตระกูล)`);
+        alert(`สลับมาเล่นเป็น '${player.name}' สำเร็จ!`);
         updateUI(); saveGame(false);
     }
 
     function openAncestralHall() {
         let text = "🏛️ หอเกียรติยศบรรพบุรุษตระกูล:\n\n";
         if (player.ancestralHall.length === 0) {
-            text += "ยังไม่มีบันทึกบรรพบุรุษในหอเกียรติยศ (ต้องสลับเล่นรุ่นลูกหรือทำพินัยกรรมก่อน)";
+            text += "ยังไม่มีบันทึกบรรพบุรุษในหอเกียรติยศ";
         } else {
             player.ancestralHall.forEach((h, idx) => {
                 text += `• รุ่นที่ ${idx+1}: ท่าน ${h.name}\n  ฉายา: ${h.titles.join(', ')}\n\n`;
@@ -730,7 +759,7 @@
 
     function executeWill(childIdx) {
         let chosenChild = player.children[childIdx];
-        addTimeline(`📜 ทำพินัยกรรมมอบสมบัติและคฤหาสน์ให้ '${chosenChild.name}' สืบทอดตระกูล`, 'good');
+        addTimeline(`📜 ทำพินัยกรรมมอบสมบัติให้ '${chosenChild.name}' สืบทอดตระกูล`, 'good');
         alert(`โอนมรดกให้ '${chosenChild.name}' เรียบร้อย!`);
         closeModal();
         switchToChild(childIdx);
@@ -759,23 +788,20 @@
     function closeModalAndCheckEvent() {
         closeModal();
         if (Math.random() < 0.4) {
-            setTimeout(triggerRivalEvent, 300); // โอกาสเจอศัตรูคู่อาฆาต
+            setTimeout(triggerRivalEvent, 300);
         } else if (Math.random() < 0.5) {
             setTimeout(triggerRandomEvent, 300);
         }
     }
 
-    // ระบบศัตรูคู่อาฆาต & การล้างแค้น
     function triggerRivalEvent() {
-        const rivalNames = ["เฉินเทียน", "ไป๋หู่", "สำนักมารโลหิต"];
-        let rival = rivalNames[Math.floor(Math.random() * rivalNames.length)];
-        
+        let rival = player.rival;
         document.getElementById('modal-title').innerText = "⚔️ ภัยคุกคามจากศัตรูคู่อาฆาต!";
-        document.getElementById('modal-desc').innerText = `อริเก่า '${rival'}' ส่งมือสังหารและจดหมายท้าทายมายังจวนของท่าน เพื่อสะสางความแค้นในอดีต! ท่านจะรับมืออย่างไร?`;
+        document.getElementById('modal-desc').innerText = `อริเก่า '${rival}' ส่งมือสังหารและจดหมายท้าทายมายังจวนของท่าน เพื่อสะสางความแค้น! ท่านจะรับมืออย่างไร?`;
         
         let cBox = document.getElementById('modal-choices');
         cBox.innerHTML = `
-            <button class="choice-btn" onclick="resolveRival(1)">ใช้กำลังปะทะมือสังหาร (ลุ้นสุขภาพ & ชื่อเสียง +10)</button>
+            <button class="choice-btn" onclick="resolveRival(1)">ใช้กำลังปะทะมือสังหาร (ชื่อเสียง +10)</button>
             <button class="choice-btn" onclick="resolveRival(2)">ใช้สติปัญญาซ้อนแผนเล่นงานอริ (สติปัญญา +10)</button>
             <button class="choice-btn" onclick="resolveRival(3)">จ่ายสินบนสงบศึก (เสีย 50 ตำลึง)</button>
         `;
@@ -785,7 +811,7 @@
     function resolveRival(opt) {
         if (opt === 1) {
             if (player.health >= 50) {
-                player.repu += 10; addTimeline("⚔️ ปะทะเดือดกับมือสังหารของอริจนได้รับชัยชนะ ชื่อเสียงขจรขจาย (ชื่อเสียง +10)", 'good');
+                player.repu += 10; addTimeline("⚔️ ปะทะเดือดกับมือสังหารของอริจนได้รับชัยชนะ (ชื่อเสียง +10)", 'good');
                 alert("เอาชนะมือสังหารได้สำเร็จ!");
             } else {
                 player.health -= 20; addTimeline("⚔️ ร่างกายอ่อนแอ พลาดท่าบาดเจ็บจากการลอบสังหาร (สุขภาพ -20)", 'bad');
