@@ -1689,5 +1689,201 @@
         autoSaveGame();
     };
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 22 (ULTIMATE MASTER): ALL FIXES, LIMITS & FEATURES 🌸
+     ========================================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบ Auto-Save, ไทม์ไลน์ไม่หาย และ เมนูด้านซ้ายปัดปิดได้
+    // ---------------------------------------------------------
+    function autoSaveGame() {
+        if (typeof player !== 'undefined' && player.age !== undefined) {
+            localStorage.setItem('ANCIENT_LIFE_V22_SAVE', JSON.stringify(player));
+        }
+    }
+
+    let originalAgeUpMaster = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUpMaster === 'function') originalAgeUpMaster();
+        
+        // รีเซ็ตโควตากิจกรรม 3 ครั้งต่อปี
+        if (typeof player !== 'undefined') {
+            player.actionLimit = 3;
+            player.studyLimit = 3;
+            player.trainLimit = 3;
+            player.artLimit = 3;
+            player.socialLimit = 3;
+
+            // เช็กความเครียดส่งผลต่อสุขภาพ
+            if (player.stress >= 70) {
+                player.health = Math.max(0, player.health - 12);
+                if (typeof addTimeline === 'function') {
+                    addTimeline("🩺 อาการตรอมใจ & โรคกำเริบ", `ความเครียดสะสมทำให้ร่างกายร่วงโรย เกิดอาการเจ็บป่วย (สุขภาพ -12)`, "bad");
+                }
+            }
+
+            // เหตุการณ์ประจำปีตามธาตุและนักษัตร
+            let annualEvents = [
+                `ปีนี้ตรงกับรอบ ${player.zodiac} ลมหนาวพัดผ่าน นำพาโชคลาภทางการค้ามาสู่ตระกูล (เงิน +20 ตำลึง)`,
+                `พลังแห่ง '${player.element}' หนุนนำจิตใจสงบนิ่ง บัณฑิตในเมืองต่างสรรเสริญเยินยอ (สติปัญญา +3)`,
+                `เกิดโรคระบาดเล็กน้อยในเมือง ${player.city} ท่านใช้สมุนไพรเยียวยาผู้คน สะสมแต้มบุญตระกูล (แต้มบุญ +5, คุณธรรม +5)`
+            ];
+            let chosenEvt = annualEvents[Math.floor(Math.random() * annualEvents.length)];
+            if (chosenEvt.includes("เงิน")) player.money += 20;
+            if (chosenEvt.includes("สติปัญญา")) player.intel += 3;
+            if (chosenEvt.includes("แต้มบุญ")) { player.karma = (player.karma || 50) + 5; player.moral += 5; }
+
+            if (typeof addTimeline === 'function') {
+                addTimeline(`🌟 เหตุการณ์ประจำปี (${player.zodiac})`, chosenEvt, "good");
+            }
+
+            // ตรวจสอบจุดเปลี่ยนเมื่ออายุครบ 16 ปี
+            if (player.age === 16) {
+                triggerAge16Milestone();
+            }
+        }
+        autoSaveGame();
+    };
+
+    let originalInitGameMaster = window.initGame;
+    window.initGame = function() {
+        // สุ่มสตอรี่ตั้งต้นไม่ซ้ำซาก
+        const uniqueBackgrounds = [
+            { origin: "ตระกูลขุนนางถูกใส่ร้ายทุจริต", desc: "ถือกำเนิดในตระกูลใหญ่ผู้กุมอำนาจคลังหลวง แต่ถูกศัตรูการเมืองใส่ร้ายป้ายสีคดีทุจริตจนล่มสลาย ต้องเติบโตท่ามกลางความอยุติธรรมและความแค้น" },
+            { origin: "ตระกูลขุนนางพิฆาตสงคราม", desc: "ทายาทตระกูลแม่ทัพผู้เสียสละ บิดาสิ้นชีพในสนามรบ เหลือเพียงมารดาและอนุสรณ์กระบี่โบราณ เติบโตมาพร้อมเสียงกลองศึก" },
+            { origin: "ทาสรับใช้ในจวนแม่ทัพ", desc: "ถือกำเนิดเป็นทาสรับใช้ในจวนอัครเสนาบดี ทำงานหนักตั้งแต่เยาว์วัย มีเป้าหมายสูงสุดคือการไถ่ถอนตัวและสะสมอำนาจทวงคืนศักดิ์ศรี" },
+            { origin: "ทาสรับใช้เรือนคณิกา", desc: "เติบโตท่ามกลางเสียงดนตรีและสุรา เรียนรู้เล่ห์เหลี่ยมผู้คนและการอ่านใจมนุษย์ มีความฝันสร้างอาณาจักรความมั่งคั่งของตนเอง" },
+            { origin: "สามัญชนทายาทพ่อค้าเร่", desc: "บุตรสามัญชนครอบครัวพ่อค้าเร่เดินทางข้ามเมือง เติบโตมากับการค้าขาย เล่ห์เหลี่ยมกลโกงตลาด และการเอาตัวรอดในสังคมพาณิชย์"
+        ];
+        let chosenBg = uniqueBackgrounds[Math.floor(Math.random() * uniqueBackgrounds.length)];
+
+        if (typeof originalInitGameMaster === 'function') originalInitGameMaster();
+
+        if (typeof player !== 'undefined') {
+            player.origin = chosenBg.origin;
+            player.karma = 50;
+            if (chosenBg.origin.includes("ทาส")) {
+                player.money = 15; player.repu = 0; player.stress = 25;
+            } else if (chosenBg.origin.includes("พ่อค้า")) {
+                player.money = 60; player.intel = 55;
+            } else {
+                player.money = 30; player.repu = 5;
+            }
+            if (typeof addTimeline === 'function') {
+                addTimeline("🌸 ชะตาชีวิตกำเนิดขึ้น", chosenBg.desc, 'good');
+            }
+        }
+        autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 2. ทางเลือกอิสระเมื่ออายุครบ 16 ปี
+    // ---------------------------------------------------------
+    function triggerAge16Milestone() {
+        document.getElementById('res-icon').innerText = "🌸";
+        document.getElementById('res-title').innerText = "🌸 จุดเปลี่ยนแห่งวัยเยาว์ (อายุ 16 ปีบริบูรณ์)";
+        document.getElementById('res-desc').innerText = `ท่านเติบโตเป็นหนุ่มสาวเต็มตัวแล้ว! ณ จุดตัดแห่งโชคชะตานี้ ท่านจะเลือกเส้นทางเดินชีวิตอย่างไรต่อไปเพื่อสร้างเกียรติยศแก่ตระกูล?`;
+        
+        let choicesHTML = `
+            <button class="choice-btn" onclick="chooseLifePath('scholar')">📜 ตั้งใจศึกษาตำรา มุ่งมั่นสอบจอหงวนเป็นขุนนางใหญ่</button>
+            <button class="choice-btn" onclick="chooseLifePath('military')">⚔️ จับกระบี่เข้าค่ายทหาร สมัครเป็นแม่ทัพออกศึกชายแดน</button>
+        `;
+        if (player.gender === 'หญิง') {
+            choicesHTML += `<button class="choice-btn" style="background:#fff3d6; border-color:var(--secondary-gold); font-weight:600;" onclick="chooseLifePath('palace')">👑 สละเส้นทางสามัญ สมัครเข้าวังหลวงคัดเลือกเป็นพระสนม (เป้าหมายฮองเฮา)</button>`;
+        } else {
+            choicesHTML += `<button class="choice-btn" style="background:#fff3d6; border-color:var(--secondary-gold); font-weight:600;" onclick="chooseLifePath('merchant')">💰 ทุ่มเททุนทรัพย์ เปิดกิจการค้าขายสะสมทรัพย์สมบัติมหาศาล</button>`;
+        }
+        choicesHTML += `<button class="choice-btn" onclick="closeModal()">เดินตามวิถีชีวิตปกติทั่วไป</button>`;
+
+        document.getElementById('res-choices').innerHTML = choicesHTML;
+        document.getElementById('result-modal').classList.add('active');
+    }
+
+    function chooseLifePath(path) {
+        if (path === 'scholar') {
+            player.intel += 15; player.rankLevel = 1;
+            player.activeTitle = "📜 บัณฑิตผู้มุ่งมั่นสอบจอหงวน";
+            addTimeline("📜 เลือกเส้นทางขุนนางบุ๋น", "ตัดสินใจละทิ้งความไขว้เขว มุ่งมั่นอ่านตำราเพื่อก้าวสู่ราชสำนัก (สติปัญญา +15)", "good");
+            showModal("📜 เลือกเส้นทางขุนนางบุ๋น", "ท่านมุ่งมั่นสู่เส้นทางบัณฑิตและเตรียมตัวสอบจอหงวน!", "📚");
+        } else if (path === 'military') {
+            player.health += 15; player.repu += 10;
+            player.activeTitle = "⚔️ ว่าที่แม่ทัพหนุ่มผู้หาญกล้า";
+            addTimeline("⚔️ เลือกเส้นทางทหารกล้า", "สวมชุดเกราะฝึกฝนกระบี่ มุ่งหน้าสู่ค่ายทหารเพื่อสร้างผลงานศึก (สุขภาพ +15, ชื่อเสียง +10)", "good");
+            showModal("⚔️ เลือกเส้นทางทหาร", "ท่านตัดสินใจจับกระบี่มุ่งสู่สนามรบชายแดน!", "⚔️");
+        } else if (path === 'palace') {
+            player.charm += 20; player.palaceRank = "ผู้เข้าคัดเลือกวังหลวง";
+            player.activeTitle = "👑 ผู้หมายปองตำแหน่งฮองเฮา";
+            addTimeline("👑 เลือกเส้นทางวังหลวง", "ตัดสินใจถวายตัวเข้าสู่พระราชวังหลวง เริ่มต้นเส้นทางไต่เต้าจากสนมสู่บัลลังก์ฮองเฮา (เสน่ห์ +20)", "good");
+            showModal("👑 เส้นทางวังหลวง", "ท่านก้าวเข้าสู่ประตูวังหลวง มุ่งสู่เป้าหมายสูงสุดแห่งฝ่ายใน (ฮองเฮา)!", "🏛️");
+        } else if (path === 'merchant') {
+            player.money += 100; player.intel += 10;
+            player.activeTitle = "💰 พ่อค้าใหญ่ผู้มั่งคั่ง";
+            addTimeline("💰 เลือกเส้นทางมหาเศรษฐี", "ใช้สายตาเฉียบแหลมเปิดกิจการค้าขายข้ามเมือง สะสมทรัพย์สินทองคำ (เงิน +100 ตำลึง)", "good");
+            showModal("💰 เส้นทางพ่อค้า", "เริ่มต้นกิจการค้าขาย สร้างความมั่งคั่งขจรขจาย!", "💎");
+        }
+        if (typeof updateUI === 'function') updateUI();
+        autoSaveGame();
+    }
+
+    // ---------------------------------------------------------
+    // 3. โหลดเซฟ, ไทม์ไลน์ และเมนูด้านซ้ายปัดปิดได้อัตโนมัติ
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        let savedData = localStorage.getItem('ANCIENT_LIFE_V22_SAVE') || localStorage.getItem('ANCIENT_LIFE_V21_SAVE');
+        if (savedData && typeof player !== 'undefined') {
+            try {
+                let parsed = JSON.parse(savedData);
+                if (parsed && parsed.age !== undefined) {
+                    player = parsed;
+                    if (typeof updateUI === 'function') updateUI();
+                    
+                    let feed = document.getElementById('timeline-feed');
+                    if (feed && player.timeline && player.timeline.length > 0) {
+                        feed.innerHTML = player.timeline.map((t, idx) => `
+                            <div class="timeline-box ${t.type || ''}" onclick="showTimelineDetail(${idx})">
+                                <div class="timeline-tag">[อายุ ${t.age} ปี] ${t.tag} <span class="hint">🔍 คลิกอ่านดีเทล</span></div>
+                                <div class="timeline-content">${t.text}</div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch(e) {}
+        }
+
+        // เมนูด้านซ้ายปัดเลื่อนปิดได้ทันที
+        let sideMenu = document.getElementById('side-menu');
+        if (sideMenu) {
+            let backdrop = document.createElement('div');
+            backdrop.id = 'side-menu-backdrop';
+            backdrop.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:140; display:none; backdrop-filter:blur(2px); transition:opacity 0.3s ease;";
+            document.body.appendChild(backdrop);
+
+            backdrop.onclick = () => {
+                sideMenu.classList.remove('active');
+                backdrop.style.display = 'none';
+            };
+
+            window.toggleSideMenu = function() {
+                sideMenu.classList.toggle('active');
+                backdrop.style.display = sideMenu.classList.contains('active') ? 'block' : 'none';
+            };
+        }
+
+        // ป๊อปอัพต้อนรับ Mega Patch 22
+        setTimeout(() => {
+            if (typeof showModal === 'function' && typeof player !== 'undefined') {
+                let msg = `ยินดีต้อนรับกลับสู่จวน, ท่าน ${player.surname}${player.firstname}!\n\n`;
+                msg += `👑 Mega Patch 22 (Ultimate Master):\n`;
+                msg += `• ลิมิตพัฒนาสเตตัส 3 ครั้งต่อปี (คุมความท้าทาย)\n`;
+                msg += `• สตอรี่ต้นกำเนิด 5 รูปแบบสุ่มไม่ซ้ำซาก\n`;
+                msg += `• เลือกเส้นทางชีวิตอิสระเมื่ออายุครบ 16 ปี\n`;
+                msg += `• ระบบแต้มบุญวาสนา (Karma) & เหตุการณ์ประจำปีตามธาตุ/นักษัตร\n`;
+                msg += `• ระบบ Auto-Save และไทม์ไลน์บันทึกประวัติไม่มีวันหาย`;
+                
+                showModal("📜 บันทึก Mega Patch 22 สมบูรณ์แบบ", msg, "🏛️");
+            }
+        }, 800);
+    });
+</script>
 </body>
 </html>
