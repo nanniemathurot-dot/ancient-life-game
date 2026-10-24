@@ -938,5 +938,53 @@
         }
     };
 </script>
+/* ==========================================
+       PATCH NOTIFICATION SYSTEM (UPDATE CHANGELOG)
+       - ระบบหน้าต่างเด้งแจ้งเตือนข่าวสารอัปเดตเกมเมื่อเข้าสู่ระบบ
+       ========================================== */
+
+    const CURRENT_GAME_VERSION = "V.56.0"; // เลขเวอร์ชันอัปเดตล่าสุด
+
+    // รายละเอียดข่าวสารอัปเดตประจำเวอร์ชัน
+    const updateNotesContent = `
+        🎉 <b>ยินดีต้อนรับกลับสู่จวนตระกูล! รายการอัปเดตแพตช์ใหม่ (${CURRENT_GAME_VERSION}):</b><br><br>
+        1. ✏️ <b>ระบบชื่อ-นามสกุลอิสระ:</b> ปลดล็อกช่องพิมพ์นามสกุลตามใจชอบตั้งแต่หน้าแรก<br>
+        2. 📜 <b>แถบราชวงศ์ & ฤดูกาล:</b> แสดงผลรัชศก ฤดูกาล และชื่อตระกูลด้านบนสุดแบบ Real-time<br>
+        3. 🏮 <b>เมนูลัดจวนตระกูล:</b> ย้ายลงไปรวมกับแถบเมนูด้านล่างสุดอย่างเป็นระเบียบ ไม่บังหน้าจอ<br>
+        4. ⚡ <b>ไทม์ไลน์ Real-time:</b> กิจกรรมและช้อยส์พัฒนาตัวละครจะบันทึกเรื่องราวเด้งขึ้นทันทีโดยไม่ค้าง<br>
+        5. 📖 <b>กิจกรรมการ์ดครบครัน:</b> ศึกษาตำรา, ฝึกยุทธ์, ท่องยุทธภพ, สานสัมพันธ์สหาย และสลับธีมสีพาสเทล
+    `;
+
+    window.checkAndShowUpdateModal = function() {
+        let lastSeenVersion = localStorage.getItem('ancientLife_LastSeenVersion');
+
+        // ถ้ายังไม่เคยอ่าน หรือเป็นเวอร์ชันใหม่ ให้แสดงหน้าต่างแจ้งเตือน
+        if (lastSeenVersion !== CURRENT_GAME_VERSION) {
+            setTimeout(() => {
+                let modal = document.getElementById('result-modal');
+                if (!modal) return;
+
+                document.getElementById('res-icon').innerText = "📢";
+                document.getElementById('res-title').innerText = "📢 ประกาศอัปเดตระบบเกม (" + CURRENT_GAME_VERSION + ")";
+                document.getElementById('res-desc').innerHTML = updateNotesContent;
+                
+                document.getElementById('res-choices').innerHTML = `
+                    <button class="choice-btn" style="background:#28a745; color:white;" onclick="confirmUpdateRead()">✨ รับทราบ & เข้าสู่เกม</button>
+                `;
+                modal.classList.add('active');
+            }, 800); // หน่วงเวลาเล็กน้อยให้หน้าจอหลักโหลดเสร็จก่อน
+        }
+    };
+
+    window.confirmUpdateRead = function() {
+        localStorage.setItem('ancientLife_LastSeenVersion', CURRENT_GAME_VERSION);
+        closeModal();
+    };
+
+    // เรียกตรวจสอบทันทีเมื่อโหลดหน้าเว็บสำเร็จ
+    window.addEventListener('load', function() {
+        checkAndShowUpdateModal();
+    });
+</script>
 </body>
 </html>
