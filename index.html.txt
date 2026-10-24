@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #f4eae1;
+            --card-bg: #fffbf7;
+            --primary-red: #8b261d;
+            --secondary-gold: #d4af37;
+            --accent-jade: #2d6a4f;
+            --text-dark: #2b1810;
+            --text-light: #7d6b5d;
+            --border-color: #e6d5c3;
+            --shadow: 0 8px 24px rgba(139, 38, 29, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Sarabun', sans-serif; user-select: none; }
+        body { background-color: #1a0f0d; color: var(--text-dark); display: flex; justify-content: center; align-items: center; min-height: 100vh; font-size: 14px; }
+        
+        .mobile-container {
+            width: 100%; max-width: 430px; height: 100vh; max-height: 920px;
+            background: var(--bg-main); display: flex; flex-direction: column;
+            position: relative; overflow: hidden; box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        /* Top Bar Header */
+        header {
+            background: linear-gradient(180deg, var(--primary-red) 0%, #5c1812 100%);
+            color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--secondary-gold); z-index: 10;
+        }
+        header h1 { font-family: 'Kanit', sans-serif; font-size: 16px; font-weight: 600; color: #ffe8b6; letter-spacing: 0.5px; }
+        .header-btns { display: flex; gap: 8px; }
+        .icon-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+
+        /* Main View Container */
+        .content-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; padding-bottom: 70px; }
+        
+        /* Profile Header Component */
+        .profile-card {
+            background: var(--card-bg); margin: 12px; padding: 12px; border-radius: 16px;
+            border: 1px solid var(--border-color); box-shadow: var(--shadow);
+            display: flex; gap: 12px; align-items: center; position: relative;
+        }
+        .avatar-box {
+            width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--secondary-gold);
+            background: #f0e6d2; display: flex; justify-content: center; align-items: center;
+            font-size: 38px; flex-shrink: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative;
+        }
+        .gender-badge { position: absolute; bottom: 0; right: 0; background: var(--primary-red); color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; border: 1px solid white; }
+        .profile-info { flex: 1; }
+        .profile-info h2 { font-family: 'Kanit', sans-serif; font-size: 18px; color: var(--primary-red); }
+        .profile-info .sub-text { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+        .profile-info .rank-text { font-size: 12px; font-weight: 600; color: #a87210; margin-top: 4px; display: inline-block; background: #fff4d9; padding: 2px 8px; border-radius: 6px; border: 1px solid #ebd39c; }
+
+        /* Stats Bar */
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 12px 12px 12px; }
+        .stat-item { background: var(--card-bg); padding: 6px 8px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-item .label { font-size: 10px; color: var(--text-light); }
+        .stat-item .val { font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 600; color: var(--primary-red); }
+
+        /* Screens */
+        .page { display: none; flex-direction: column; flex: 1; }
+        .page.active { display: flex; }
+
+        /* Timeline Feed (One More Life Style) */
+        .timeline-container { padding: 0 12px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+        .timeline-item { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-color); padding: 12px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--secondary-gold); border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        .timeline-age { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--primary-red); font-weight: 600; margin-bottom: 4px; }
+        .timeline-desc { font-size: 13px; line-height: 1.5; color: var(--text-dark); }
+
+        /* Action & List Cards */
+        .menu-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+        .action-card {
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px;
+            padding: 12px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: 0.1s;
+        }
+        .action-card:active { transform: scale(0.98); background: #fdf5eb; }
+        .action-card .info h4 { font-family: 'Kanit', sans-serif; font-size: 14px; color: var(--text-dark); }
+        .action-card .info p { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+        .action-card .icon { font-size: 22px; margin-right: 10px; }
+        .action-left { display: flex; align-items: center; }
+
+        /* Buttons */
+        .btn { background: var(--primary-red); color: white; border: none; padding: 10px 16px; border-radius: 10px; font-family: 'Kanit', sans-serif; font-size: 13px; cursor: pointer; text-align: center; }
+        .btn-gold { background: linear-gradient(135deg, #d4af37, #aa8311); color: #fff; font-weight: 600; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary-red); color: var(--primary-red); }
+        .btn-block { width: 100%; display: block; }
+
+        /* Floating Age Up Button */
+        .age-up-bar {
+            position: fixed; bottom: 65px; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 430px; padding: 8px 12px; background: rgba(244, 234, 225, 0.95);
+            border-top: 1px solid var(--border-color); z-index: 5;
+        }
+
+        /* Bottom Navigation Menu */
+        nav.bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: #2b1810; display: flex; border-top: 2px solid var(--secondary-gold); z-index: 10;
+        }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #a89485; font-size: 10px; cursor: pointer; font-family: 'Kanit', sans-serif;
+        }
+        .nav-item.active { color: var(--secondary-gold); font-weight: 600; }
+        .nav-item .nav-icon { font-size: 18px; margin-bottom: 2px; }
+
+        /* Modal Overlay */
+        .modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center;
+            padding: 20px; z-index: 100; backdrop-filter: blur(3px);
+        }
+        .modal.active { display: flex; }
+        .modal-box {
+            background: var(--card-bg); width: 100%; max-width: 360px; border-radius: 20px;
+            border: 2px solid var(--secondary-gold); padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-height: 80vh; overflow-y: auto;
+        }
+        .modal-box h3 { font-family: 'Kanit', sans-serif; color: var(--primary-red); font-size: 18px; margin-bottom: 10px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; }
+        .modal-box p { font-size: 13px; line-height: 1.6; color: var(--text-dark); margin-bottom: 16px; }
+        .choice-btn { width: 100%; padding: 10px 12px; margin-bottom: 8px; background: #fff; border: 1px solid var(--border-color); border-radius: 10px; text-align: left; font-size: 13px; cursor: pointer; color: var(--text-dark); }
+        .choice-btn:hover { background: #fdf2e3; border-color: var(--secondary-gold); }
+
+        /* Setup Screen Form */
+        .setup-form { display: flex; flex-
