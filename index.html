@@ -2737,608 +2737,11 @@
         }, 2000);
     });
 </script>
-    <!-- ==========================================================================
-     🌸 MEGA PATCH 30 (ULTIMATE STORY EVENTS & RANDOM ENCOUNTERS) 🌸
+<!-- ==========================================================================
+     🌸 CLEAN MASTER PANEL CODE (วางทับอันเก่าทั้งหมดตรงท้ายไฟล์) 🌸
      ========================================================== -->
 <script>
-    // ---------------------------------------------------------
-    // ฟังก์ชันสุ่มเลือกอีเวนต์เนื้อเรื่องพิเศษทั้ง 3 แบบ
-    // ---------------------------------------------------------
-    window.triggerRandomStoryEvent = function() {
-        let eventType = Math.floor(Math.random() * 3);
-
-        if (eventType === 0) {
-            // 1. อีเวนต์จดหมายปริศนากลางตลาดหลวง
-            document.getElementById('res-icon').innerText = "🏮";
-            document.getElementById('res-title').innerText = "🏮 ปริศนาจดหมายลับกลางตลาดหลวง";
-            document.getElementById('res-desc').innerText = `ระหว่างที่ท่านเดินเลือกซื้อของในตลาดหลวง จู่ๆ ก็มีเด็กน้อยวิ่งมาชนพร้อมกับยื่นจดหมายลับที่มีตราประทับประหลาดใส่มือ ก่อนจะหายตัวไปในฝูงชนอย่างรวดเร็ว...`;
-            
-            document.getElementById('res-choices').innerHTML = `
-                <button class="choice-btn" onclick="resolveStoryEvent('market_open')">📜 เปิดอ่านและตามหาเบาะแส (เสี่ยงอันตราย ลุ้นค้นพบขุมทรัพย์)</button>
-                <button class="choice-btn" onclick="resolveStoryEvent('market_report')">⚖️ นำไปมอบให้กรมอาญาตรวจสอบ (ได้รับชื่อเสียงและความไว้วางใจ)</button>
-                <button class="choice-btn" onclick="resolveStoryEvent('market_burn')">🔥 เผาทิ้งทำลายหลักฐานเพื่อความปลอดภัย (ตัดปัญหา รักษาสุขภาพจิต)</button>
-            `;
-        } else if (eventType === 1) {
-            // 2. อีเวนต์เทศกาลโคมไฟประจำปี
-            document.getElementById('res-icon').innerText = "🌸";
-            document.getElementById('res-title').innerText = "🌸 งานเทศกาลโคมไฟประจำปี";
-            document.getElementById('res-desc').innerText = `คืนเทศกาลโคมไฟอันงดงาม แสงไฟสว่างไสวทั่วท้องถนน ผู้คนต่างออกมาปล่อยโคมลอยอธิษฐาน บรรยากาศเต็มไปด้วยความครึกครื้น...`;
-            
-            document.getElementById('res-choices').innerHTML = `
-                <button class="choice-btn" onclick="resolveStoryEvent('lantern_wish')">✨ เขียนคำอธิษฐานปล่อยโคมลอยขอพรความรัก (เพิ่มค่าเสน่ห์และความสัมพันธ์)</button>
-                <button class="choice-btn" onclick="resolveStoryEvent('lantern_riddle')">🧠 ร่วมวงทายปริศนาโคมไฟชิงรางวัลใหญ่ (วัดสติปัญญา ลุ้นรับเงินตำลึง)</button>
-                <button class="choice-btn" onclick="resolveStoryEvent('lantern_relax')">🍃 เดินชมบรรยากาศเงียบๆ คนเดียว (ลดความเครียด เพิ่มพลังชีวิต)</button>
-            `;
-        } else {
-            // 3. อีเวนต์วิกฤตภัยธรรมชาติและโรงทาน
-            document.getElementById('res-icon').innerText = "🌾";
-            document.getElementById('res-title').innerText = "🌾 วิกฤตอุทกภัย & โรงทานราษฎร";
-            document.getElementById('res-desc').innerText = `เกิดอุทกภัยใหญ่ขึ้นในหัวเมือง ราษฎรจำนวนมากอพยพไร้ที่อยู่อาศัยเข้ามาในเมืองหลวง ในฐานะผู้มีหน้ามีตา ท่านจะตัดสินใจอย่างไร?`;
-            
-            document.getElementById('res-choices').innerHTML = `
-                <button class="choice-btn" onclick="resolveStoryEvent('crisis_charity')">🍲 ควักกระเป๋าเปิดโรงทานแจกอาหารและยา (เสีย 50 ตำลึง แต่ชื่อเสียงพุ่งสูงสุดขีด)</button>
-                <button class="choice-btn" onclick="resolveStoryEvent('crisis_policy')">📜 ถวายฎีกาเสนอแผนแก้ปัญหาต่อท้องพระโรง (วัดสติปัญญา สร้างผลงานความดีความชอบ)</button>
-                <button class="choice-btn" onclick="resolveStoryEvent('crisis_ignore')">🚪 ปิดจวนเงียบไม่ยุ่งเกี่ยว (ประหยัดทรัพย์สิน แต่ชื่อเสียงลดลง)</button>
-            `;
-        }
-
-        document.getElementById('result-modal').classList.add('active');
-    };
-
-    // ---------------------------------------------------------
-    // ฟังก์ชันประมวลผลการตัดสินใจในอีเวนต์เนื้อเรื่อง
-    // ---------------------------------------------------------
-    window.resolveStoryEvent = function(choice) {
-        // 1. ตลาดหลวง
-        if (choice === 'market_open') {
-            player.intel = (player.intel || 10) + 10;
-            player.stress = (player.stress || 0) + 10;
-            addTimeline("📜 แกะรอยจดหมายลับ", "เสี่ยงภัยตามหาเบาะแสจากจดหมายปริศนา ได้รับข้อมูลลับสำคัญแต่สร้างความเครียด", "good");
-            showModal("📜 เบาะแสลับ", "ท่านไขปริศนาสำเร็จ ได้รับแผนที่ขุมทรัพย์และข้อมูลลับทางการเมือง!", "💎");
-        } else if (choice === 'market_report') {
-            player.repu += 15;
-            player.merit = (player.merit || 0) + 10;
-            addTimeline("⚖️ ส่งมอบหลักฐานกรมอาญา", "นำจดหมายปริศนามอบให้ทางการ ขุนนางผู้ใหญ่ชื่นชมในความจงรักภักดี", "good");
-            showModal("⚖️ ความดีความชอบ", "ทางการตบรางวัลและบันทึกความดีความชอบให้แก่ท่าน!", "🏆");
-        } else if (choice === 'market_burn') {
-            player.stress = Math.max(0, (player.stress || 0) - 15);
-            addTimeline("🔥 ทำลายหลักฐาน", "เลือกเผาจดหมายทิ้งเพื่อตัดปัญหา ไม่ขอเกี่ยวצข้องกับเรื่องยุ่งยากใดๆ", "neutral");
-            showModal("🔥 ปลอดภัยไร้กังวล", "ท่านรอดพ้นจากคดีความและอันตราย จิตใจสงบสุขขึ้น", "🌿");
-        }
-        
-        // 2. เทศกาลโคมไฟ
-        else if (choice === 'lantern_wish') {
-            player.charm = (player.charm || 10) + 10;
-            player.relationship = (player.relationship || 50) + 10;
-            addTimeline("🌸 ขอพรโคมลอย", "เขียนคำอธิษฐานในคืนเทศกาลโคมไฟ เสน่ห์แพรพราวและผู้คนต่างเอ็นดู", "good");
-            showModal("🌸 สมหวังดั่งใจ", "บรรยากาศสุดโรแมนติกทำให้เสน่ห์ของท่านพุ่งกระฉูด!", "💖");
-        } else if (choice === 'lantern_riddle') {
-            if ((player.intel || 10) >= 30) {
-                player.money += 80;
-                addTimeline("🧠 ชนะทายปริศนาโคมไฟ", "ตอบคำถามปริศนาโคมไฟได้ถูกต้องทุกข้อ คว้ารางวัลใหญ่จากเศรษฐี", "good");
-                showModal("🧠 ฉลาดเป็นกรด", "คว้ารางวัลเงินรางวัล 80 ตำลึงกลับจวนอย่างภาคภูมิใจ!", "💰");
-            } else {
-                player.money += 20;
-                addTimeline("🧠 ร่วมทายปริศนาโคมไฟ", "ร่วมสนุกตอบคำถามได้รางวัลปลอบใจเล็กๆ น้อยๆ", "neutral");
-                showModal("🧠 ได้รับรางวัล", "ได้รับเงินรางวัลปลอบใจ 20 ตำลึง", "🎁");
-            }
-        } else if (choice === 'lantern_relax') {
-            player.health = Math.min(100, (player.health || 100) + 10);
-            player.stress = 0;
-            addTimeline("🍃 พักผ่อนเทศกาลโคมไฟ", "เดินเที่ยวชมแสงสีเสียงผ่อนคลายความเครียดจนหมดสิ้น สุขภาพร่างกายแข็งแรง", "good");
-            showModal("🍃 ผ่อนคลายสบายใจ", "ความเครียดหายเป็นปลิดทิ้ง สุขภาพกายใจสดชื่นแจ่มใส!", "🌿");
-        }
-
-        // 3. วิกฤตโรงทาน
-        else if (choice === 'crisis_charity') {
-            if (player.money >= 50) {
-                player.money -= 50;
-                player.repu += 35;
-                addTimeline("🍲 เปิดโรงทานช่วยเหลือราษฎร์", "ควักเงิน 50 ตำลึงเปิดโรงทานแจกอาหาร ขจรขจายชื่อเสียงความใจบุญ", "good");
-                showModal("🍲 เสียงสรรเสริญจากชาวเมือง", "ราษฎรต่างพากันแซ่ซ้องสรรเสริญในความเมตตาของท่าน!", "🌟");
-            } else {
-                player.money = 0;
-                player.repu += 15;
-                showModal("🍲 โรงทานจำกัด", "แม้จะมีเงินน้อยนิดแต่ก็พยายามช่วยเหลือเต็มที่ ราษฎรซาบซึ้งใจ", "💖");
-            }
-        } else if (choice === 'crisis_policy') {
-            if ((player.intel || 10) >= 40) {
-                player.repu += 25;
-                player.merit = (player.merit || 0) + 25;
-                addTimeline("📜 ถวายฎีกาแก้วิกฤต", "เสนอแผนจัดการอุทกภัยและปากท้องราษฎร์ต่อฮ่องเต้ สำเร็จลุล่วงงดงาม", "good");
-                showModal("📜 ผลงานชิ้นโบแดง", "ฮ่องเต้ทรงพอพระทัยยิ่ง เลื่อนขั้นบรรดาศักดิ์และเพิ่มความดีความชอบ!", "🏆");
-            } else {
-                player.stress += 10;
-                addTimeline("📜 ฎีกายังไม่รัดกุม", "เสนอแผนงานแต่ยังขาดประสบการณ์ ฮ่องเต้ให้กลับไปปรับปรุงแก้ไข", "neutral");
-                showModal("📜 ต้องพยายามอีกนิด", "แผนงานยังไม่ผ่านการพิจารณา ต้องเพิ่มสติปัญญาและความรู้ให้มากกว่านี้", "⚠️");
-            }
-        } else if (choice === 'crisis_ignore') {
-            player.repu = Math.max(0, player.repu - 10);
-            player.stress += 5;
-            addTimeline("🚪 เพิกเฉยต่อวิกฤต", "เลือกปิดจวนเงียบไม่ยุ่งเกี่ยวกับปัญหาภายนอก ถูกชาวบ้านนินทา", "bad");
-            showModal("🚪 เสียงนินทา", "ชื่อเสียงความน่าเชื่อถือลดลงเล็กน้อยเนื่องจากไร้น้ำใจยามวิกฤต", "⚠️");
-        }
-
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // แทรกปุ่มลัดสุ่มอีเวนต์เนื้อเรื่องลงบนหน้าจอหลักอัตโนมัติ
-    // ---------------------------------------------------------
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
-            if (actionContainer && !document.getElementById('random-story-panel')) {
-                let storyDiv = document.createElement('div');
-                storyDiv.id = 'random-story-panel';
-                storyDiv.style.cssText = "background: #fdf2f8; border: 1px dashed #ec4899; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
-                
-                storyDiv.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 8px; color: #be185d;">📖 เหตุการณ์ชีวิต & อีเวนต์ประจำวัน</div>
-                    <button class="choice-btn" style="margin: 4px 0; background: #fce7f3;" onclick="triggerRandomStoryEvent()">✨ สุ่มเผชิญเหตุการณ์เนื้อเรื่อง (ตลาดหลวง, เทศกาล, วิกฤต)</button>
-                `;
-                actionContainer.appendChild(storyDiv);
-            }
-        }, 2200);
-    });
-</script>
-   <!-- ==========================================================================
-     🌸 MEGA PATCH 31 (THEME SWITCHER: CLASSIC VS PASTEL CUTE) 🌸
-     ========================================================== -->
-<style>
-    /* ธีมพาสเทลสดใสน่ารัก (Pastel Cute Theme) */
-    body.pastel-theme {
-        background: linear-gradient(135deg, #fff0f5 0%, #e0f2fe 100%) !important;
-        color: #4a3b32 !important;
-    }
-    body.pastel-theme .card, 
-    body.pastel-theme .action-container, 
-    body.pastel-theme div[id*="panel"] {
-        background: #ffffffdd !important;
-        border-color: #f472b6 !important;
-        box-shadow: 0 4px 15px rgba(244, 114, 182, 0.15) !important;
-    }
-    body.pastel-theme button.choice-btn {
-        background: #fdf2f8 !important;
-        color: #db2777 !important;
-        border: 1px solid #f472b6 !important;
-    }
-    body.pastel-theme button.choice-btn:hover {
-        background: #fce7f3 !important;
-    }
-</style>
-
-<script>
-    // ---------------------------------------------------------
-    // ฟังก์ชันสลับธีมสีระหว่าง คลาสสิกย้อนยุค และ พาสเทลสดใส
-    // ---------------------------------------------------------
-    window.toggleGameTheme = function() {
-        let isPastel = document.body.classList.toggle('pastel-theme');
-        
-        if (isPastel) {
-            localStorage.setItem('game_theme', 'pastel');
-            showModal("🌸 โหมดพาสเทลสดใส", "เปลี่ยนบรรยากาศหน้าจอเป็นโทนสีหวานสดใสน่ารัก ฟีลกู๊ดสุดๆ!", "✨");
-        } else {
-            localStorage.setItem('game_theme', 'classic');
-            showModal("🌙 โหมดคลาสสิกย้อนยุค", "กลับสู่โทนสีขรึมขลังสไตล์พงศาวดารโบราณ ขลังและทรงพลัง!", "📜");
-        }
-    };
-
-    // โหลดค่าธีมที่บันทึกไว้ล่าสุดอัตโนมัติ
-    window.addEventListener('DOMContentLoaded', () => {
-        let savedTheme = localStorage.getItem('game_theme');
-        if (savedTheme === 'pastel') {
-            document.body.classList.add('pastel-theme');
-        }
-
-        // แทรกปุ่มสลับธีมไว้บนมุมจอหรือพาเนลหลัก
-        setTimeout(() => {
-            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
-            if (actionContainer && !document.getElementById('theme-switcher-panel')) {
-                let themeDiv = document.createElement('div');
-                themeDiv.id = 'theme-switcher-panel';
-                themeDiv.style.cssText = "background: #f3e8ff; border: 1px dashed #a855f7; padding: 10px; border-radius: 8px; margin-top: 15px; text-align: center;";
-                
-                themeDiv.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 6px; color: #7e22ce;">🎨 ปรับแต่งบรรยากาศเกม</div>
-                    <button class="choice-btn" style="margin: 4px 0; background: #faf5ff; color: #7e22ce; border-color: #a855f7;" onclick="toggleGameTheme()">✨ สลับโหมดสี (คลาสสิกย้อนยุค ⇄ พาสเทลสดใส)</button>
-                `;
-                actionContainer.appendChild(themeDiv);
-            }
-        }, 2500);
-    });
-</script> 
-    <!-- ==========================================================================
-     🌸 MEGA PATCH 32 (IMPERIAL THRONE, HAREM & BALANCED ECONOMY) 🌸
-     ========================================================== -->
-<script>
-    // ---------------------------------------------------------
-    // 1. ระบบตัวแปรจักรพรรดิและวังหลัง
-    // ---------------------------------------------------------
-    if (typeof player !== 'undefined') {
-        player.isEmperor = player.isEmperor || false;
-        player.dynastyName = player.dynastyName || "";
-        player.haremConsorts = player.haremConsorts || [];
-        player.imperialPrinces = player.imperialPrinces || 0;
-    }
-
-    // ---------------------------------------------------------
-    // 2. ระบบสถาปนาราชวงศ์ใหม่ & ขึ้นครองราชย์
-    // ---------------------------------------------------------
-    window.foundNewDynasty = function() {
-        if ((player.repu || 0) < 80 || (player.militaryPower || 0) < 70) {
-            showModal("⚠️ บารมีไม่เพียงพอ", "ท่านยังมีชื่อเสียงและกำลังทหารไม่มากพอที่จะโค่นล้มราชวงศ์เดิม ต้องสร้างผลงานเพิ่มขึ้นอีก!", "🛡️");
-            return;
-        }
-
-        let dynastyInput = prompt("ตั้งชื่อราชวงศ์ใหม่ของท่าน (เช่น ราชวงศ์หมิง, ราชวงศ์ต้าถัง):", "ราชวงศ์สุริยัน");
-        if (!dynastyInput) return;
-
-        player.isEmperor = true;
-        player.dynastyName = dynastyInput;
-        player.activeTitle = `👑 ปฐมกษัตริย์แห่ง${dynastyInput}`;
-        player.money += 1000; // ทรัพย์สินหลวง
-
-        addTimeline("👑 สถาปนาราชวงศ์ใหม่", `นำกำลังพลและขุนนางเข้ายึดเมืองหลวง ประกาศตั้ง${dynastyInput} ขึ้นครองราชย์เป็นฮ่องเต้!`, "good");
-        showModal("🎉 ฮ่องเต้พระองค์ใหม่ถือกำเนิด!", `ยินดีด้วย! ท่านได้สถาปนา ${dynastyInput} ขึ้นครองบัลลังก์มังกรอย่างยิ่งใหญ่!`, "🐉");
-
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 3. ระบบออกราชโองการ & จัดการวังหลัง (สำหรับฮ่องเต้)
-    // ---------------------------------------------------------
-    window.openImperialDecreeMenu = function() {
-        if (!player.isEmperor) {
-            showModal("🔒 เงื่อนไขไม่ผ่าน", "ท่านยังไม่ได้เป็นฮ่องเต้ ต้องสถาปนาราชวงศ์เสียก่อนจึงจะออกราชโองการได้!", "⚠️");
-            return;
-        }
-
-        document.getElementById('res-icon').innerText = "🐉";
-        document.getElementById('res-title').innerText = "🐉 ท้องพระโรง & ราชโองการสวรรค์";
-        document.getElementById('res-desc').innerText = `ในฐานะองค์ฮ่องเต้แห่ง ${player.dynastyName} แผ่นดินนี้อยู่ในกำมือท่าน จะทรงมีราชโองการประกาศิตว่าอย่างไร?`;
-        
-        document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="executeImperialAction('decree_reform')">📜 ออกราชโองการปฏิรูปภาษี (คลังหลวงได้เงิน +300 ตำลึง)</button>
-            <button class="choice-btn" onclick="executeImperialAction('harem_select')">🌸 คัดเลือกสนมเอกเข้าวังหลัง (เพิ่มค่าเสน่ห์และความบันเทิง)</button>
-            <button class="choice-btn" onclick="executeImperialAction('punish_rebel')">⚔️ ปราบปรามกบฏชายแดน (วัดพลังทหาร สร้างเสถียรภาพ)</button>
-        `;
-        document.getElementById('result-modal').classList.add('active');
-    };
-
-    window.executeImperialAction = function(action) {
-        if (action === 'decree_reform') {
-            player.money += 300;
-            player.repu -= 5;
-            showModal("📜 ราชโองการภาษี", "ออกประกาศปฏิรูปภาษี คลังหลวงร่ำรวยขึ้น แต่ราษฎรบางส่วนบ่นพึมพำ", "💰");
-            addTimeline("📜 ราชโองการภาษี", "ออกพระราชโองการปฏิรูปการจัดเก็บภาษีทั่วราชอาณาจักร", "neutral");
-        } else if (action === 'harem_select') {
-            player.charm += 15;
-            player.haremConsorts.push("สนมเอกคนใหม่");
-            showModal("🌸 คัดเลือกสนมวังหลัง", "จัดพิธีคัดเลือกสาวงามทั่วหล้าเข้าสู่ตำหนักใน วังหลังครึกครื้น!", "💖");
-            addTimeline("🌸 คัดเลือกสนม", "รับสนมเอกเข้าสู่ตำหนักในเพื่อสานสัมพันธ์กับตระกูลขุนนาง", "good");
-        } else if (action === 'punish_rebel') {
-            if ((player.militaryPower || 10) >= 60) {
-                player.merit += 30;
-                showModal("⚔️ ปราบกบฏราบคาบ", "กองทัพหลวงยกไปปราบกบฏหัวเมืองจนราบคาบ แผ่นดินสงบสุข!", "🛡️");
-                addTimeline("⚔️ ชัยชนะเหนือทัพกบฏ", "นำทัพหลวงกวาดล้างกลุ่มกบฏชายแดนจนสิ้นซาก", "good");
-            } else {
-                player.stress += 20;
-                player.repu -= 15;
-                showModal("⚠️ ทัพหลวงเพลี่ยงพล้ำ", "กำลังทหารไม่เพียงพอ ปราบกบฏไม่สำเร็จ เสียชื่อเสียงอย่างมาก", "❌");
-                addTimeline("⚠️ พ่ายแพ้ศึกกบฏ", "กองทัพหลวงเสียทีแก่กบฏ สร้างความสั่นคลอนแก่ราชบัลลังก์", "bad");
-            }
-        }
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 4. ระบบหักค่าครองชีพประจำปีสมจริง (เชื่อมกับปุ่ม ageUp)
-    // ---------------------------------------------------------
-    let originalAgeUpPatch32 = window.ageUp;
-    window.ageUp = function() {
-        if (typeof originalAgeUpPatch32 === 'function') originalAgeUpPatch32();
-
-        // หักค่าครองชีพตามจริงประจำปี (ไม่ให้รวยง่ายเกินไป)
-        let livingCost = player.isEmperor ? 200 : 40; // ฮ่องเต้ใช้จ่ายเยอะกว่าตามฐานะ
-        player.money = Math.max(0, (player.money || 100) - livingCost);
-
-        // เช็คเงื่อนไขสุ่มเกิดวิกฤตกบฏถ้าเป็นฮ่องเต้แล้วละเลย
-        if (player.isEmperor && Math.random() < 0.25) {
-            setTimeout(() => {
-                showModal("⚡ วิกฤตกบฏชิงบัลลังก์!", "ขุนนางกังฉินและกองกำลังหัวเมืองร่วมมือกันก่อกบฏหวังโค่นล้มราชวงศ์ของท่าน!", "🚨");
-                addTimeline("⚡ เกิดกบฏในราชสำนัก", "กลุ่มอำนาจเก่าซ่องสุมกำลังก่อกบฏท้าทายราชบัลลังก์", "bad");
-            }, 1000);
-        }
-
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 5. แทรกปุ่มลัดท้องพระโรงฮ่องเต้บนหน้าจอหลัก
-    // ---------------------------------------------------------
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
-            if (actionContainer && !document.getElementById('imperial-throne-panel')) {
-                let throneDiv = document.createElement('div');
-                throneDiv.id = 'imperial-throne-panel';
-                throneDiv.style.cssText = "background: #fffbeb; border: 1px dashed #d97706; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
-                
-                throneDiv.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 8px; color: #b45309;">🐉 เส้นทางสู่วังหลวง & บัลลังก์มังกร</div>
-                    <button class="choice-btn" style="margin: 4px 0; background: #fef3c7; color: #92400e; border-color: #d97706;" onclick="foundNewDynasty()">👑 ประกาศศักดา: สถาปนาราชวงศ์ใหม่ขึ้นเป็นฮ่องเต้</button>
-                    <button class="choice-btn" style="margin: 4px 0; background: #fef3c7; color: #92400e; border-color: #d97706;" onclick="openImperialDecreeMenu()">📜 ท้องพระโรง: ออกราชโองการ & จัดการวังหลัง</button>
-                `;
-                actionContainer.appendChild(throneDiv);
-            }
-        }, 2600);
-    });
-</script>
-    <!-- ==========================================================================
-     🌸 MEGA PATCH 33 (ESTATE ASSETS, CASINO & WEALTH RISK SYSTEM) 🌸
-     ========================================================== -->
-<script>
-    // ---------------------------------------------------------
-    // 1. ระบบตัวแปรทรัพย์สินเพิ่มเติม
-    // ---------------------------------------------------------
-    if (typeof player !== 'undefined') {
-        player.farms = player.farms || 0;         // จำนวนไร่นา
-        player.horses = player.horses || 0;       // จำนวนม้าศึก
-        player.servants = player.servants || 1;   // จำนวนบ่าวรับใช้
-    }
-
-    // ---------------------------------------------------------
-    // 2. ระบบโรงพนันใต้ดิน (เสี่ยงโชค ลุ้นรวยหรือหมดตัว)
-    // ---------------------------------------------------------
-    window.openCasinoEvent = function() {
-        document.getElementById('res-icon').innerText = "🎲";
-        document.getElementById('res-title').innerText = "🎲 โรงพนันใต้ดินเมืองหลวง";
-        document.getElementById('res-desc').innerText = `ท่านแอบลักLอบเข้ามาในโรงพนันใต้ดินที่มีชื่อเสียง ที่นี่มีทั้งคนรวยขึ้นชั่วข้ามคืนและคนหมดตัวจนต้องขายบ้านขายเรือ... จะลองเสี่ยงโชคดูไหม?`;
-        
-        document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="playGambling(50)">🪙 ลงขันเดิมพัน 50 ตำลึง (ลุ้นโชคใหญ่)</button>
-            <button class="choice-btn" onclick="playGambling(200)">💰 ลงขันเดิมพันหนัก 200 ตำลึง (เดิมพันสูง กำไรมหาศาล)</button>
-            <button class="choice-btn" onclick="closeModal()">🚪 เดินออกจากโรงพนันอย่างปลอดภัย</button>
-        `;
-        document.getElementById('result-modal').classList.add('active');
-    };
-
-    window.playGambling = function(amount) {
-        if ((player.money || 0) < amount) {
-            showModal("⚠️ เงินไม่พอ", "ท่านมีเงินตำลึงไม่พอสำหรับการเดิมพันโต๊ะนี้!", "❌");
-            return;
-        }
-
-        player.money -= amount;
-        let roll = Math.random();
-
-        if (roll < 0.45) { // ชนะ ได้เงิน x2
-            let winAmount = amount * 2;
-            player.money += winAmount;
-            showModal("🎉 เฮลั่นโต๊ะพนัน!", `ทายถูกเผง! เจ้ามือจ่ายเงินรางวัลให้ท่าน ${winAmount} ตำลึงเต็มๆ!`, "💰");
-            addTimeline("🎲 ชนะพนันโรงพนันใต้ดิน", `เสี่ยงโชคเดิมพัน ${amount} ตำลึง ได้รับกำไรกลับมา ${winAmount} ตำลึง`, "good");
-        } else { // แพ้ เสียเงิน
-            showModal("💸 น่าเสียดาย ทายผิดฝั่ง!", `ไพ่ในมือท่านพ่ายแพ้ เสียเงินเดิมพันไป ${amount} ตำลึง...`, "😢");
-            addTimeline("🎲 พ่ายแพ้ในโรงพนัน", `สูญเสียเงินเดิมพัน ${amount} ตำลึงจากการเสี่ยงโชค`, "bad");
-        }
-
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 3. ระบบตลาดซื้อขายทรัพย์สิน (ที่ดิน, ไร่นา, ม้าศึก, บ่าวรับใช้)
-    // ---------------------------------------------------------
-    window.openAssetMarket = function() {
-        document.getElementById('res-icon').innerText = "🌾";
-        document.getElementById('res-title').innerText = "🌾 ตลาดซื้อขายที่ดิน ทรัพย์สิน & บ่าวรับใช้";
-        document.getElementById('res-desc').innerText = `ท่านสามารถลงทุนซื้อสินทรัพย์เพื่อสร้างรายได้ประจำปี หรือจ้างบ่าวรับใช้มาช่วยดูแลจวนให้ร่มรื่นได้ที่นี่`;
-        
-        document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="buyAsset('farm')">🌾 ซื้อไร่นา (ราคา 150 ตำลึง - สร้างผลผลิตทุกปี)</button>
-            <button class="choice-btn" onclick="buyAsset('horse')">🐎 ซื้อโรงม้าศึก (ราคา 100 ตำลึง - เพิ่มค่าพลังทหาร)</button>
-            <button class="choice-btn" onclick="buyAsset('servant')">👥 จ้างบ่าวรับใช้เพิ่ม (ราคา 60 ตำลึง - ลดความเครียด)</button>
-            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
-        `;
-        document.getElementById('result-modal').classList.add('active');
-    };
-
-    window.buyAsset = function(type) {
-        if (type === 'farm') {
-            if (player.money >= 150) {
-                player.money -= 150;
-                player.farms += 1;
-                showModal("🌾 ซื้อไร่นาสำเร็จ", "ท่านครอบครองแปลงเกษตรกรรมแห่งใหม่ เก็บเกี่ยวผลผลิตสร้างรายได้ทุกปี!", "🏡");
-                addTimeline("🌾 ขยายอาณาเขตไร่นา", "ซื้อแปลงไร่นาเพิ่ม 1 แห่งเพื่อลงทุนสร้างผลผลิต", "good");
-            } else { alert("เงินตำลึงไม่พอ!"); }
-        } else if (type === 'horse') {
-            if (player.money >= 100) {
-                player.money -= 100;
-                player.horses += 1;
-                player.militaryPower = (player.militaryPower || 10) + 10;
-                showModal("🐎 ซื้อโรงม้าศึกสำเร็จ", "ม้าศึกสายพันธุ์ดีช่วยฝึกฝนยุทธ์ พลังทหารเพิ่มขึ้น 10 แต้ม!", "🛡️");
-                addTimeline("🐎 ซื้อโรงม้าศึก", "จัดซื้อม้าศึกเข้าโรงเลี้ยงประจำจวน", "good");
-            } else { alert("เงินตำลึงไม่พอ!"); }
-        } else if (type === 'servant') {
-            if (player.money >= 60) {
-                player.money -= 60;
-                player.servants += 1;
-                player.stress = Math.max(0, (player.stress || 0) - 20);
-                showModal("👥 จ้างบ่าวรับใช้สำเร็จ", "บ่าวรับใช้ช่วยดูแลงานบ้าน ความเครียดของท่านลดลงฮวบฮาบ!", "💖");
-                addTimeline("👥 จ้างบ่าวรับใช้", "รับบ่าวรับใช้เข้าจวนเพื่อช่วยแบ่งเบาภาระ", "good");
-            } else { alert("เงินตำลึงไม่พอ!"); }
-        }
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 4. ระบบเหตุการณ์ความเสี่ยง (โดนริบทรัพย์ / ปรับเงิน)
-    // ---------------------------------------------------------
-    let originalAgeUpPatch33 = window.ageUp;
-    window.ageUp = function() {
-        if (typeof originalAgeUpPatch33 === 'function') originalAgeUpPatch33();
-
-        // คำนวณรายได้จากไร่นาประจำปี
-        let farmIncome = (player.farms || 0) * 40;
-        if (farmIncome > 0) {
-            player.money += farmIncome;
-            addTimeline("🌾 ผลผลิตไร่นาออกผล", `ไร่นาในครอบครองสร้างผลกำไรขายพืชผลได้เงิน ${farmIncome} ตำลึง`, "good");
-        }
-
-        // สุ่มโอกาสเกิดเหตุการณ์ความเสี่ยง (ถูกทางการปรับเงิน หรือถูกขุนนางกลั่นแกล้งริบทรัพย์)
-        if (Math.random() < 0.15 && (player.money || 0) > 100) {
-            let fine = 80;
-            player.money = Math.max(0, player.money - fine);
-            player.stress += 15;
-            setTimeout(() => {
-                showModal("⚖️ ขุนนางกังฉินกลั่นแกล้ง!", `กรมอาญาตรวจพบข้อกล่าวหาที่ไม่เป็นธรรม สั่งปรับเงินและริบทรัพย์สินในจวนไป ${fine} ตำลึง!`, "🚨");
-                addTimeline("⚠️ ถูกทางการปรับเงินริบทรัพย์", `เกิดคดีความไม่เป็นธรรม ถูกปรับเงินเข้าท้องพระโรง ${fine} ตำลึง`, "bad");
-            }, 1000);
-        }
-
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 5. แทรกปุ่มลัดโรงพนันและตลาดสินทรัพย์บนหน้าจอหลัก
-    // ---------------------------------------------------------
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
-            if (actionContainer && !document.getElementById('economy-assets-panel')) {
-                let ecoDiv = document.createElement('div');
-                ecoDiv.id = 'economy-assets-panel';
-                ecoDiv.style.cssText = "background: #fdf8f6; border: 1px dashed #ea580c; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
-                
-                ecoDiv.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 8px; color: #c2410c;">💰 ตลาดการลงทุน & โรงพนันใต้ดิน</div>
-                    <button class="choice-btn" style="margin: 4px 0; background: #ffedd5; color: #c2410c; border-color: #ea580c;" onclick="openAssetMarket()">🌾 ตลาดซื้อขายที่ดิน, ไร่นา, ม้าศึก & บ่าวรับใช้</button>
-                    <button class="choice-btn" style="margin: 4px 0; background: #ffedd5; color: #c2410c; border-color: #ea580c;" onclick="openCasinoEvent()">🎲 เสี่ยงโชคโรงพนันใต้ดิน (ลุ้นรวยชั่วข้ามคืน)</button>
-                `;
-                actionContainer.appendChild(ecoDiv);
-            }
-        }, 2800);
-    });
-</script>
-    <!-- ==========================================================================
-     🌸 MEGA PATCH 34 (MARRIAGE, ADOPTION & DYNAMIC HEIR SYSTEM) 🌸
-     ========================================================== -->
-<script>
-    // ---------------------------------------------------------
-    // 1. ระบบตัวแปรเสริม (สถานะโสด, บุตรบุญธรรม, พรสวรรค์ลูก)
-    // ---------------------------------------------------------
-    if (typeof player !== 'undefined') {
-        player.maritalStatus = player.maritalStatus || "โสด"; // โสด, สมรส, หม้าย/หย่า
-        player.partnerName = player.partnerName || "ยังไม่มีคู่ครอง";
-        player.adoptedChildren = player.adoptedChildren || []; // รายชื่อบุตรบุญธรรม
-    }
-
-    // ---------------------------------------------------------
-    // 2. ระบบจัดงานแต่งงาน
-    // ---------------------------------------------------------
-    window.openWeddingMenu = function() {
-        document.getElementById('res-icon').innerText = "💒";
-        document.getElementById('res-title').innerText = "💒 พิธีมงคลสมบูรณ์ & งานแต่งงาน";
-        document.getElementById('res-desc').innerText = `ท่านพบผู้คนที่ถูกใจและต้องการตบแต่งใช้ชีวิตคู่ร่วมกัน ท่านต้องการจัดพิธีแต่งงานรูปแบบใด?`;
-        
-        document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="executeWedding('grand')">🏮 จัดงานแต่งงานใหญ่โตมโหฬาร (เสีย 200 ตำลึง - ชื่อเสียงพุ่ง + เสน่ห์กระจาย)</button>
-            <button class="choice-btn" onclick="executeWedding('simple')">🌸 จัดพิธีเรียบง่ายภายในจวน (เสีย 30 ตำลึง - ออบอุ่นและประหยัด)</button>
-            <button class="choice-btn" onclick="closeModal()">ยังไม่พร้อมแต่งงาน</button>
-        `;
-        document.getElementById('result-modal').classList.add('active');
-    };
-
-    window.executeWedding = function(type) {
-        if (type === 'grand') {
-            if ((player.money || 0) < 200) { alert("เงินตำลึงไม่พอจัดงานใหญ่!"); return; }
-            player.money -= 200;
-            player.repu += 25;
-            player.charm += 15;
-            player.maritalStatus = "สมรส";
-            player.partnerName = "คุณชาย/คุณหญิงคู่ใจ";
-            showModal("🎉 งานแต่งงานสุดอลังการ!", "แขกเหรื่อมาร่วมอวยพรคับคั่ง ชื่อเสียงขจรขจายเริ่มต้นชีวิตคู่สุดแฮปปี้!", "💖");
-            addTimeline("💒 จัดงานแต่งงานใหญ่", "จัดพิธีสมรสเกริกเกียรติเป็นที่กล่าวขานทั่วเมืองหลวง", "good");
-        } else if (type === 'simple') {
-            if ((player.money || 0) < 30.0) { alert("เงินไม่พอ!"); return; }
-            player.money -= 30;
-            player.maritalStatus = "สมรส";
-            player.partnerName = "คู่ชีวิตเรียบง่าย";
-            showModal("🌸 พิธีสมรสเรียบง่ายแต่อบอุ่น", "กล่าวคำปฏิญาณต่อหน้าฟ้าดิน เริ่มต้นใช้ชีวิตคู่ร่วมกันอย่างสงบสุข", "🌿");
-            addTimeline("💒 จัดงานแต่งงานเรียบง่าย", "จดทะเบียนสมรสและจัดพิธีเล็กๆ ภายในจวน", "good");
-        }
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 3. ระบบรับบุตรบุญธรรม (สำหรับสายโสดหรืออยากมีลูกเพิ่ม)
-    // ---------------------------------------------------------
-    window.openAdoptionMenu = function() {
-        document.getElementById('res-icon').innerText = "👶";
-        document.getElementById('res-title').innerText = "👶 สถานรับเลี้ยงเด็ก & รับบุตรบุญธรรม";
-        document.getElementById('res-desc').innerText = `ท่านสามารถเดินทางไปรับเด็กกำพร้า (ตั้งแต่แบเบาะจนถึงวัย 10 ขวบ) มาอุปการะเป็นบุตรบุญธรรม เพื่อสืบสกุลและดูแลยามแก่ชราได้`;
-        
-        document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="adoptChild('baby')">🍼 รับเลี้ยงทารกแรกเกิด (อายุ 0 ขวบ - ปั้นแต่งอนาคตได้เต็มที่)</button>
-            <button class="choice-btn" onclick="adoptChild('kid')">🧒 รับเลี้ยงเด็กโต (อายุ 8 ขวบ - ช่วยแบ่งเบาภาระและฝึกฝนไว)</button>
-            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
-        `;
-        document.getElementById('result-modal').classList.add('active');
-    };
-
-    window.adoptChild = function(ageType) {
-        if ((player.money || 0) < 50) { alert("ต้องใช้เงิน 50 ตำลึงเป็นทุนการศึกษาเริ่มต้น!"); return; }
-        player.money -= 50;
-
-        // สุ่มพรสวรรค์ของเด็กที่รับมาเลี้ยง
-        let talents = ["อัจฉริยะหัวไว (พรสวรรค์สูง)", "เด็กปานกลาง (ต้องหมั่นสอน)", "เด็กดื้อรั้น (ต้องปั้นแต่งเป็นพิเศษ)"];
-        let assignedTalent = talents[Math.floor(Math.random() * talents.length)];
-        
-        player.adoptedChildren.push({ name: "บุตรบุญธรรมตระกูล", age: ageType === 'baby' ? 0 : 8, talent: assignedTalent });
-        
-        showModal("👶 รับบุตรบุญธรรมสำเร็จ!", `ท่านรับเด็กน้อยเข้าจวนเรียบร้อย!\n🌟 พรสวรรค์เด็ก: ${assignedTalent}`, "💖");
-        addTimeline("👶 รับบุตรบุญธรรม", `อุปการะเด็กน้อยเข้าจวน พร้อมเริ่มต้นอบรมเลี้ยงดู พรสวรรค์: ${assignedTalent}`, "good");
-
-        if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
-    };
-
-    // ---------------------------------------------------------
-    // 4. แทรกปุ่มลัดงานแต่งงานและรับบุตรบุญธรรมบนหน้าจอหลัก
-    // ---------------------------------------------------------
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
-            if (actionContainer && !document.getElementById('family-adoption-panel')) {
-                let famDiv = document.createElement('div');
-                famDiv.id = 'family-adoption-panel';
-                famDiv.style.cssText = "background: #fdf4f8; border: 1px dashed #f43f5e; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
-                
-                famDiv.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 8px; color: #be123c;">👨‍👩‍👧 ระบบครอบครัว, งานแต่ง & บุตรบุญธรรม</div>
-                    <button class="choice-btn" style="margin: 4px 0; background: #ffe4e6; color: #be123c; border-color: #f43f5e;" onclick="openWeddingMenu()">💒 จัดพิธีมงคลสมรส / แต่งงาน</button>
-                    <button class="choice-btn" style="margin: 4px 0; background: #ffe4e6; color: #be123c; border-color: #f43f5e;" onclick="openAdoptionMenu()">👶 สถานรับเลี้ยงเด็ก: รับบุตรบุญธรรม</button>
-                `;
-                actionContainer.appendChild(famDiv);
-            }
-        }, 3000);
-    });
-</script>
- <!-- ==========================================================================
-     🌸 CLEAN FIXED MEGA PATCH (MARRIAGE, ADOPTION & ECONOMY SYSTEM) 🌸
-     ========================================================== -->
-<script>
-    // ---------------------------------------------------------
-    // 1. ระบบตัวแปรพื้นฐาน
-    // ---------------------------------------------------------
+    // 1. ฟังก์ชันการทำงานทั้งหมดรวมไว้ที่เดียว
     if (typeof player !== 'undefined') {
         player.maritalStatus = player.maritalStatus || "โสด";
         player.partnerName = player.partnerName || "ยังไม่มีคู่ครอง";
@@ -3346,136 +2749,88 @@
         player.farms = player.farms || 0;
         player.horses = player.horses || 0;
         player.servants = player.servants || 1;
+        player.isEmperor = player.isEmperor || false;
+        player.dynastyName = player.dynastyName || "";
     }
 
-    // ---------------------------------------------------------
-    // 2. ฟังก์ชันเปิดหน้าต่างงานแต่งงาน (เมื่อกดปุ่มเท่านั้น)
-    // ---------------------------------------------------------
+    window.toggleGameTheme = function() {
+        let isPastel = document.body.classList.toggle('pastel-theme');
+        localStorage.setItem('game_theme', isPastel ? 'pastel' : 'classic');
+    };
+
     window.openWeddingMenu = function() {
         if (!document.getElementById('result-modal')) return;
         document.getElementById('res-icon').innerText = "💒";
         document.getElementById('res-title').innerText = "💒 พิธีมงคลสมรส & งานแต่งงาน";
         document.getElementById('res-desc').innerText = `ท่านพบผู้คนที่ถูกใจและต้องการตบแต่งใช้ชีวิตคู่ร่วมกัน ท่านต้องการจัดพิธีแต่งงานรูปแบบใด?`;
-        
         document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="executeWedding('grand')">🏮 จัดงานแต่งงานใหญ่โตมโหฬาร (เสีย 200 ตำลึง - ชื่อเสียงพุ่ง + เสน่ห์กระจาย)</button>
-            <button class="choice-btn" onclick="executeWedding('simple')">🌸 จัดพิธีเรียบง่ายภายในจวน (เสีย 30 ตำลึง - อบอุ่นและประหยัด)</button>
-            <button class="choice-btn" onclick="closeModal()">ยังไม่พร้อมแต่งงาน</button>
+            <button class="choice-btn" onclick="executeWedding('grand')">🏮 จัดงานแต่งงานใหญ่โตมโหฬาร (เสีย 200 ตำลึง)</button>
+            <button class="choice-btn" onclick="executeWedding('simple')">🌸 จัดพิธีเรียบง่ายภายในจวน (เสีย 30 ตำลึง)</button>
+            <button class="choice-btn" onclick="closeModal()">ปิด</button>
         `;
         document.getElementById('result-modal').classList.add('active');
     };
 
     window.executeWedding = function(type) {
-        if (type === 'grand') {
-            if ((player.money || 0) < 200) { alert("เงินตำลึงไม่พอจัดงานใหญ่!"); return; }
-            player.money -= 200;
-            player.repu += 25;
-            player.charm += 15;
-            player.maritalStatus = "สมรส";
-            player.partnerName = "คุณชาย/คุณหญิงคู่ใจ";
-            showModal("🎉 งานแต่งงานสุดอลังการ!", "แขกเหรื่อมาร่วมอวยพรคับคั่ง ชื่อเสียงขจรขจายเริ่มต้นชีวิตคู่สุดแฮปปี้!", "💖");
-            addTimeline("💒 จัดงานแต่งงานใหญ่", "จัดพิธีสมรสเกริกเกียรติเป็นที่กล่าวขานทั่วเมืองหลวง", "good");
-        } else if (type === 'simple') {
-            if ((player.money || 0) < 30) { alert("เงินไม่พอ!"); return; }
-            player.money -= 30;
-            player.maritalStatus = "สมรส";
-            player.partnerName = "คู่ชีวิตเรียบง่าย";
-            showModal("🌸 พิธีสมรสเรียบง่ายแต่อบอุ่น", "กล่าวคำปฏิญาณต่อหน้าฟ้าดิน เริ่มต้นใช้ชีวิตคู่ร่วมกันอย่างสงบสุข", "🌿");
-            addTimeline("💒 จัดงานแต่งงานเรียบง่าย", "จดทะเบียนสมรสและจัดพิธีเล็กๆ ภายในจวน", "good");
-        }
+        if (type === 'grand' && player.money >= 200) {
+            player.money -= 200; player.maritalStatus = "สมรส";
+            showModal("🎉 งานแต่งงานสุดอลังการ!", "เริ่มต้นชีวิตคู่สุดแฮปปี้!", "💖");
+        } else if (type === 'simple' && player.money >= 30) {
+            player.money -= 30; player.maritalStatus = "สมรส";
+            showModal("🌸 พิธีสมรสเรียบง่าย", "ใช้ชีวิตคู่ร่วมกันอย่างอบอุ่น", "🌿");
+        } else { alert("เงินตำลึงไม่พอ!"); }
         if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
     };
 
-    // ---------------------------------------------------------
-    // 3. ฟังก์ชันเปิดหน้าต่างรับบุตรบุญธรรม (เมื่อกดปุ่มเท่านั้น)
-    // ---------------------------------------------------------
     window.openAdoptionMenu = function() {
         if (!document.getElementById('result-modal')) return;
         document.getElementById('res-icon').innerText = "👶";
-        document.getElementById('res-title').innerText = "👶 สถานรับเลี้ยงเด็ก & รับบุตรบุญธรรม";
-        document.getElementById('res-desc').innerText = `ท่านสามารถเดินทางไปรับเด็กกำพร้ามาอุปการะเป็นบุตรบุญธรรม เพื่อสืบสกุลและดูแลยามแก่ชราได้`;
-        
+        document.getElementById('res-title').innerText = "👶 รับบุตรบุญธรรม";
+        document.getElementById('res-desc').innerText = `รับเด็กกำพร้ามาอุปการะเพื่อสืบสกุล`;
         document.getElementById('res-choices').innerHTML = `
-            <button class="choice-btn" onclick="adoptChild('baby')">🍼 รับเลี้ยงทารกแรกเกิด (อายุ 0 ขวบ - ปั้นแต่งอนาคตได้เต็มที่)</button>
-            <button class="choice-btn" onclick="adoptChild('kid')">🧒 รับเลี้ยงเด็กโต (อายุ 8 ขวบ - ช่วยแบ่งเบาภาระและฝึกฝนไว)</button>
-            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+            <button class="choice-btn" onclick="adoptChild('baby')">🍼 รับเลี้ยงทารกแรกเกิด (50 ตำลึง)</button>
+            <button class="choice-btn" onclick="closeModal()">ปิด</button>
         `;
         document.getElementById('result-modal').classList.add('active');
     };
 
-    window.adoptChild = function(ageType) {
-        if ((player.money || 0) < 50) { alert("ต้องใช้เงิน 50 ตำลึงเป็นทุนการศึกษาเริ่มต้น!"); return; }
+    window.adoptChild = function() {
+        if (player.money < 50) { alert("เงินไม่พอ!"); return; }
         player.money -= 50;
-
-        let talents = ["อัจฉริยะหัวไว (พรสวรรค์สูง)", "เด็กปานกลาง (ต้องหมั่นสอน)", "เด็กดื้อรั้น (ต้องปั้นแต่งเป็นพิเศษ)"];
-        let assignedTalent = talents[Math.floor(Math.random() * talents.length)];
-        
-        player.adoptedChildren.push({ name: "บุตรบุญธรรมตระกูล", age: ageType === 'baby' ? 0 : 8, talent: assignedTalent });
-        
-        showModal("👶 รับบุตรบุญธรรมสำเร็จ!", `ท่านรับเด็กน้อยเข้าจวนเรียบร้อย!\n🌟 พรสวรรค์เด็ก: ${assignedTalent}`, "💖");
-        addTimeline("👶 รับบุตรบุญธรรม", `อุปการะเด็กน้อยเข้าจวน พร้อมเริ่มต้นอบรมเลี้ยงดู พรสวรรค์: ${assignedTalent}`, "good");
-
+        player.adoptedChildren.push({ name: "บุตรบุญธรรม", age: 0 });
+        showModal("👶 รับบุตรบุญธรรมสำเร็จ!", "รับเด็กน้อยเข้าจวนเรียบร้อย", "💖");
         if (typeof updateUI === 'function') updateUI();
-        if (typeof autoSaveGame === 'function') autoSaveGame();
     };
 
-    // ---------------------------------------------------------
-    // 4. สร้างปุ่มเมนูรวม (ครอบครัว, แต่งงาน, บุตรบุญธรรม) แบบไม่เด้งกวนใจ
-    // ---------------------------------------------------------
+    // 2. สร้างกล่องเมนูหลักอันเดียวแบบจัดระเบียบสะอาดตา ไม่ล้นจอ
     window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('game_theme') === 'pastel') {
+            document.body.classList.add('pastel-theme');
+        }
+
         setTimeout(() => {
-            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
-            if (actionContainer && !document.getElementById('family-adoption-panel')) {
-                let famDiv = document.createElement('div');
-                famDiv.id = 'family-adoption-panel';
-                famDiv.style.cssText = "background: #fdf4f8; border: 1px dashed #f43f5e; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
-                
-                famDiv.innerHTML = `
-                    <div style="font-weight: 600; margin-bottom: 8px; color: #be123c;">👨‍👩‍👧 ระบบครอบครัว, งานแต่ง & บุตรบุญธรรม</div>
-                    <button class="choice-btn" style="margin: 4px 0; background: #ffe4e6; color: #be123c; border-color: #f43f5e;" onclick="openWeddingMenu()">💒 จัดพิธีมงคลสมรส / แต่งงาน</button>
-                    <button class="choice-btn" style="margin: 4px 0; background: #ffe4e6; color: #be123c; border-color: #f43f5e;" onclick="openAdoptionMenu()">👶 สถานรับเลี้ยงเด็ก: รับบุตรบุญธรรม</button>
-                `;
-                actionContainer.appendChild(famDiv);
-            }
-        }, 1500);
-    });
-</script> 
-<!-- ==========================================================================
-     🌸 MASTER UNIFIED PANEL FIX (รวมทุกปุ่มให้เป็นระเบียบ ไม่ล้นจอ) 🌸
-     ========================================================== -->
-<script>
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            // ลบกล่องแยกอันเก่าที่ทำให้หน้าจอซ้อนกันออกทั้งหมดก่อน
-            ['random-story-panel', 'theme-switcher-panel', 'imperial-throne-panel', 'economy-assets-panel', 'family-adoption-panel'].forEach(id => {
-                let oldEl = document.getElementById(id);
-                if (oldEl) oldEl.remove();
+            // ลบกล่องขยะอันเก่าที่เคยค้างทั้งหมดทิ้งทันที
+            ['random-story-panel', 'theme-switcher-panel', 'imperial-throne-panel', 'economy-assets-panel', 'family-adoption-panel', 'master-mega-panel'].forEach(id => {
+                let old = document.getElementById(id);
+                if (old) old.remove();
             });
 
-            // สร้างกล่องแผงควบคุมหลักอันเดียวแบบจัดเรียงแนวตั้งสวยงาม
             let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
-            if (actionContainer && !document.getElementById('master-mega-panel')) {
+            if (actionContainer) {
                 let masterDiv = document.createElement('div');
                 masterDiv.id = 'master-mega-panel';
-                masterDiv.style.cssText = "background: #fdf8f6; border: 2px solid #ea580c; padding: 15px; border-radius: 12px; margin-top: 15px; display: flex; flex-direction: column; gap: 10px; width: 100%; box-sizing: border-box;";
+                masterDiv.style.cssText = "background: #fff; border: 2px solid #ea580c; padding: 12px; border-radius: 12px; margin-top: 15px; display: flex; flex-direction: column; gap: 8px; width: 100%; box-sizing: border-box;";
                 
                 masterDiv.innerHTML = `
-                    <div style="font-weight: bold; font-size: 16px; color: #c2410c; text-align: center; margin-bottom: 5px;">✨ เมนูพิเศษ & ระบบเสริมทั้งหมด</div>
-                    
-                    <button class="choice-btn" style="background: #fce7f3; color: #be185d; border-color: #f472b6; width: 100%; margin: 0;" onclick="triggerRandomStoryEvent()">📖 สุ่มเหตุการณ์เนื้อเรื่อง (ตลาดหลวง, เทศกาล, วิกฤต)</button>
-                    <button class="choice-btn" style="background: #f3e8ff; color: #7e22ce; border-color: #a855f7; width: 100%; margin: 0;" onclick="toggleGameTheme()">🎨 สลับโหมดสี (คลาสสิก ⇄ พาสเทลสดใส)</button>
-                    <button class="choice-btn" style="background: #fef3c7; color: #92400e; border-color: #d97706; width: 100%; margin: 0;" onclick="foundNewDynasty()">👑 สถาปนาราชวงศ์ใหม่ขึ้นเป็นฮ่องเต้</button>
-                    <button class="choice-btn" style="background: #fef3c7; color: #92400e; border-color: #d97706; width: 100%; margin: 0;" onclick="openImperialDecreeMenu()">📜 ท้องพระโรง: ออกราชโองการ & วังหลัง</button>
-                    <button class="choice-btn" style="background: #ffedd5; color: #c2410c; border-color: #ea580c; width: 100%; margin: 0;" onclick="openAssetMarket()">🌾 ตลาดซื้อขายที่ดิน, ไร่นา, ม้าศึก & บ่าวรับใช้</button>
-                    <button class="choice-btn" style="background: #ffedd5; color: #c2410c; border-color: #ea580c; width: 100%; margin: 0;" onclick="openCasinoEvent()">🎲 เสี่ยงโชคโรงพนันใต้ดิน</button>
-                    <button class="choice-btn" style="background: #ffe4e6; color: #be123c; border-color: #f43f5e; width: 100%; margin: 0;" onclick="openWeddingMenu()">💒 จัดพิธีมงคลสมรส / แต่งงาน</button>
-                    <button class="choice-btn" style="background: #ffe4e6; color: #be123c; border-color: #f43f5e; width: 100%; margin: 0;" onclick="openAdoptionMenu()">👶 สถานรับเลี้ยงเด็ก: รับบุตรบุญธรรม</button>
+                    <div style="font-weight: bold; font-size: 15px; color: #c2410c; text-align: center;">✨ เมนูจัดการพิเศษ</div>
+                    <button class="choice-btn" style="background: #fdf2f8; color: #be185d; margin:0;" onclick="toggleGameTheme()">🎨 สลับโหมดสี (คลาสสิก ⇄ พาสเทล)</button>
+                    <button class="choice-btn" style="background: #fef3c7; color: #92400e; margin:0;" onclick="openWeddingMenu()">💒 จัดงานแต่งงาน / สมรส</button>
+                    <button class="choice-btn" style="background: #ffe4e6; color: #be123c; margin:0;" onclick="openAdoptionMenu()">👶 รับบุตรบุญธรรม</button>
                 `;
                 actionContainer.appendChild(masterDiv);
             }
-        }, 1500);
+        }, 1000);
     });
-</script>   
+</script>
 </body>
 </html>
