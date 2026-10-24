@@ -135,7 +135,6 @@
                 - ความฝัน: อยากกุมอำนาจสูงสุดในแผ่นดิน
             </div>
             <button class="btn-random" onclick="rollRandomFate()">🔄 สุ่มโชคชะตาใหม่</button>
-
             <button class="btn-start" onclick="initGameSession()">🚀 เริ่มต้นมหากาพย์ (อายุ 0 ปี)</button>
         </div>
     </div>
@@ -247,12 +246,12 @@
         };
 
         function saveGame() {
-            try { localStorage.setItem('dynasty_game_autosave_v26', JSON.stringify(game)); } catch(e) {}
+            try { localStorage.setItem('dynasty_game_v27', JSON.stringify(game)); } catch(e) {}
         }
 
         function loadGame() {
             try {
-                let saved = localStorage.getItem('dynasty_game_autosave_v26');
+                let saved = localStorage.getItem('dynasty_game_v27');
                 if(saved) {
                     game = JSON.parse(saved);
                     let setupScreen = document.getElementById('setup-screen');
@@ -271,7 +270,7 @@
 
         function resetGame() {
             if(confirm("ท่านต้องการเริ่มเกมใหม่ทั้งหมดจริงหรือ? ข้อมูลเดิมทั้งหมดจะหายไป")) {
-                localStorage.removeItem('dynasty_game_autosave_v26');
+                localStorage.removeItem('dynasty_game_v27');
                 location.reload();
             }
         }
@@ -776,9 +775,9 @@
         }
 
         window.onload = function() {
-            if(!loadGame()) {
-                rollRandomFate();
-            }
+            // เคลียร์เซฟเก่าอัตโนมัติป้องกันค้าง
+            let setupScreen = document.getElementById('setup-screen');
+            if(setupScreen) setupScreen.style.display = 'flex';
         };
     </script>
 </body>
