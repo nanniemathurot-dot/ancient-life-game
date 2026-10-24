@@ -1347,23 +1347,8 @@
                 let el=document.createElement('div'); 
                 el.className=`timeline-item ${t.type||''}`; 
                 el.innerHTML=`<div class='timeline-age'>[อายุ ${t.age} ปี - เมือง${player.city||'ฉางอัน'}]</div><div class='timeline-desc'>${t.text}</div>`; 
-                document.getElementById('timeline-feed').appendChild(el); 
-            }); 
-            updateUI(); 
-            if(n) alert("📂 โหลดเกมสำเร็จ!"); 
-        } else if(n) alert("ไม่พบเซฟเกม");
-    }
-    function exportSaveFile() {
-        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(player));
-        let a = document.createElement('a'); a.href = dataStr; a.download = `Save_${player.name}.json`; a.click(); a.remove();
-    }
-    function importSaveFile() { document.getElementById('file-input').click(); }
-    function handleFileImport(e) {
-        let f = e.target.files[0]; if(!f) return;
-        let r = new FileReader(); r.onload = function(evt) { player = JSON.parse(evt.target.result); document.getElementById('page-setup').style.display='none'; document.getElementById('game-view').style.display='flex'; document.getElementById('main-nav').style.display='flex'; updateUI(); saveGame(false); alert("📥 นำเข้าสำเร็จ!"); }; r.readAsText(f);
-    }
-    function resetGameData() { if(confirm("เริ่มเล่นใหม่ทั้งหมด?")) { localStorage.removeItem('ANCIENT_LIFE_FINAL_SAVE'); location.reload(); } }
-
+                document.getElementById('timeline-feed').appendChild( 
+            
     window.onload = () => { if (localStorage.getItem('ANCIENT_LIFE_FINAL_SAVE')) loadGame(false); };
 </script>
 </body>
