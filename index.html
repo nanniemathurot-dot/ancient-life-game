@@ -3079,5 +3079,153 @@
         }, 2600);
     });
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 33 (ESTATE ASSETS, CASINO & WEALTH RISK SYSTEM) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบตัวแปรทรัพย์สินเพิ่มเติม
+    // ---------------------------------------------------------
+    if (typeof player !== 'undefined') {
+        player.farms = player.farms || 0;         // จำนวนไร่นา
+        player.horses = player.horses || 0;       // จำนวนม้าศึก
+        player.servants = player.servants || 1;   // จำนวนบ่าวรับใช้
+    }
+
+    // ---------------------------------------------------------
+    // 2. ระบบโรงพนันใต้ดิน (เสี่ยงโชค ลุ้นรวยหรือหมดตัว)
+    // ---------------------------------------------------------
+    window.openCasinoEvent = function() {
+        document.getElementById('res-icon').innerText = "🎲";
+        document.getElementById('res-title').innerText = "🎲 โรงพนันใต้ดินเมืองหลวง";
+        document.getElementById('res-desc').innerText = `ท่านแอบลักLอบเข้ามาในโรงพนันใต้ดินที่มีชื่อเสียง ที่นี่มีทั้งคนรวยขึ้นชั่วข้ามคืนและคนหมดตัวจนต้องขายบ้านขายเรือ... จะลองเสี่ยงโชคดูไหม?`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="playGambling(50)">🪙 ลงขันเดิมพัน 50 ตำลึง (ลุ้นโชคใหญ่)</button>
+            <button class="choice-btn" onclick="playGambling(200)">💰 ลงขันเดิมพันหนัก 200 ตำลึง (เดิมพันสูง กำไรมหาศาล)</button>
+            <button class="choice-btn" onclick="closeModal()">🚪 เดินออกจากโรงพนันอย่างปลอดภัย</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.playGambling = function(amount) {
+        if ((player.money || 0) < amount) {
+            showModal("⚠️ เงินไม่พอ", "ท่านมีเงินตำลึงไม่พอสำหรับการเดิมพันโต๊ะนี้!", "❌");
+            return;
+        }
+
+        player.money -= amount;
+        let roll = Math.random();
+
+        if (roll < 0.45) { // ชนะ ได้เงิน x2
+            let winAmount = amount * 2;
+            player.money += winAmount;
+            showModal("🎉 เฮลั่นโต๊ะพนัน!", `ทายถูกเผง! เจ้ามือจ่ายเงินรางวัลให้ท่าน ${winAmount} ตำลึงเต็มๆ!`, "💰");
+            addTimeline("🎲 ชนะพนันโรงพนันใต้ดิน", `เสี่ยงโชคเดิมพัน ${amount} ตำลึง ได้รับกำไรกลับมา ${winAmount} ตำลึง`, "good");
+        } else { // แพ้ เสียเงิน
+            showModal("💸 น่าเสียดาย ทายผิดฝั่ง!", `ไพ่ในมือท่านพ่ายแพ้ เสียเงินเดิมพันไป ${amount} ตำลึง...`, "😢");
+            addTimeline("🎲 พ่ายแพ้ในโรงพนัน", `สูญเสียเงินเดิมพัน ${amount} ตำลึงจากการเสี่ยงโชค`, "bad");
+        }
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 3. ระบบตลาดซื้อขายทรัพย์สิน (ที่ดิน, ไร่นา, ม้าศึก, บ่าวรับใช้)
+    // ---------------------------------------------------------
+    window.openAssetMarket = function() {
+        document.getElementById('res-icon').innerText = "🌾";
+        document.getElementById('res-title').innerText = "🌾 ตลาดซื้อขายที่ดิน ทรัพย์สิน & บ่าวรับใช้";
+        document.getElementById('res-desc').innerText = `ท่านสามารถลงทุนซื้อสินทรัพย์เพื่อสร้างรายได้ประจำปี หรือจ้างบ่าวรับใช้มาช่วยดูแลจวนให้ร่มรื่นได้ที่นี่`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="buyAsset('farm')">🌾 ซื้อไร่นา (ราคา 150 ตำลึง - สร้างผลผลิตทุกปี)</button>
+            <button class="choice-btn" onclick="buyAsset('horse')">🐎 ซื้อโรงม้าศึก (ราคา 100 ตำลึง - เพิ่มค่าพลังทหาร)</button>
+            <button class="choice-btn" onclick="buyAsset('servant')">👥 จ้างบ่าวรับใช้เพิ่ม (ราคา 60 ตำลึง - ลดความเครียด)</button>
+            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.buyAsset = function(type) {
+        if (type === 'farm') {
+            if (player.money >= 150) {
+                player.money -= 150;
+                player.farms += 1;
+                showModal("🌾 ซื้อไร่นาสำเร็จ", "ท่านครอบครองแปลงเกษตรกรรมแห่งใหม่ เก็บเกี่ยวผลผลิตสร้างรายได้ทุกปี!", "🏡");
+                addTimeline("🌾 ขยายอาณาเขตไร่นา", "ซื้อแปลงไร่นาเพิ่ม 1 แห่งเพื่อลงทุนสร้างผลผลิต", "good");
+            } else { alert("เงินตำลึงไม่พอ!"); }
+        } else if (type === 'horse') {
+            if (player.money >= 100) {
+                player.money -= 100;
+                player.horses += 1;
+                player.militaryPower = (player.militaryPower || 10) + 10;
+                showModal("🐎 ซื้อโรงม้าศึกสำเร็จ", "ม้าศึกสายพันธุ์ดีช่วยฝึกฝนยุทธ์ พลังทหารเพิ่มขึ้น 10 แต้ม!", "🛡️");
+                addTimeline("🐎 ซื้อโรงม้าศึก", "จัดซื้อม้าศึกเข้าโรงเลี้ยงประจำจวน", "good");
+            } else { alert("เงินตำลึงไม่พอ!"); }
+        } else if (type === 'servant') {
+            if (player.money >= 60) {
+                player.money -= 60;
+                player.servants += 1;
+                player.stress = Math.max(0, (player.stress || 0) - 20);
+                showModal("👥 จ้างบ่าวรับใช้สำเร็จ", "บ่าวรับใช้ช่วยดูแลงานบ้าน ความเครียดของท่านลดลงฮวบฮาบ!", "💖");
+                addTimeline("👥 จ้างบ่าวรับใช้", "รับบ่าวรับใช้เข้าจวนเพื่อช่วยแบ่งเบาภาระ", "good");
+            } else { alert("เงินตำลึงไม่พอ!"); }
+        }
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 4. ระบบเหตุการณ์ความเสี่ยง (โดนริบทรัพย์ / ปรับเงิน)
+    // ---------------------------------------------------------
+    let originalAgeUpPatch33 = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUpPatch33 === 'function') originalAgeUpPatch33();
+
+        // คำนวณรายได้จากไร่นาประจำปี
+        let farmIncome = (player.farms || 0) * 40;
+        if (farmIncome > 0) {
+            player.money += farmIncome;
+            addTimeline("🌾 ผลผลิตไร่นาออกผล", `ไร่นาในครอบครองสร้างผลกำไรขายพืชผลได้เงิน ${farmIncome} ตำลึง`, "good");
+        }
+
+        // สุ่มโอกาสเกิดเหตุการณ์ความเสี่ยง (ถูกทางการปรับเงิน หรือถูกขุนนางกลั่นแกล้งริบทรัพย์)
+        if (Math.random() < 0.15 && (player.money || 0) > 100) {
+            let fine = 80;
+            player.money = Math.max(0, player.money - fine);
+            player.stress += 15;
+            setTimeout(() => {
+                showModal("⚖️ ขุนนางกังฉินกลั่นแกล้ง!", `กรมอาญาตรวจพบข้อกล่าวหาที่ไม่เป็นธรรม สั่งปรับเงินและริบทรัพย์สินในจวนไป ${fine} ตำลึง!`, "🚨");
+                addTimeline("⚠️ ถูกทางการปรับเงินริบทรัพย์", `เกิดคดีความไม่เป็นธรรม ถูกปรับเงินเข้าท้องพระโรง ${fine} ตำลึง`, "bad");
+            }, 1000);
+        }
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 5. แทรกปุ่มลัดโรงพนันและตลาดสินทรัพย์บนหน้าจอหลัก
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('economy-assets-panel')) {
+                let ecoDiv = document.createElement('div');
+                ecoDiv.id = 'economy-assets-panel';
+                ecoDiv.style.cssText = "background: #fdf8f6; border: 1px dashed #ea580c; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
+                
+                ecoDiv.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #c2410c;">💰 ตลาดการลงทุน & โรงพนันใต้ดิน</div>
+                    <button class="choice-btn" style="margin: 4px 0; background: #ffedd5; color: #c2410c; border-color: #ea580c;" onclick="openAssetMarket()">🌾 ตลาดซื้อขายที่ดิน, ไร่นา, ม้าศึก & บ่าวรับใช้</button>
+                    <button class="choice-btn" style="margin: 4px 0; background: #ffedd5; color: #c2410c; border-color: #ea580c;" onclick="openCasinoEvent()">🎲 เสี่ยงโชคโรงพนันใต้ดิน (ลุ้นรวยชั่วข้ามคืน)</button>
+                `;
+                actionContainer.appendChild(ecoDiv);
+            }
+        }, 2800);
+    });
+</script>
 </body>
 </html>
