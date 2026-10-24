@@ -2949,5 +2949,135 @@
         }, 2500);
     });
 </script> 
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 32 (IMPERIAL THRONE, HAREM & BALANCED ECONOMY) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบตัวแปรจักรพรรดิและวังหลัง
+    // ---------------------------------------------------------
+    if (typeof player !== 'undefined') {
+        player.isEmperor = player.isEmperor || false;
+        player.dynastyName = player.dynastyName || "";
+        player.haremConsorts = player.haremConsorts || [];
+        player.imperialPrinces = player.imperialPrinces || 0;
+    }
+
+    // ---------------------------------------------------------
+    // 2. ระบบสถาปนาราชวงศ์ใหม่ & ขึ้นครองราชย์
+    // ---------------------------------------------------------
+    window.foundNewDynasty = function() {
+        if ((player.repu || 0) < 80 || (player.militaryPower || 0) < 70) {
+            showModal("⚠️ บารมีไม่เพียงพอ", "ท่านยังมีชื่อเสียงและกำลังทหารไม่มากพอที่จะโค่นล้มราชวงศ์เดิม ต้องสร้างผลงานเพิ่มขึ้นอีก!", "🛡️");
+            return;
+        }
+
+        let dynastyInput = prompt("ตั้งชื่อราชวงศ์ใหม่ของท่าน (เช่น ราชวงศ์หมิง, ราชวงศ์ต้าถัง):", "ราชวงศ์สุริยัน");
+        if (!dynastyInput) return;
+
+        player.isEmperor = true;
+        player.dynastyName = dynastyInput;
+        player.activeTitle = `👑 ปฐมกษัตริย์แห่ง${dynastyInput}`;
+        player.money += 1000; // ทรัพย์สินหลวง
+
+        addTimeline("👑 สถาปนาราชวงศ์ใหม่", `นำกำลังพลและขุนนางเข้ายึดเมืองหลวง ประกาศตั้ง${dynastyInput} ขึ้นครองราชย์เป็นฮ่องเต้!`, "good");
+        showModal("🎉 ฮ่องเต้พระองค์ใหม่ถือกำเนิด!", `ยินดีด้วย! ท่านได้สถาปนา ${dynastyInput} ขึ้นครองบัลลังก์มังกรอย่างยิ่งใหญ่!`, "🐉");
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 3. ระบบออกราชโองการ & จัดการวังหลัง (สำหรับฮ่องเต้)
+    // ---------------------------------------------------------
+    window.openImperialDecreeMenu = function() {
+        if (!player.isEmperor) {
+            showModal("🔒 เงื่อนไขไม่ผ่าน", "ท่านยังไม่ได้เป็นฮ่องเต้ ต้องสถาปนาราชวงศ์เสียก่อนจึงจะออกราชโองการได้!", "⚠️");
+            return;
+        }
+
+        document.getElementById('res-icon').innerText = "🐉";
+        document.getElementById('res-title').innerText = "🐉 ท้องพระโรง & ราชโองการสวรรค์";
+        document.getElementById('res-desc').innerText = `ในฐานะองค์ฮ่องเต้แห่ง ${player.dynastyName} แผ่นดินนี้อยู่ในกำมือท่าน จะทรงมีราชโองการประกาศิตว่าอย่างไร?`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="executeImperialAction('decree_reform')">📜 ออกราชโองการปฏิรูปภาษี (คลังหลวงได้เงิน +300 ตำลึง)</button>
+            <button class="choice-btn" onclick="executeImperialAction('harem_select')">🌸 คัดเลือกสนมเอกเข้าวังหลัง (เพิ่มค่าเสน่ห์และความบันเทิง)</button>
+            <button class="choice-btn" onclick="executeImperialAction('punish_rebel')">⚔️ ปราบปรามกบฏชายแดน (วัดพลังทหาร สร้างเสถียรภาพ)</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.executeImperialAction = function(action) {
+        if (action === 'decree_reform') {
+            player.money += 300;
+            player.repu -= 5;
+            showModal("📜 ราชโองการภาษี", "ออกประกาศปฏิรูปภาษี คลังหลวงร่ำรวยขึ้น แต่ราษฎรบางส่วนบ่นพึมพำ", "💰");
+            addTimeline("📜 ราชโองการภาษี", "ออกพระราชโองการปฏิรูปการจัดเก็บภาษีทั่วราชอาณาจักร", "neutral");
+        } else if (action === 'harem_select') {
+            player.charm += 15;
+            player.haremConsorts.push("สนมเอกคนใหม่");
+            showModal("🌸 คัดเลือกสนมวังหลัง", "จัดพิธีคัดเลือกสาวงามทั่วหล้าเข้าสู่ตำหนักใน วังหลังครึกครื้น!", "💖");
+            addTimeline("🌸 คัดเลือกสนม", "รับสนมเอกเข้าสู่ตำหนักในเพื่อสานสัมพันธ์กับตระกูลขุนนาง", "good");
+        } else if (action === 'punish_rebel') {
+            if ((player.militaryPower || 10) >= 60) {
+                player.merit += 30;
+                showModal("⚔️ ปราบกบฏราบคาบ", "กองทัพหลวงยกไปปราบกบฏหัวเมืองจนราบคาบ แผ่นดินสงบสุข!", "🛡️");
+                addTimeline("⚔️ ชัยชนะเหนือทัพกบฏ", "นำทัพหลวงกวาดล้างกลุ่มกบฏชายแดนจนสิ้นซาก", "good");
+            } else {
+                player.stress += 20;
+                player.repu -= 15;
+                showModal("⚠️ ทัพหลวงเพลี่ยงพล้ำ", "กำลังทหารไม่เพียงพอ ปราบกบฏไม่สำเร็จ เสียชื่อเสียงอย่างมาก", "❌");
+                addTimeline("⚠️ พ่ายแพ้ศึกกบฏ", "กองทัพหลวงเสียทีแก่กบฏ สร้างความสั่นคลอนแก่ราชบัลลังก์", "bad");
+            }
+        }
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 4. ระบบหักค่าครองชีพประจำปีสมจริง (เชื่อมกับปุ่ม ageUp)
+    // ---------------------------------------------------------
+    let originalAgeUpPatch32 = window.ageUp;
+    window.ageUp = function() {
+        if (typeof originalAgeUpPatch32 === 'function') originalAgeUpPatch32();
+
+        // หักค่าครองชีพตามจริงประจำปี (ไม่ให้รวยง่ายเกินไป)
+        let livingCost = player.isEmperor ? 200 : 40; // ฮ่องเต้ใช้จ่ายเยอะกว่าตามฐานะ
+        player.money = Math.max(0, (player.money || 100) - livingCost);
+
+        // เช็คเงื่อนไขสุ่มเกิดวิกฤตกบฏถ้าเป็นฮ่องเต้แล้วละเลย
+        if (player.isEmperor && Math.random() < 0.25) {
+            setTimeout(() => {
+                showModal("⚡ วิกฤตกบฏชิงบัลลังก์!", "ขุนนางกังฉินและกองกำลังหัวเมืองร่วมมือกันก่อกบฏหวังโค่นล้มราชวงศ์ของท่าน!", "🚨");
+                addTimeline("⚡ เกิดกบฏในราชสำนัก", "กลุ่มอำนาจเก่าซ่องสุมกำลังก่อกบฏท้าทายราชบัลลังก์", "bad");
+            }, 1000);
+        }
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 5. แทรกปุ่มลัดท้องพระโรงฮ่องเต้บนหน้าจอหลัก
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('imperial-throne-panel')) {
+                let throneDiv = document.createElement('div');
+                throneDiv.id = 'imperial-throne-panel';
+                throneDiv.style.cssText = "background: #fffbeb; border: 1px dashed #d97706; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
+                
+                throneDiv.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #b45309;">🐉 เส้นทางสู่วังหลวง & บัลลังก์มังกร</div>
+                    <button class="choice-btn" style="margin: 4px 0; background: #fef3c7; color: #92400e; border-color: #d97706;" onclick="foundNewDynasty()">👑 ประกาศศักดา: สถาปนาราชวงศ์ใหม่ขึ้นเป็นฮ่องเต้</button>
+                    <button class="choice-btn" style="margin: 4px 0; background: #fef3c7; color: #92400e; border-color: #d97706;" onclick="openImperialDecreeMenu()">📜 ท้องพระโรง: ออกราชโองการ & จัดการวังหลัง</button>
+                `;
+                actionContainer.appendChild(throneDiv);
+            }
+        }, 2600);
+    });
+</script>
 </body>
 </html>
