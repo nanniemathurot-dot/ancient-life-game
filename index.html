@@ -2737,5 +2737,151 @@
         }, 2000);
     });
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 30 (ULTIMATE STORY EVENTS & RANDOM ENCOUNTERS) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // ฟังก์ชันสุ่มเลือกอีเวนต์เนื้อเรื่องพิเศษทั้ง 3 แบบ
+    // ---------------------------------------------------------
+    window.triggerRandomStoryEvent = function() {
+        let eventType = Math.floor(Math.random() * 3);
+
+        if (eventType === 0) {
+            // 1. อีเวนต์จดหมายปริศนากลางตลาดหลวง
+            document.getElementById('res-icon').innerText = "🏮";
+            document.getElementById('res-title').innerText = "🏮 ปริศนาจดหมายลับกลางตลาดหลวง";
+            document.getElementById('res-desc').innerText = `ระหว่างที่ท่านเดินเลือกซื้อของในตลาดหลวง จู่ๆ ก็มีเด็กน้อยวิ่งมาชนพร้อมกับยื่นจดหมายลับที่มีตราประทับประหลาดใส่มือ ก่อนจะหายตัวไปในฝูงชนอย่างรวดเร็ว...`;
+            
+            document.getElementById('res-choices').innerHTML = `
+                <button class="choice-btn" onclick="resolveStoryEvent('market_open')">📜 เปิดอ่านและตามหาเบาะแส (เสี่ยงอันตราย ลุ้นค้นพบขุมทรัพย์)</button>
+                <button class="choice-btn" onclick="resolveStoryEvent('market_report')">⚖️ นำไปมอบให้กรมอาญาตรวจสอบ (ได้รับชื่อเสียงและความไว้วางใจ)</button>
+                <button class="choice-btn" onclick="resolveStoryEvent('market_burn')">🔥 เผาทิ้งทำลายหลักฐานเพื่อความปลอดภัย (ตัดปัญหา รักษาสุขภาพจิต)</button>
+            `;
+        } else if (eventType === 1) {
+            // 2. อีเวนต์เทศกาลโคมไฟประจำปี
+            document.getElementById('res-icon').innerText = "🌸";
+            document.getElementById('res-title').innerText = "🌸 งานเทศกาลโคมไฟประจำปี";
+            document.getElementById('res-desc').innerText = `คืนเทศกาลโคมไฟอันงดงาม แสงไฟสว่างไสวทั่วท้องถนน ผู้คนต่างออกมาปล่อยโคมลอยอธิษฐาน บรรยากาศเต็มไปด้วยความครึกครื้น...`;
+            
+            document.getElementById('res-choices').innerHTML = `
+                <button class="choice-btn" onclick="resolveStoryEvent('lantern_wish')">✨ เขียนคำอธิษฐานปล่อยโคมลอยขอพรความรัก (เพิ่มค่าเสน่ห์และความสัมพันธ์)</button>
+                <button class="choice-btn" onclick="resolveStoryEvent('lantern_riddle')">🧠 ร่วมวงทายปริศนาโคมไฟชิงรางวัลใหญ่ (วัดสติปัญญา ลุ้นรับเงินตำลึง)</button>
+                <button class="choice-btn" onclick="resolveStoryEvent('lantern_relax')">🍃 เดินชมบรรยากาศเงียบๆ คนเดียว (ลดความเครียด เพิ่มพลังชีวิต)</button>
+            `;
+        } else {
+            // 3. อีเวนต์วิกฤตภัยธรรมชาติและโรงทาน
+            document.getElementById('res-icon').innerText = "🌾";
+            document.getElementById('res-title').innerText = "🌾 วิกฤตอุทกภัย & โรงทานราษฎร";
+            document.getElementById('res-desc').innerText = `เกิดอุทกภัยใหญ่ขึ้นในหัวเมือง ราษฎรจำนวนมากอพยพไร้ที่อยู่อาศัยเข้ามาในเมืองหลวง ในฐานะผู้มีหน้ามีตา ท่านจะตัดสินใจอย่างไร?`;
+            
+            document.getElementById('res-choices').innerHTML = `
+                <button class="choice-btn" onclick="resolveStoryEvent('crisis_charity')">🍲 ควักกระเป๋าเปิดโรงทานแจกอาหารและยา (เสีย 50 ตำลึง แต่ชื่อเสียงพุ่งสูงสุดขีด)</button>
+                <button class="choice-btn" onclick="resolveStoryEvent('crisis_policy')">📜 ถวายฎีกาเสนอแผนแก้ปัญหาต่อท้องพระโรง (วัดสติปัญญา สร้างผลงานความดีความชอบ)</button>
+                <button class="choice-btn" onclick="resolveStoryEvent('crisis_ignore')">🚪 ปิดจวนเงียบไม่ยุ่งเกี่ยว (ประหยัดทรัพย์สิน แต่ชื่อเสียงลดลง)</button>
+            `;
+        }
+
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    // ---------------------------------------------------------
+    // ฟังก์ชันประมวลผลการตัดสินใจในอีเวนต์เนื้อเรื่อง
+    // ---------------------------------------------------------
+    window.resolveStoryEvent = function(choice) {
+        // 1. ตลาดหลวง
+        if (choice === 'market_open') {
+            player.intel = (player.intel || 10) + 10;
+            player.stress = (player.stress || 0) + 10;
+            addTimeline("📜 แกะรอยจดหมายลับ", "เสี่ยงภัยตามหาเบาะแสจากจดหมายปริศนา ได้รับข้อมูลลับสำคัญแต่สร้างความเครียด", "good");
+            showModal("📜 เบาะแสลับ", "ท่านไขปริศนาสำเร็จ ได้รับแผนที่ขุมทรัพย์และข้อมูลลับทางการเมือง!", "💎");
+        } else if (choice === 'market_report') {
+            player.repu += 15;
+            player.merit = (player.merit || 0) + 10;
+            addTimeline("⚖️ ส่งมอบหลักฐานกรมอาญา", "นำจดหมายปริศนามอบให้ทางการ ขุนนางผู้ใหญ่ชื่นชมในความจงรักภักดี", "good");
+            showModal("⚖️ ความดีความชอบ", "ทางการตบรางวัลและบันทึกความดีความชอบให้แก่ท่าน!", "🏆");
+        } else if (choice === 'market_burn') {
+            player.stress = Math.max(0, (player.stress || 0) - 15);
+            addTimeline("🔥 ทำลายหลักฐาน", "เลือกเผาจดหมายทิ้งเพื่อตัดปัญหา ไม่ขอเกี่ยวצข้องกับเรื่องยุ่งยากใดๆ", "neutral");
+            showModal("🔥 ปลอดภัยไร้กังวล", "ท่านรอดพ้นจากคดีความและอันตราย จิตใจสงบสุขขึ้น", "🌿");
+        }
+        
+        // 2. เทศกาลโคมไฟ
+        else if (choice === 'lantern_wish') {
+            player.charm = (player.charm || 10) + 10;
+            player.relationship = (player.relationship || 50) + 10;
+            addTimeline("🌸 ขอพรโคมลอย", "เขียนคำอธิษฐานในคืนเทศกาลโคมไฟ เสน่ห์แพรพราวและผู้คนต่างเอ็นดู", "good");
+            showModal("🌸 สมหวังดั่งใจ", "บรรยากาศสุดโรแมนติกทำให้เสน่ห์ของท่านพุ่งกระฉูด!", "💖");
+        } else if (choice === 'lantern_riddle') {
+            if ((player.intel || 10) >= 30) {
+                player.money += 80;
+                addTimeline("🧠 ชนะทายปริศนาโคมไฟ", "ตอบคำถามปริศนาโคมไฟได้ถูกต้องทุกข้อ คว้ารางวัลใหญ่จากเศรษฐี", "good");
+                showModal("🧠 ฉลาดเป็นกรด", "คว้ารางวัลเงินรางวัล 80 ตำลึงกลับจวนอย่างภาคภูมิใจ!", "💰");
+            } else {
+                player.money += 20;
+                addTimeline("🧠 ร่วมทายปริศนาโคมไฟ", "ร่วมสนุกตอบคำถามได้รางวัลปลอบใจเล็กๆ น้อยๆ", "neutral");
+                showModal("🧠 ได้รับรางวัล", "ได้รับเงินรางวัลปลอบใจ 20 ตำลึง", "🎁");
+            }
+        } else if (choice === 'lantern_relax') {
+            player.health = Math.min(100, (player.health || 100) + 10);
+            player.stress = 0;
+            addTimeline("🍃 พักผ่อนเทศกาลโคมไฟ", "เดินเที่ยวชมแสงสีเสียงผ่อนคลายความเครียดจนหมดสิ้น สุขภาพร่างกายแข็งแรง", "good");
+            showModal("🍃 ผ่อนคลายสบายใจ", "ความเครียดหายเป็นปลิดทิ้ง สุขภาพกายใจสดชื่นแจ่มใส!", "🌿");
+        }
+
+        // 3. วิกฤตโรงทาน
+        else if (choice === 'crisis_charity') {
+            if (player.money >= 50) {
+                player.money -= 50;
+                player.repu += 35;
+                addTimeline("🍲 เปิดโรงทานช่วยเหลือราษฎร์", "ควักเงิน 50 ตำลึงเปิดโรงทานแจกอาหาร ขจรขจายชื่อเสียงความใจบุญ", "good");
+                showModal("🍲 เสียงสรรเสริญจากชาวเมือง", "ราษฎรต่างพากันแซ่ซ้องสรรเสริญในความเมตตาของท่าน!", "🌟");
+            } else {
+                player.money = 0;
+                player.repu += 15;
+                showModal("🍲 โรงทานจำกัด", "แม้จะมีเงินน้อยนิดแต่ก็พยายามช่วยเหลือเต็มที่ ราษฎรซาบซึ้งใจ", "💖");
+            }
+        } else if (choice === 'crisis_policy') {
+            if ((player.intel || 10) >= 40) {
+                player.repu += 25;
+                player.merit = (player.merit || 0) + 25;
+                addTimeline("📜 ถวายฎีกาแก้วิกฤต", "เสนอแผนจัดการอุทกภัยและปากท้องราษฎร์ต่อฮ่องเต้ สำเร็จลุล่วงงดงาม", "good");
+                showModal("📜 ผลงานชิ้นโบแดง", "ฮ่องเต้ทรงพอพระทัยยิ่ง เลื่อนขั้นบรรดาศักดิ์และเพิ่มความดีความชอบ!", "🏆");
+            } else {
+                player.stress += 10;
+                addTimeline("📜 ฎีกายังไม่รัดกุม", "เสนอแผนงานแต่ยังขาดประสบการณ์ ฮ่องเต้ให้กลับไปปรับปรุงแก้ไข", "neutral");
+                showModal("📜 ต้องพยายามอีกนิด", "แผนงานยังไม่ผ่านการพิจารณา ต้องเพิ่มสติปัญญาและความรู้ให้มากกว่านี้", "⚠️");
+            }
+        } else if (choice === 'crisis_ignore') {
+            player.repu = Math.max(0, player.repu - 10);
+            player.stress += 5;
+            addTimeline("🚪 เพิกเฉยต่อวิกฤต", "เลือกปิดจวนเงียบไม่ยุ่งเกี่ยวกับปัญหาภายนอก ถูกชาวบ้านนินทา", "bad");
+            showModal("🚪 เสียงนินทา", "ชื่อเสียงความน่าเชื่อถือลดลงเล็กน้อยเนื่องจากไร้น้ำใจยามวิกฤต", "⚠️");
+        }
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // แทรกปุ่มลัดสุ่มอีเวนต์เนื้อเรื่องลงบนหน้าจอหลักอัตโนมัติ
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('random-story-panel')) {
+                let storyDiv = document.createElement('div');
+                storyDiv.id = 'random-story-panel';
+                storyDiv.style.cssText = "background: #fdf2f8; border: 1px dashed #ec4899; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
+                
+                storyDiv.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #be185d;">📖 เหตุการณ์ชีวิต & อีเวนต์ประจำวัน</div>
+                    <button class="choice-btn" style="margin: 4px 0; background: #fce7f3;" onclick="triggerRandomStoryEvent()">✨ สุ่มเผชิญเหตุการณ์เนื้อเรื่อง (ตลาดหลวง, เทศกาล, วิกฤต)</button>
+                `;
+                actionContainer.appendChild(storyDiv);
+            }
+        }, 2200);
+    });
+</script>
 </body>
 </html>
