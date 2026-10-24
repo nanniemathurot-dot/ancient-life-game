@@ -3227,5 +3227,110 @@
         }, 2800);
     });
 </script>
+    <!-- ==========================================================================
+     🌸 MEGA PATCH 34 (MARRIAGE, ADOPTION & DYNAMIC HEIR SYSTEM) 🌸
+     ========================================================== -->
+<script>
+    // ---------------------------------------------------------
+    // 1. ระบบตัวแปรเสริม (สถานะโสด, บุตรบุญธรรม, พรสวรรค์ลูก)
+    // ---------------------------------------------------------
+    if (typeof player !== 'undefined') {
+        player.maritalStatus = player.maritalStatus || "โสด"; // โสด, สมรส, หม้าย/หย่า
+        player.partnerName = player.partnerName || "ยังไม่มีคู่ครอง";
+        player.adoptedChildren = player.adoptedChildren || []; // รายชื่อบุตรบุญธรรม
+    }
+
+    // ---------------------------------------------------------
+    // 2. ระบบจัดงานแต่งงาน
+    // ---------------------------------------------------------
+    window.openWeddingMenu = function() {
+        document.getElementById('res-icon').innerText = "💒";
+        document.getElementById('res-title').innerText = "💒 พิธีมงคลสมบูรณ์ & งานแต่งงาน";
+        document.getElementById('res-desc').innerText = `ท่านพบผู้คนที่ถูกใจและต้องการตบแต่งใช้ชีวิตคู่ร่วมกัน ท่านต้องการจัดพิธีแต่งงานรูปแบบใด?`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="executeWedding('grand')">🏮 จัดงานแต่งงานใหญ่โตมโหฬาร (เสีย 200 ตำลึง - ชื่อเสียงพุ่ง + เสน่ห์กระจาย)</button>
+            <button class="choice-btn" onclick="executeWedding('simple')">🌸 จัดพิธีเรียบง่ายภายในจวน (เสีย 30 ตำลึง - ออบอุ่นและประหยัด)</button>
+            <button class="choice-btn" onclick="closeModal()">ยังไม่พร้อมแต่งงาน</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.executeWedding = function(type) {
+        if (type === 'grand') {
+            if ((player.money || 0) < 200) { alert("เงินตำลึงไม่พอจัดงานใหญ่!"); return; }
+            player.money -= 200;
+            player.repu += 25;
+            player.charm += 15;
+            player.maritalStatus = "สมรส";
+            player.partnerName = "คุณชาย/คุณหญิงคู่ใจ";
+            showModal("🎉 งานแต่งงานสุดอลังการ!", "แขกเหรื่อมาร่วมอวยพรคับคั่ง ชื่อเสียงขจรขจายเริ่มต้นชีวิตคู่สุดแฮปปี้!", "💖");
+            addTimeline("💒 จัดงานแต่งงานใหญ่", "จัดพิธีสมรสเกริกเกียรติเป็นที่กล่าวขานทั่วเมืองหลวง", "good");
+        } else if (type === 'simple') {
+            if ((player.money || 0) < 30.0) { alert("เงินไม่พอ!"); return; }
+            player.money -= 30;
+            player.maritalStatus = "สมรส";
+            player.partnerName = "คู่ชีวิตเรียบง่าย";
+            showModal("🌸 พิธีสมรสเรียบง่ายแต่อบอุ่น", "กล่าวคำปฏิญาณต่อหน้าฟ้าดิน เริ่มต้นใช้ชีวิตคู่ร่วมกันอย่างสงบสุข", "🌿");
+            addTimeline("💒 จัดงานแต่งงานเรียบง่าย", "จดทะเบียนสมรสและจัดพิธีเล็กๆ ภายในจวน", "good");
+        }
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 3. ระบบรับบุตรบุญธรรม (สำหรับสายโสดหรืออยากมีลูกเพิ่ม)
+    // ---------------------------------------------------------
+    window.openAdoptionMenu = function() {
+        document.getElementById('res-icon').innerText = "👶";
+        document.getElementById('res-title').innerText = "👶 สถานรับเลี้ยงเด็ก & รับบุตรบุญธรรม";
+        document.getElementById('res-desc').innerText = `ท่านสามารถเดินทางไปรับเด็กกำพร้า (ตั้งแต่แบเบาะจนถึงวัย 10 ขวบ) มาอุปการะเป็นบุตรบุญธรรม เพื่อสืบสกุลและดูแลยามแก่ชราได้`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="adoptChild('baby')">🍼 รับเลี้ยงทารกแรกเกิด (อายุ 0 ขวบ - ปั้นแต่งอนาคตได้เต็มที่)</button>
+            <button class="choice-btn" onclick="adoptChild('kid')">🧒 รับเลี้ยงเด็กโต (อายุ 8 ขวบ - ช่วยแบ่งเบาภาระและฝึกฝนไว)</button>
+            <button class="choice-btn" onclick="closeModal()">ปิดหน้าต่าง</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    };
+
+    window.adoptChild = function(ageType) {
+        if ((player.money || 0) < 50) { alert("ต้องใช้เงิน 50 ตำลึงเป็นทุนการศึกษาเริ่มต้น!"); return; }
+        player.money -= 50;
+
+        // สุ่มพรสวรรค์ของเด็กที่รับมาเลี้ยง
+        let talents = ["อัจฉริยะหัวไว (พรสวรรค์สูง)", "เด็กปานกลาง (ต้องหมั่นสอน)", "เด็กดื้อรั้น (ต้องปั้นแต่งเป็นพิเศษ)"];
+        let assignedTalent = talents[Math.floor(Math.random() * talents.length)];
+        
+        player.adoptedChildren.push({ name: "บุตรบุญธรรมตระกูล", age: ageType === 'baby' ? 0 : 8, talent: assignedTalent });
+        
+        showModal("👶 รับบุตรบุญธรรมสำเร็จ!", `ท่านรับเด็กน้อยเข้าจวนเรียบร้อย!\n🌟 พรสวรรค์เด็ก: ${assignedTalent}`, "💖");
+        addTimeline("👶 รับบุตรบุญธรรม", `อุปการะเด็กน้อยเข้าจวน พร้อมเริ่มต้นอบรมเลี้ยงดู พรสวรรค์: ${assignedTalent}`, "good");
+
+        if (typeof updateUI === 'function') updateUI();
+        if (typeof autoSaveGame === 'function') autoSaveGame();
+    };
+
+    // ---------------------------------------------------------
+    // 4. แทรกปุ่มลัดงานแต่งงานและรับบุตรบุญธรรมบนหน้าจอหลัก
+    // ---------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('family-adoption-panel')) {
+                let famDiv = document.createElement('div');
+                famDiv.id = 'family-adoption-panel';
+                famDiv.style.cssText = "background: #fdf4f8; border: 1px dashed #f43f5e; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center;";
+                
+                famDiv.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 8px; color: #be123c;">👨‍👩‍👧 ระบบครอบครัว, งานแต่ง & บุตรบุญธรรม</div>
+                    <button class="choice-btn" style="margin: 4px 0; background: #ffe4e6; color: #be123c; border-color: #f43f5e;" onclick="openWeddingMenu()">💒 จัดพิธีมงคลสมรส / แต่งงาน</button>
+                    <button class="choice-btn" style="margin: 4px 0; background: #ffe4e6; color: #be123c; border-color: #f43f5e;" onclick="openAdoptionMenu()">👶 สถานรับเลี้ยงเด็ก: รับบุตรบุญธรรม</button>
+                `;
+                actionContainer.appendChild(famDiv);
+            }
+        }, 3000);
+    });
+</script>
 </body>
 </html>
