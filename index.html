@@ -1004,5 +1004,165 @@
     function resetGameData() { if(confirm("เริ่มชีวิตใหม่ทั้งหมด?")) { localStorage.removeItem('ANCIENT_LIFE_V13_SAVE'); location.reload(); } }
     window.onload = () => { if (localStorage.getItem('ANCIENT_LIFE_V13_SAVE')) loadGame(false); };
 </script>
+    <!-- ==========================================================
+     🌸 MEGA PATCH (V.14 & V.15): HAREM, IMPERIAL COURT & INTRIGUE 🌸
+     ========================================================== -->
+<script>
+    // 1. เพิ่มข้อมูลสเตตัสระบบวังหลังและขุนนางใหม่ในตัวแปร Player
+    if (typeof player !== 'undefined') {
+        player.haremFame = player.haremFame || 0;         // แต้มบารมีวังหลัง
+        player.courtFaction = player.courtFaction || 'บุ๋น';   // สายขุนนาง: บุ๋น / บู๊
+        player.affection = player.affection || 50;       // แต้มความรัก/ความซื่อสัตย์คู่ครอง
+        player.palaceRank = player.palaceRank || "สามัญชน"; // ยศฝ่ายใน (กรณีหญิง/สนม)
+        player.pregnant = player.pregnant || false;      // สถานะตั้งครรภ์
+    }
+
+    // 2. ระบบเกี้ยวพาราสี & จีบสาวก่อนแต่งงาน (Courtship System)
+    function wooPartner() {
+        if (player.age < 15) { showModal("🌸 เกี้ยวพาราสี", "ยังเยาว์วัยเกินกว่าจะออกเกี้ยวพาราสี! (ต้องอายุ 15+)", "🌸"); return; }
+        if (player.money < 15) { showModal("🌸 เกี้ยวพาราสี", "เงินไม่พอ! ค่าซื้อปิ่นปักผมและขนมหวาน 15 ตำลึง", "💸"); return; }
+        
+        player.money -= 15;
+        player.charm += 4;
+        player.affection = Math.min(100, player.affection + 15);
+        player.happy = Math.min(100, player.happy + 10);
+
+        let events = [
+            "มอบปิ่นปักผมหยกงามและแต่งบทกลอนเกี้ยวพาราสีใต้ต้นเหมย (ความรัก +15, เสน่ห์ +4)",
+            "ชวนเที่ยวชมงานเทศกาลโคมไฟยามค่ำคืนและเดินเคียงคู่ริมสระบัว (ความรัก +15, ความสุข +10)",
+            "จัดส่งขนมกุ้ยฮวาหวานละมุนไปมอบให้ถึงจวนเรือนใน (ความรัก +15)"
+        ];
+        let randEvt = events[Math.floor(Math.random() * events.length)];
+        
+        addTimeline("🌸 เกี้ยวพาราสีเกี้ยวพาน", randEvt, "good");
+        showModal("🌸 เกี้ยวพาราสีสำเร็จ", randEvt, "💖");
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    // 3. ระบบศึกชิงอำนาจเรือนหลัง & วังหลัง (Harem & Court Politics)
+    function triggerHaremDrama() {
+        if (!player.partner && player.gender === 'ชาย') { showModal("🪭 ศึกเรือนหลัง", "ท่านยังไม่มีฮูหยินหรืออนุภรรยาในเรือนหลัง!", "🪭"); return; }
+        
+        document.getElementById('res-icon').innerText = "🪭";
+        document.getElementById('res-title').innerText = "🪭 เหตุการณ์ริษยาในวังหลัง & เรือนหลัง";
+        document.getElementById('res-desc').innerText = `คนในเรือนหลังเกิดความขัดแย้งชิงดีชิงเด่น! มีการใส่ร้ายป้ายสีและแย่งชิงความโปรดปราน ท่านจะตัดสินใจสะสางอย่างไร?`;
+        
+        document.getElementById('res-choices').innerHTML = `
+            <button class="choice-btn" onclick="resolveHarem('bias')">⚖️ เข้าข้างฮูหยินเอก ยึดถือธรรมเนียมตระกูล (คุณธรรม +5, ความเครียด +5)</button>
+            <button class="choice-btn" onclick="resolveHarem('fair')">🤝 ให้ความเป็นธรรมแบ่งปันเบี้ยเลี้ยงเท่าเทียม (ความสุข +10, เสีย 20 ตำลึง)</button>
+            <button class="choice-btn" onclick="resolveHarem('scold')">💢 ตักเตือนทั้งสองฝ่ายให้อยู่ในความสงบ (บารมีวังหลัง +5)</button>
+        `;
+        document.getElementById('result-modal').classList.add('active');
+    }
+
+    function resolveHarem(choice) {
+        if (choice === 'bias') {
+            player.moral += 5; player.stress += 5;
+            addTimeline("⚖️ ตัดสินศึกเรือนหลัง", "ยึดถือธรรมเนียมโบราณ ให้ฮูหยินเอกปกครองเรือนหลังอย่างเด็ดขาด (คุณธรรม +5)", "good");
+            showModal("⚖️ ยึดถือธรรมเนียม", "ฮูหยินเอกปลาบปลื้มในความยุติธรรมตามธรรมเนียม", "⚖️");
+        } else if (choice === 'fair') {
+            if (player.money >= 20) {
+                player.money -= 20; player.happy = Math.min(100, player.happy + 10);
+                addTimeline("🤝 ปรองดองเรือนหลัง", "แจกจ่ายทรัพย์สินเพิ่มเบี้ยเลี้ยงให้ทุกฝ่ายอย่างเท่าเทียม สงบศึกเรือนหลัง (ความสุข +10)", "good");
+                showModal("🤝 เรือนหลังสงบสุข", "แจกจ่ายเบี้ยเลี้ยงสยบความขัดแย้ง เรือนหลังกลับมาสงบสุข!", "🌸");
+            } else {
+                player.stress += 10;
+                addTimeline("💥 เงินไม่พอสงบศึกเรือนหลัง", "ไม่มีเงินแจกจ่ายเบี้ยเลี้ยง ทำให้ความขัดแย้งในเรือนหลังรุนแรงขึ้น (ความเครียด +10)", "bad");
+                showModal("💥 เกิดความขัดแย้ง", "เงินไม่พอสยบความขัดแย้ง! (ความเครียด +10)", "💥");
+            }
+        } else {
+            player.haremFame += 5; player.repu += 5;
+            addTimeline("💢 สำแดงบารมีคุมเรือนหลัง", "ใช้อำนาจผู้นำตระกูลว่ากล่าวตักเตือน ทุกฝ่ายยินยอมสยบเคลื่อนไหว (บารมีวังหลัง +5)", "good");
+            showModal("💢 สำแดงบารมี", "ตักเตือนให้ทุกฝ่ายอยู่ในความสงบอย่างเกรงขาม!", "👑");
+        }
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    // 4. ระบบคัดเลือกหญิงงาม / ถวายตัววังหลวง (Imperial Harem Selection)
+    function enterPalaceSelection() {
+        if (player.age < 16) { showModal("🏛️ คัดเลือกวังหลวง", "ต้องมีอายุ 16 ปีขึ้นไปจึงจะสามารถเข้าร่วมคัดเลือกได้!", "🏛️"); return; }
+        
+        if (player.gender === 'หญิง') {
+            document.getElementById('res-icon').innerText = "🌸";
+            document.getElementById('res-title').innerText = "🌸 การคัดเลือกนางกำนัล & สนมวังหลวง";
+            document.getElementById('res-desc').innerText = `ท่านเดินทางเข้าสู่พระราชวังหลวงเพื่อเข้าร่วมการคัดเลือกตัวพระสนม คณะกรรมการและขันทีหลวงกำลังตรวจพิจารณารูปลักษณ์และกิริยามารยาทของท่าน...`;
+            document.getElementById('res-choices').innerHTML = `
+                <button class="choice-btn" onclick="resolvePalaceSelection('pass')">✨ แสดงความสามารถร่ายรำและกลอน (ลุ้นรับตำแหน่ง 'พระสนมกุ้ยเหริน')</button>
+                <button class="choice-btn" onclick="resolvePalaceSelection('fail')">🍃 ขอถอนตัวกลับจวน ใช้ชีวิตอิสระตามเดิม</button>
+            `;
+            document.getElementById('result-modal').classList.add('active');
+        } else {
+            if (player.money < 50) { showModal("🏛️ คัดเลือกหญิงงาม", "ต้องใช้ทรัพย์สิน 50 ตำลึงในการจัดเตรียมขบวนรับหญิงงามเข้าจวน!", "💸"); return; }
+            player.money -= 50; player.charm += 8;
+            let concubines = ["ไป๋ซูหนี่ว์", "หลินหว่านเออร์", "มู่หรงเสวี่ย", "ฮวาอี้หลิน"];
+            let chosen = concubines[Math.floor(Math.random() * concubines.length)];
+            
+            addTimeline("👑 รับหญิงงามเข้าจวน", `ใช้ทรัพย์สินคัดเลือกและรับหญิงงามนาม '${chosen}' เข้าสู่จวนตระกูลเป็นอนุภรรยา (เสน่ห์ +8)`, "good");
+            showModal("👑 รับหญิงงามเข้าจวน", `ต้อนรับ '${chosen}' เข้าสู่จวนตระกูลเป็นอนุภรรยา ท่ามกลางบรรยากาศชื่นมื่น!`, "💖");
+            if (typeof updateUI === 'function') updateUI();
+        }
+    }
+
+    function resolvePalaceSelection(type) {
+        if (type === 'pass') {
+            if (player.charm >= 55 || player.intel >= 60) {
+                player.palaceRank = "พระสนมกุ้ยเหริน";
+                player.activeTitle = "🌸 พระสนมกุ้ยเหรินแห่งวังหลวง";
+                player.money += 100;
+                addTimeline("🌸 ได้รับการแต่งตั้งเป็นพระสนม", "ร่ายรำและถวายบทกลอนต้องพระเนตรฮ่องเต้ ได้รับการแต่งตั้งเป็น 'พระสนมกุ้ยเหริน' พร้อมเบี้ยหวัดมหาศาล", "good");
+                showModal("🌸 ได้รับการแต่งตั้งเป็นพระสนม!", "ฮ่องเต้โปรดปราน แต่งตั้งเป็น 'พระสนมกุ้ยเหริน' ประทับ ณ ตำหนักใน!", "👑");
+            } else {
+                player.palaceRank = "นางกำนัลปลายแถว";
+                addTimeline("🍃 คัดเลือกเป็นนางกำนัล", "ผ่านการคัดเลือกเบื้องต้นแต่ได้รับตำแหน่งเป็นเพียง 'นางกำนัลปลายแถว' รับใช้ในตำหนัก", "bad");
+                showModal("🍃 เป็นนางกำนัล", "ผ่านการคัดเลือกได้เป็นเพียง 'นางกำนัลปลายแถว' ต้องพยายามไต่เต้าต่อไป!", "🍵");
+            }
+        } else {
+            showModal("🍃 ถอนตัวสำเร็จ", "ท่านเลือกถอนตัวกลับจวน ใช้ชีวิตอิสระตามครเซียน", "🍃");
+        }
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    // 5. ระบบเลือกฝั่งขุนนาง สายบุ๋น VS สายบู๊ (Civil vs Military Faction)
+    function chooseCourtFaction(faction) {
+        player.courtFaction = faction;
+        let title = faction === 'บุ๋น' ? "📜 ขุนนางฝ่ายปัญญา (บุ๋น)" : "⚔️ ขุนนางฝ่ายแม่ทัพ (บู๊)";
+        addTimeline(`📜 เลือกสังกัดราชสำนัก`, `สวามิภักดิ์เข้าสังกัด '${title}' ในท้องพระโรง ยกระดับอิทธิพลการเมือง`, "good");
+        showModal("🏛️ เข้าสังกัดขุนนาง", `ท่านเข้าสังกัด '${title}' เรียบร้อยแล้ว!`, "🏛️");
+        if (typeof updateUI === 'function') updateUI();
+    }
+
+    // 6. ฉีดปุ่มกิจกรรมใหม่เข้าสู่หน้าความสัมพันธ์และกิจกรรมอัตโนมัติ
+    window.addEventListener('DOMContentLoaded', () => {
+        let relTab = document.getElementById('page-relatives');
+        if (relTab) {
+            let wooBtn = document.createElement('div');
+            wooBtn.className = 'card-item';
+            wooBtn.onclick = wooPartner;
+            wooBtn.innerHTML = `
+                <div class="card-left"><div class="card-icon">💖</div><div class="card-text"><h4>เกี้ยวพาราสี & กระชับรัก (15 ตำลึง)</h4><p>พาเที่ยวชมโคมไฟ มอบปิ่นปักผม เพิ่มความรัก & เสน่ห์</p></div></div>
+            `;
+            relTab.insertBefore(wooBtn, relTab.children[1]);
+
+            let haremBtn = document.createElement('div');
+            haremBtn.className = 'card-item';
+            haremBtn.onclick = triggerHaremDrama;
+            haremBtn.innerHTML = `
+                <div class="card-left"><div class="card-icon">🪭</div><div class="card-text"><h4>จัดการศึกเรือนหลัง & ชิงอำนาจ</h4><p>ไกล่เกลี่ยความริษยาและระเบียบในจวน</p></div></div>
+            `;
+            relTab.insertBefore(haremBtn, relTab.children[2]);
+        }
+
+        let actTab = document.getElementById('page-activities');
+        if (actTab) {
+            let palaceBtn = document.createElement('div');
+            palaceBtn.className = 'card-item';
+            palaceBtn.onclick = enterPalaceSelection;
+            palaceBtn.innerHTML = `
+                <div class="card-left"><div class="card-icon">🏛️</div><div class="card-text"><h4>คัดเลือกวังหลวง / รับหญิงงามถวายตัว</h4><p>ไต่เต้าพระสนมฝ่ายใน หรือคัดเลือกอนุเข้าจวน</p></div></div>
+            `;
+            actTab.insertBefore(palaceBtn, actTab.children[1]);
+        }
+    });
+</script>
 </body>
 </html>
