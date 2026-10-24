@@ -2883,5 +2883,71 @@
         }, 2200);
     });
 </script>
+   <!-- ==========================================================================
+     🌸 MEGA PATCH 31 (THEME SWITCHER: CLASSIC VS PASTEL CUTE) 🌸
+     ========================================================== -->
+<style>
+    /* ธีมพาสเทลสดใสน่ารัก (Pastel Cute Theme) */
+    body.pastel-theme {
+        background: linear-gradient(135deg, #fff0f5 0%, #e0f2fe 100%) !important;
+        color: #4a3b32 !important;
+    }
+    body.pastel-theme .card, 
+    body.pastel-theme .action-container, 
+    body.pastel-theme div[id*="panel"] {
+        background: #ffffffdd !important;
+        border-color: #f472b6 !important;
+        box-shadow: 0 4px 15px rgba(244, 114, 182, 0.15) !important;
+    }
+    body.pastel-theme button.choice-btn {
+        background: #fdf2f8 !important;
+        color: #db2777 !important;
+        border: 1px solid #f472b6 !important;
+    }
+    body.pastel-theme button.choice-btn:hover {
+        background: #fce7f3 !important;
+    }
+</style>
+
+<script>
+    // ---------------------------------------------------------
+    // ฟังก์ชันสลับธีมสีระหว่าง คลาสสิกย้อนยุค และ พาสเทลสดใส
+    // ---------------------------------------------------------
+    window.toggleGameTheme = function() {
+        let isPastel = document.body.classList.toggle('pastel-theme');
+        
+        if (isPastel) {
+            localStorage.setItem('game_theme', 'pastel');
+            showModal("🌸 โหมดพาสเทลสดใส", "เปลี่ยนบรรยากาศหน้าจอเป็นโทนสีหวานสดใสน่ารัก ฟีลกู๊ดสุดๆ!", "✨");
+        } else {
+            localStorage.setItem('game_theme', 'classic');
+            showModal("🌙 โหมดคลาสสิกย้อนยุค", "กลับสู่โทนสีขรึมขลังสไตล์พงศาวดารโบราณ ขลังและทรงพลัง!", "📜");
+        }
+    };
+
+    // โหลดค่าธีมที่บันทึกไว้ล่าสุดอัตโนมัติ
+    window.addEventListener('DOMContentLoaded', () => {
+        let savedTheme = localStorage.getItem('game_theme');
+        if (savedTheme === 'pastel') {
+            document.body.classList.add('pastel-theme');
+        }
+
+        // แทรกปุ่มสลับธีมไว้บนมุมจอหรือพาเนลหลัก
+        setTimeout(() => {
+            let actionContainer = document.querySelector('.action-container') || document.getElementById('action-panel') || document.body;
+            if (actionContainer && !document.getElementById('theme-switcher-panel')) {
+                let themeDiv = document.createElement('div');
+                themeDiv.id = 'theme-switcher-panel';
+                themeDiv.style.cssText = "background: #f3e8ff; border: 1px dashed #a855f7; padding: 10px; border-radius: 8px; margin-top: 15px; text-align: center;";
+                
+                themeDiv.innerHTML = `
+                    <div style="font-weight: 600; margin-bottom: 6px; color: #7e22ce;">🎨 ปรับแต่งบรรยากาศเกม</div>
+                    <button class="choice-btn" style="margin: 4px 0; background: #faf5ff; color: #7e22ce; border-color: #a855f7;" onclick="toggleGameTheme()">✨ สลับโหมดสี (คลาสสิกย้อนยุค ⇄ พาสเทลสดใส)</button>
+                `;
+                actionContainer.appendChild(themeDiv);
+            }
+        }, 2500);
+    });
+</script> 
 </body>
 </html>
