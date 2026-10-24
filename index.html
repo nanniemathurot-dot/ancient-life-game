@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า (Imperial Destiny)</title>
+    <title>ชีวิตต่างภพ: ตำนานชะตาฟ้า</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,8 +11,6 @@
             --card-bg: #fffbf5;
             --primary-red: #8b261d;
             --secondary-gold: #c59b27;
-            --dark-gold: #947112;
-            --accent-green: #2c5e3b;
             --text-dark: #2c1d11;
             --text-light: #7c6853;
             --border-color: #e2d2bc;
@@ -25,4 +23,516 @@
         .app-container {
             width: 100%; max-width: 430px; height: 100vh; max-height: 920px;
             background: var(--bg-main); display: flex; flex-direction: column;
-            position: relative;
+            position: relative; overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.85);
+        }
+
+        header {
+            background: linear-gradient(180deg, #99281e 0%, #5e150f 100%);
+            color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--secondary-gold); z-index: 20; box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        header h1 { font-family: 'Kanit', sans-serif; font-size: 16px; font-weight: 600; color: #ffeabf; }
+        .header-btns { display: flex; gap: 8px; }
+        .icon-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 15px; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+
+        .content-body { flex: 1; overflow-y: auto; display: flex; flex-direction: column; position: relative; padding-bottom: 75px; }
+        
+        .profile-card {
+            background: var(--card-bg); margin: 12px 12px 6px 12px; padding: 12px; border-radius: 18px;
+            border: 1px solid var(--border-color); box-shadow: var(--shadow);
+            display: flex; gap: 12px; align-items: center; position: relative;
+        }
+        .avatar-box {
+            width: 76px; height: 76px; border-radius: 50%; border: 3px solid var(--secondary-gold);
+            background: #f7edd9; display: flex; justify-content: center; align-items: center;
+            font-size: 42px; flex-shrink: 0; position: relative;
+        }
+        .gender-badge { position: absolute; bottom: -2px; right: -2px; background: var(--primary-red); color: white; font-size: 10px; padding: 2px 7px; border-radius: 10px; border: 1px solid white; font-weight: 600; }
+        .profile-info { flex: 1; }
+        .profile-info h2 { font-family: 'Kanit', sans-serif; font-size: 18px; color: var(--primary-red); }
+        .profile-info .sub-text { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+        .profile-info .rank-text { font-size: 11px; font-weight: 600; color: #855b08; margin-top: 4px; display: inline-block; background: #fff3d6; padding: 2px 8px; border-radius: 6px; border: 1px solid #e2c88d; }
+
+        .energy-bar-container { margin: 0 12px 8px 12px; background: #ebdcc9; border-radius: 10px; padding: 6px 12px; border: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .energy-title { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--primary-red); font-weight: 600; }
+        .energy-dots { display: flex; gap: 4px; }
+        .energy-dot { width: 12px; height: 12px; border-radius: 50%; background: #ccc; border: 1px solid #aaa; }
+        .energy-dot.active { background: #2c5e3b; border-color: #1b3d26; box-shadow: 0 0 5px rgba(44,94,59,0.5); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 12px 10px 12px; }
+        .stat-item { background: var(--card-bg); padding: 6px 8px; border-radius: 10px; border: 1px solid var(--border-color); text-align: center; }
+        .stat-item .label { font-size: 10px; color: var(--text-light); }
+        .stat-item .val { font-family: 'Kanit', sans-serif; font-size: 13px; font-weight: 600; color: var(--primary-red); }
+
+        .page { display: none; flex-direction: column; flex: 1; }
+        .page.active { display: flex; }
+
+        .timeline-container { padding: 0 12px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+        .timeline-item { background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border-color); padding: 12px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--secondary-gold); border-top-left-radius: 14px; border-bottom-left-radius: 14px; }
+        .timeline-age { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--primary-red); font-weight: 600; margin-bottom: 4px; }
+        .timeline-desc { font-size: 13px; line-height: 1.5; color: var(--text-dark); }
+
+        .menu-list { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+        .section-header { font-family: 'Kanit', sans-serif; font-size: 12px; color: var(--text-light); margin-top: 6px; margin-bottom: 2px; }
+        .action-card {
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px;
+            padding: 12px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: 0.15s;
+        }
+        .action-card:active { transform: scale(0.98); background: #fbeedb; }
+        .action-card .info h4 { font-family: 'Kanit', sans-serif; font-size: 14px; color: var(--text-dark); }
+        .action-card .info p { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+        .action-card .icon { font-size: 24px; margin-right: 12px; }
+        .action-left { display: flex; align-items: center; }
+
+        .btn { background: var(--primary-red); color: white; border: none; padding: 10px 16px; border-radius: 12px; font-family: 'Kanit', sans-serif; font-size: 13px; cursor: pointer; text-align: center; }
+        .btn-gold { background: linear-gradient(135deg, #d4af37 0%, #a37c15 100%); color: #fff; font-weight: 600; }
+        .btn-block { width: 100%; display: block; }
+
+        .age-up-bar {
+            position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 430px; padding: 8px 12px; background: rgba(243, 233, 220, 0.95);
+            border-top: 1px solid var(--border-color); z-index: 15;
+        }
+
+        nav.bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
+            background: #23120b; display: flex; border-top: 2px solid var(--secondary-gold); z-index: 20;
+        }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #9c8473; font-size: 10px; cursor: pointer; font-family: 'Kanit', sans-serif;
+        }
+        .nav-item.active { color: #ffe082; font-weight: 600; }
+        .nav-item .nav-icon { font-size: 19px; margin-bottom: 2px; }
+
+        .modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center;
+            padding: 20px; z-index: 100; backdrop-filter: blur(4px);
+        }
+        .modal.active { display: flex; }
+        .modal-box {
+            background: var(--card-bg); width: 100%; max-width: 370px; border-radius: 20px;
+            border: 2px solid var(--secondary-gold); padding: 20px; box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+            max-height: 82vh; overflow-y: auto;
+        }
+        .modal-box h3 { font-family: 'Kanit', sans-serif; color: var(--primary-red); font-size: 18px; margin-bottom: 8px; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; }
+        .modal-box p { font-size: 13px; line-height: 1.6; color: var(--text-dark); margin-bottom: 16px; }
+        .choice-btn { width: 100%; padding: 11px 14px; margin-bottom: 8px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; text-align: left; font-size: 13px; cursor: pointer; color: var(--text-dark); font-family: 'Sarabun', sans-serif; }
+        .choice-btn:hover { background: #fdf2df; border-color: var(--secondary-gold); color: var(--primary-red); }
+
+        .setup-form { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+        .form-group label { font-family: 'Kanit', sans-serif; font-size: 13px; color: var(--primary-red); margin-bottom: 4px; display: block; }
+        .form-group input, .form-group select { width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 10px; background: #fff; font-size: 13px; outline: none; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header>
+        <h1>ชีวิตต่างภพ: ตำนานชะตาฟ้า</h1>
+        <div class="header-btns">
+            <button class="icon-btn" id="sound-btn" onclick="toggleBGM()">🎵</button>
+            <button class="icon-btn" onclick="openSystemMenu()">⚙️</button>
+        </div>
+    </header>
+
+    <div class="content-body">
+        <!-- SETUP PAGE -->
+        <div id="page-setup" class="page active">
+            <div style="text-align: center; padding: 20px 16px 0 16px;">
+                <h2 style="font-family:'Kanit'; color:var(--primary-red); font-size:22px;">จุติชีวิตใหม่ในแผ่นดินโบราณ</h2>
+                <p style="font-size:12px; color:var(--text-light); margin-top:4px;">เลือกชาติกำเนิดและลิขิตชะตาชีวิตของคุณ</p>
+            </div>
+            <div class="setup-form">
+                <div class="form-group">
+                    <label>ยุคสมัย / ราชวงศ์</label>
+                    <select id="setup-dynasty">
+                        <option value="ราชวงศ์เซียว">ราชวงศ์เซียว (ยุทธภพและวังหลังสมมติ)</option>
+                        <option value="ราชวงศ์ฮั่น">ราชวงศ์ฮั่น (ยุคทองยุทธภพและบารมี)</option>
+                        <option value="ราชวงศ์ถัง">ราชวงศ์ถัง (เฟื่องฟู ศิลปะ และฝ่ายใน)</option>
+                        <option value="ราชวงศ์ซ่ง">ราชวงศ์ซ่ง (การค้า ปัญญาชน และการเมือง)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>ชาติกำเนิด</label>
+                    <select id="setup-origin">
+                        <option value="ตระกูลขุนนาง">ตระกูลขุนนาง (มีอิทธิพลในราชสำนัก)</option>
+                        <option value="ตระกูลแม่ทัพ">ตระกูลแม่ทัพ (เชี่ยวชาญยุทธ์และทหาร)</option>
+                        <option value="ตระกูลพ่อค้า">ตระกูลพ่อค้า (มั่งคั่งด้วยทรัพย์สิน)</option>
+                        <option value="ตระกูลชาวนา">ตระกูลชาวนา (สู้ชีวิตจากสามัญชน)</option>
+                        <option value="เชื้อพระวงศ์">เชื้อพระวงศ์ (สูงศักดิ์แต่วังวนอันตราย)</option>
+                    </select>
+                </div>
+                <div style="display:flex; gap:10px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>เพศ</label>
+                        <select id="setup-gender">
+                            <option value="ชาย">ชาย</option>
+                            <option value="หญิง">หญิง</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:2;">
+                        <label>ชื่อ-นามสกุล</label>
+                        <input type="text" id="setup-name" value="หลี่เฟิง">
+                    </div>
+                </div>
+                <button class="btn btn-gold btn-block" style="margin-top:10px; padding:12px; font-size:15px;" onclick="initGame()">เริ่มต้นชีวิตใหม่ 📜</button>
+            </div>
+        </div>
+
+        <!-- MAIN GAME VIEW -->
+        <div id="game-view" style="display:none; flex-direction:column; flex:1;">
+            <div class="profile-card">
+                <div class="avatar-box" id="ui-avatar">👶<span class="gender-badge" id="ui-gender">ชาย</span></div>
+                <div class="profile-info">
+                    <h2 id="ui-name">หลี่เฟิง</h2>
+                    <div class="sub-text" id="ui-meta">อายุ 0 ปี • ตระกูลขุนนาง</div>
+                    <div class="rank-text" id="ui-rank">สถานะ: สามัญชน</div>
+                </div>
+            </div>
+
+            <div class="energy-bar-container">
+                <div class="energy-title">⚡ พลังงานประจำปี (Action Points):</div>
+                <div class="energy-dots" id="energy-dots">
+                    <div class="energy-dot active"></div>
+                    <div class="energy-dot active"></div>
+                    <div class="energy-dot active"></div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item"><div class="label">❤️ สุขภาพ</div><div class="val" id="st-health">100</div></div>
+                <div class="stat-item"><div class="label">🧠 สติปัญญา</div><div class="val" id="st-intel">50</div></div>
+                <div class="stat-item"><div class="label">✨ เสน่ห์</div><div class="val" id="st-charm">50</div></div>
+                <div class="stat-item"><div class="label">📜 คุณธรรม</div><div class="val" id="st-moral">50</div></div>
+                <div class="stat-item"><div class="label">👑 ชื่อเสียง</div><div class="val" id="st-repu">10</div></div>
+                <div class="stat-item"><div class="label">💰 เงินทอง</div><div class="val" id="st-money">100 ตำลึง</div></div>
+            </div>
+
+            <!-- TAB 1: TIMELINE -->
+            <div id="page-timeline" class="page active">
+                <div class="timeline-container" id="timeline-feed"></div>
+            </div>
+
+            <!-- TAB 2: ACTIVITIES & CAREER -->
+            <div id="page-activities" class="page">
+                <div class="menu-list">
+                    <div class="section-header">กิจกรรมพัฒนาตนเอง (ใช้พลังงาน ⚡)</div>
+                    <div class="action-card" onclick="doActivity('study')">
+                        <div class="action-left"><span class="icon">📚</span><div class="info"><h4>ศึกษาตำราปราชญ์</h4><p>เพิ่มสติปัญญา เตรียมสอบขุนนาง</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="doActivity('train')">
+                        <div class="action-left"><span class="icon">⚔️</span><div class="info"><h4>ฝึกวิทยายุทธ์ / สุขภาพ</h4><p>บำรุงรักษาร่างกายให้แข็งแกร่ง</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="doActivity('social')">
+                        <div class="action-left"><span class="icon">🪕</span><div class="info"><h4>เจรจาเข้าสังคม / ศิลปะ</h4><p>พบปะสหาย เพิ่มเสน่ห์และคอนเนกชัน</p></div></div>
+                    </div>
+
+                    <div class="section-header">เส้นทางอาชีพ / ราชสำนัก / วังหลัง</div>
+                    <div class="action-card" onclick="takeCareerAction()">
+                        <div class="action-left"><span class="icon" id="career-icon">🏛️</span><div class="info"><h4 id="career-title">สอบขุนนาง / คัดเลือกฝ่ายใน</h4><p id="career-desc">ไต่เต้าตำแหน่งในราชสำนัก</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="doWork()">
+                        <div class="action-left"><span class="icon">💼</span><div class="info"><h4>ปฏิบัติหน้าที่ / ทำงาน</h4><p>รับเบี้ยหวัดเงินปีตามตำแหน่ง</p></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: FAMILY -->
+            <div id="page-family" class="page">
+                <div class="menu-list">
+                    <div class="action-card" onclick="findPartner()">
+                        <div class="action-left"><span class="icon">💍</span><div class="info"><h4>หมั้นหมาย / เกี้ยวพาราสี</h4><p>เสาะหาคู่ครองที่มีตระกูลเหมาะสม</p></div></div>
+                    </div>
+                    <div class="section-header">ผังตระกูลและสมาชิก</div>
+                    <div id="family-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: SYSTEM -->
+            <div id="page-system" class="page">
+                <div class="menu-list">
+                    <div class="section-header">ระบบจัดการเกม (Save / Load)</div>
+                    <div class="action-card" onclick="saveGame(true)">
+                        <div class="action-left"><span class="icon">💾</span><div class="info"><h4>บันทึกเกม (Save Game)</h4><p>บันทึกลงเบราว์เซอร์ปัจจุบัน</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="loadGame(true)">
+                        <div class="action-left"><span class="icon">📂</span><div class="info"><h4>โหลดเกม (Load Game)</h4><p>เล่นต่อจากไฟล์บันทึกล่าสุด</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="exportSaveFile()">
+                        <div class="action-left"><span class="icon">📤</span><div class="info"><h4>ส่งออกไฟล์เซฟ (Export JSON)</h4><p>ดาวน์โหลดไฟล์เก็บไว้ในเครื่อง</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="importSaveFile()">
+                        <div class="action-left"><span class="icon">📥</span><div class="info"><h4>นำเข้าไฟล์เซฟ (Import JSON)</h4><p>โหลดไฟล์เซฟมาเล่นต่อ</p></div></div>
+                    </div>
+                    <div class="action-card" onclick="resetGameData()">
+                        <div class="action-left"><span class="icon">🔄</span><div class="info"><h4>เริ่มจุติชีวิตใหม่</h4><p>ลบตัวละครนี้และเริ่มจุติใหม่</p></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AGE UP BAR -->
+            <div class="age-up-bar">
+                <button class="btn btn-gold btn-block" onclick="ageUp()">เพิ่มอายุขึ้น 1 ปี (ผ่านไปอีกปี) ⏳</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav" id="main-nav" style="display:none;">
+        <div class="nav-item active" onclick="switchTab('timeline', this)"><span class="nav-icon">📜</span><span>ภาพรวมชีวิต</span></div>
+        <div class="nav-item" onclick="switchTab('activities', this)"><span class="nav-icon">⚡</span><span>กิจกรรม/อาชีพ</span></div>
+        <div class="nav-item" onclick="switchTab('family', this)"><span class="nav-icon">👨‍👩‍👧</span><span>ตระกูล</span></div>
+        <div class="nav-item" onclick="switchTab('system', this)"><span class="nav-icon">⚙️</span><span>ระบบ</span></div>
+    </nav>
+
+    <!-- MODAL -->
+    <div class="modal" id="event-modal">
+        <div class="modal-box">
+            <h3 id="modal-title">เหตุการณ์สำคัญ</h3>
+            <p id="modal-desc">รายละเอียด...</p>
+            <div id="modal-choices"></div>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="file-input" style="display:none" onchange="handleFileImport(event)" accept=".json">
+
+<script>
+    let audioCtx = null;
+    let bgmInterval = null;
+    let bgmPlaying = false;
+    const pentatonicNotes = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33];
+
+    function initAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function playSoundEffect(freq, type='sine', duration=0.15) {
+        try {
+            initAudio();
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch(e){}
+    }
+
+    function toggleBGM() {
+        initAudio();
+        bgmPlaying = !bgmPlaying;
+        document.getElementById('sound-btn').innerText = bgmPlaying ? "🔊" : "🎵";
+        if (bgmPlaying) {
+            bgmInterval = setInterval(() => {
+                if (!bgmPlaying) return;
+                let note = pentatonicNotes[Math.floor(Math.random() * pentatonicNotes.length)];
+                playSoundEffect(note, 'triangle', 0.4);
+            }, 900);
+        } else {
+            clearInterval(bgmInterval);
+        }
+    }
+
+    const maleRanks = ["สามัญชน", "บัณฑิตซิ่วไฉ", "ขุนนางขั้น 9 (จอหงวน)", "ขุนนางขั้น 7 (นายอำเภอ)", "ขุนนางขั้น 5 (เจ้าเมือง)", "ขุนนางขั้น 3 (เสนาบดีกรม)", "ขุนนางขั้น 1 (อัครมหาเสนาบดี)"];
+    const femaleRanks = ["สามัญชน", "คุณหนูในตระกูล", "นางกำนัลรับใช้", "นางสนมชั้นปลาย", "พระสนม (กุ้ยเหริน)", "พระอัครเทวี (เฟย)", "พระอัครมเหสี (ฮองเฮา)"];
+
+    let player = {
+        name: "หลี่เฟิง", dynasty: "ราชวงศ์เซียว", origin: "ตระกูลขุนนาง", gender: "ชาย",
+        age: 0, energy: 3, health: 100, intel: 50, charm: 50, moral: 50, repu: 10, money: 100,
+        rankLevel: 0, partner: null, children: [], timeline: []
+    };
+
+    function getRankName() { return player.gender === 'ชาย' ? maleRanks[player.rankLevel] : femaleRanks[player.rankLevel]; }
+
+    function initGame() {
+        player.name = document.getElementById('setup-name').value || "หลี่เฟิง";
+        player.dynasty = document.getElementById('setup-dynasty').value;
+        player.origin = document.getElementById('setup-origin').value;
+        player.gender = document.getElementById('setup-gender').value;
+        player.age = 0; player.energy = 3; player.rankLevel = 0; player.timeline = [];
+
+        if (player.origin === 'ตระกูลพ่อค้า') player.money = 600;
+        if (player.origin === 'เชื้อพระวงศ์') { player.money = 1200; player.repu = 30; }
+
+        document.getElementById('page-setup').style.display = 'none';
+        document.getElementById('game-view').style.display = 'flex';
+        document.getElementById('main-nav').style.display = 'flex';
+
+        addTimeline(`ถือกำเนิดขึ้นในยุค ${player.dynasty} เป็นบุตรตระกูล ${player.origin}`);
+        updateUI();
+        saveGame(false);
+    }
+
+    function switchTab(tabId, el) {
+        playSoundEffect(440);
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('page-' + tabId).classList.add('active');
+        if (el) el.classList.add('active');
+    }
+
+    function updateUI() {
+        document.getElementById('ui-avatar').innerHTML = (player.age < 3 ? '👶' : (player.age < 15 ? '👦' : '👨')) + `<span class="gender-badge">${player.gender}</span>`;
+        document.getElementById('ui-name').innerText = player.name;
+        document.getElementById('ui-meta').innerText = `อายุ ${player.age} ปี • ${player.origin} (${player.dynasty})`;
+        document.getElementById('ui-rank').innerText = `สถานะ: ${getRankName()}`;
+
+        document.getElementById('st-health').innerText = player.health;
+        document.getElementById('st-intel').innerText = player.intel;
+        document.getElementById('st-charm').innerText = player.charm;
+        document.getElementById('st-moral').innerText = player.moral;
+        document.getElementById('st-repu').innerText = player.repu;
+        document.getElementById('st-money').innerText = player.money + " ตำลึง";
+
+        let dots = document.getElementById('energy-dots').children;
+        for (let i = 0; i < 3; i++) {
+            if (i < player.energy) dots[i].classList.add('active');
+            else dots[i].classList.remove('active');
+        }
+
+        let famHTML = "";
+        if (player.partner) famHTML += `<div class="action-card"><div class="action-left"><span class="icon">❤️</span><div class="info"><h4>${player.partner}</h4><p>คู่ครองสมรส</p></div></div></div>`;
+        player.children.forEach((c, i) => {
+            famHTML += `<div class="action-card"><div class="action-left"><span class="icon">👶</span><div class="info"><h4>${c.name} (${c.gender})</h4><p>บุตรคนที่ ${i+1} (อายุ ${c.age} ปี)</p></div></div></div>`;
+        });
+        if (!famHTML) famHTML = "<p style='font-size:12px; color:var(--text-light); text-align:center;'>ยังไม่มีครอบครัว</p>";
+        document.getElementById('family-list').innerHTML = famHTML;
+    }
+
+    function addTimeline(text) {
+        player.timeline.unshift({ age: player.age, text: text });
+        document.getElementById('timeline-feed').innerHTML = player.timeline.map(item => `
+            <div class="timeline-item">
+                <div class="timeline-age">[อายุ ${item.age} ปี]</div>
+                <div class="timeline-desc">${item.text}</div>
+            </div>
+        `).join('');
+    }
+
+    function doActivity(type) {
+        if (player.age < 4) { alert("คุณยังเยาว์วัยเกินไป รอให้อายุถึง 4 ปีเสียก่อน!"); return; }
+        if (player.energy <= 0) { alert("พลังงานประจำปีหมดแล้ว! โปรดกด 'เพิ่มอายุ +1 ปี'"); return; }
+
+        playSoundEffect(520);
+        player.energy--;
+
+        if (type === 'study') {
+            let g = Math.floor(Math.random() * 4) + 3; player.intel += g;
+            addTimeline(`ตั้งใจศึกษาตำราปราชญ์โบราณ (สติปัญญา +${g})`);
+        } else if (type === 'train') {
+            let g = Math.floor(Math.random() * 4) + 2; player.health = Math.min(100, player.health + g);
+            addTimeline(`ฝึกฝนวิทยายุทธ์และร่างกาย (สุขภาพ +${g})`);
+        } else if (type === 'social') {
+            let g = Math.floor(Math.random() * 4) + 2; player.charm += g;
+            addTimeline(`เข้าร่วมงานพบปะสหายปัญญาชน (เสน่ห์ +${g})`);
+        }
+        updateUI();
+    }
+
+    function ageUp() {
+        playSoundEffect(650);
+        player.age++; player.energy = 3;
+        player.children.forEach(c => c.age++);
+
+        if (player.partner && player.age >= 18 && player.age <= 45 && Math.random() < 0.25) {
+            let cGen = Math.random() > 0.5 ? 'ชาย' : 'หญิง';
+            let cName = (cGen === 'ชาย' ? 'หลี่หมิง' : 'หลี่เหมย') + (player.children.length + 1);
+            player.children.push({ name: cName, gender: cGen, age: 0 });
+            addTimeline(`🎉 กำเนิดบุตร (${cName}) ในตระกูลเรียบร้อย`);
+        }
+
+        if (player.age > 60) player.health -= Math.floor(Math.random() * 8) + 3;
+
+        if (player.health <= 0 || player.age > 95) {
+            addTimeline(`💀 สิ้นอายุขัยแล้วในวัย ${player.age} ปี`);
+            updateUI();
+            if (player.children.length > 0 && confirm(`ต้องการสืบทอดเล่นต่อเป็นบุตร '${player.children[0].name}' หรือไม่?`)) {
+                let heir = player.children[0];
+                player.name = heir.name; player.gender = heir.gender; player.age = heir.age;
+                player.health = 100; player.rankLevel = 0; player.partner = null; player.children = [];
+                addTimeline(`✨ สืบทอดตระกูลเล่นต่อในฐานะรุ่นลูก (${player.name})`);
+                updateUI(); saveGame(false); return;
+            }
+            alert(`ตัวละครเสียชีวิตลงแล้วด้วยอายุ ${player.age} ปี`);
+            return;
+        }
+
+        if (player.age >= 6 && Math.random() < 0.5) {
+            let evs = [
+                { title: "เทศกาลโคมไฟ", desc: "พบนักพรตยื่นคำทำนายมงคลให้", act: () => { player.moral += 5; addTimeline("รับคำทำนายมงคลในงานเทศกาลโคมไฟ"); } },
+                { title: "โอกาสลงทุน", desc: "ชวนลงทุนค้าผ้าแพรไหม (ใช้ 50 ตำลึง)", act: () => { if(player.money>=50){ player.money+=80; addTimeline("ลงทุนค้าขายได้กำไรก้อนโต!"); } else { addTimeline("เงินไม่พอลงทุน"); } } }
+            ];
+            let ev = evs[Math.floor(Math.random() * evs.length)];
+            document.getElementById('modal-title').innerText = ev.title;
+            document.getElementById('modal-desc').innerText = ev.desc;
+            document.getElementById('modal-choices').innerHTML = `<button class='choice-btn' onclick='evalEvent(${JSON.stringify(ev.act.toString())})'>ตกลงรับผล</button>`;
+            document.getElementById('event-modal').classList.add('active');
+        }
+
+        updateUI();
+        saveGame(false);
+    }
+
+    function takeCareerAction() {
+        if (player.age < 16) { alert("ต้องมีอายุ 16 ปีขึ้นไป!"); return; }
+        let req = (player.rankLevel + 1) * 20;
+        if (player.intel >= req) {
+            player.rankLevel++;
+            let rName = getRankName();
+            addTimeline(`👑 ได้รับการเลื่อนแต่งตั้งเป็น '${rName}'!`);
+            alert(`ยินดีด้วย! เลื่อนขั้นเป็น '${rName}' สำเร็จ`);
+        } else {
+            alert(`สติปัญญาไม่พอ! (ต้องการ ${req}) โปรดศึกษาตำราเพิ่มขึ้น`);
+        }
+        updateUI();
+    }
+
+    function doWork() {
+        if (player.rankLevel === 0) { alert("ยังไม่ได้รับตำแหน่ง!"); return; }
+        let sal = player.rankLevel * 80 + 50;
+        player.money += sal;
+        addTimeline(`ปฏิบัติราชการ ได้รับเบี้ยหวัดปีละ ${sal} ตำลึง`);
+        updateUI();
+    }
+
+    function findPartner() {
+        if (player.age < 16) { alert("ต้องมีอายุ 16 ปีขึ้นไป"); return; }
+        if (player.partner) { alert(`แต่งงานแล้วกับ '${player.partner}'`); return; }
+        let p = player.gender === 'ชาย' ? "คุณหนูตระกูลหลิน" : "คุณชายตระกูลไป๋";
+        player.partner = p;
+        addTimeline(`เข้าพิธีสมรสกับ '${p}' สำเร็จ`);
+        alert(`สมรสกับ '${p}' เรียบร้อยแล้ว!`);
+        updateUI();
+    }
+
+    function openSystemMenu() { switchTab('system', document.querySelectorAll('.nav-item')[3]); }
+    function saveGame(n=true) { localStorage.setItem('ANCIENT_LIFE_FINAL_SAVE', JSON.stringify(player)); if(n) alert("💾 บันทึกเกมสำเร็จ!"); }
+    function loadGame(n=true) {
+        let d = localStorage.getItem('ANCIENT_LIFE_FINAL_SAVE');
+        if(d) { player = JSON.parse(d); document.getElementById('page-setup').style.display='none'; document.getElementById('game-view').style.display='flex'; document.getElementById('main-nav').style.display='flex'; document.getElementById('timeline-feed').innerHTML=""; player.timeline.forEach(t=>{ let el=document.createElement('div'); el.className='timeline-item'; el.innerHTML=`<div class='timeline-age'>[อายุ ${t.age} ปี]</div><div class='timeline-desc'>${t.text}</div>`; document.getElementById('timeline-feed').appendChild(el); }); updateUI(); if(n) alert("📂 โหลดเกมสำเร็จ!"); }
+        else if(n) alert("ไม่พบเซฟเกม");
+    }
+    function exportSaveFile() {
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(player));
+        let a = document.createElement('a'); a.href = dataStr; a.download = `Save_${player.name}.json`; a.click(); a.remove();
+    }
+    function importSaveFile() { document.getElementById('file-input').click(); }
+    function handleFileImport(e) {
+        let f = e.target.files[0]; if(!f) return;
+        let r = new FileReader(); r.onload = function(evt) { player = JSON.parse(evt.target.result); document.getElementById('page-setup').style.display='none'; document.getElementById('game-view').style.display='flex'; document.getElementById('main-nav').style.display='flex'; updateUI(); saveGame(false); alert("📥 นำเข้าสำเร็จ!"); }; r.readAsText(f);
+    }
+    function resetGameData() { if(confirm("เริ่มเล่นใหม่ทั้งหมด?")) { localStorage.removeItem('ANCIENT_LIFE_FINAL_SAVE'); location.reload(); } }
+
+    window.onload = () => { if (localStorage.getItem('ANCIENT_LIFE_FINAL_SAVE')) loadGame(false); };
+</script>
+</body>
+</html>
