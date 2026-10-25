@@ -896,7 +896,7 @@
         };
     </script>
 <!-- ========================================== -->
-<!-- 🛠️ PATCH 1.19: ระบบไอคอนภาพการ์ตูนจีนโบราณสไตล์ Chibi แท้ๆ ทั่วทั้งเกม -->
+<!-- 🛠️ PATCH 2.5: แก้ไขวงกลมหน้าสรุปผลให้แสดงไอคอนคาแรคเตอร์หลัก -->
 <!-- ให้นำบล็อกนี้ไปวางทับแพทช์เดิมก่อนปิดแท็ก </body> ของโค้ดหลัก -->
 <!-- ========================================== -->
 <style>
@@ -916,24 +916,18 @@
     .ui-title { font-size: 16px; font-weight: bold; color: var(--primary); margin-bottom: 2px; }
     .ui-subtitle { font-size: 11px; color: #666; margin-bottom: 12px; }
 
-    /* กรอบรูปไอคอนการ์ตูนจีนโบราณสไตล์ Chibi */
     .char-portrait-container {
-        width: 84px;
-        height: 84px;
+        width: 76px;
+        height: 76px;
         border-radius: 50%;
-        border: 2.5px solid var(--gold);
+        border: 2px solid var(--gold);
         margin: 0 auto 10px auto;
-        overflow: hidden;
         background: #fdfbf7;
         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         display: flex;
         align-items: center;
         justify-content: center;
-    }
-    .char-portrait-container img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        font-size: 36px;
     }
 
     .ui-card-item {
@@ -970,97 +964,99 @@
 </style>
 
 <script>
-    const p19Surnames = ["มู่หรง", "ไป๋", "เซียว", "ลู่", "เย่", "ซู", "เฟิง", "หลี่", "จ้าว", "ฮวา", "ตงฟาง", "หนานกง"];
-    const p19FirstNames = ["เฟิ่ง", "ชิง", "หลาน", "เหมย", "เทียน", "อวี้", "หลง", "เซียน", "หนิง", "จิน", "อิง"];
-    const p19Genders = ["ชาย", "หญิง"];
-    const p19Dynasties = [
+    const p25Surnames = ["มู่หรง", "ไป๋", "เซียว", "ลู่", "เย่", "ซู", "เฟิง", "หลี่", "จ้าว", "ฮวา", "ตงฟาง", "หนานกง"];
+    const p25FirstNames = ["เฟิ่ง", "ชิง", "หลาน", "เหมย", "เทียน", "อวี้", "หลง", "เซียน", "หนิง", "จิน", "อิง"];
+    const p25DadNames = ["เทียน", "เจี้ยน", "หย่ง", "เจิ้ง", "คุน", "ไห่"];
+    const p25Genders = ["ชาย", "หญิง"];
+    
+    const p25Dynasties = [
         { name: "ราชวงศ์ต้าเซี่ย (Great Xia)", money: 300 },
         { name: "ราชวงศ์ต้าถัง (Great Tang)", money: 350 },
         { name: "ยุคสามก๊ก (Three Kingdoms)", money: 400 },
         { name: "ราชวงศ์ต้าชิง (Great Qing)", money: 300 }
     ];
     
-    const p19Origins = [
+    const p25Origins = [
         { title: "👑 บุตรขุนนางตระกูลใหญ่ (สายบุ๋น)", path: "ขุนนาง", desc: "เกิดในตระกูลขุนนางทรงอิทธิพล มีเส้นสายในราชสำนัก เริ่มต้นด้วยปัญญาและเงินทุน" },
         { title: "⚔️ ทายาทค่ายทหารชายแดน (สายบู๊ขุนศึก)", path: "แม่ทัพ", desc: "เติบโตท่ามกลางกลิ่นอายสงครามและคมดาบ พลังยุทธ์สูง พร้อมออกศึกชิงชัย" },
         { title: "🌸 โฉมงามตระกูลสูง (สายชิงอำนาจวังหลัง)", path: "วังหลัง", desc: "รูปโฉมงดงาม เพียบพร้อมด้วยเสน่ห์และเล่ห์กลวังหลัง เตรียมเข้าสู่การคัดเลือกสนม" },
         { title: "⛓️ ทาสรับใช้ในจวน (สายไถ่ตัวจากจุดต่ำสุด)", path: "ทาส", desc: "ชีวิตรันทดถูกกดขี่ข่มเหง ต้องอดทนทำงานเก็บเงินเพื่อไถ่ตัวพลิกชีวิต" },
-        { title: "⚠️ ทายาทขุนนางต้องโทษถูกใส่ร้าย (สายล้างมลทิน)", path: "ตกอับ", desc: "วงศ์ตระกูลล่มสลายจากข้อกล่าวหาเท็จ ต้องใช้สติปัญญาสืบหาความจริงกู้ชื่อเสียง" },
+        { title: "⚠️ ทายาทขุนนางถูกใส่ร้าย (สายล้างมลทิน)", path: "ตกอับ", desc: "วงศ์ตระกูลล่มสลายจากข้อกล่าวหาเท็จ ต้องใช้สติปัญญาสืบหาความจริงกู้ชื่อเสียง" },
         { title: "💰 ทายาทคหบดีใหญ่ (สายการค้าพาณิชย์)", path: "พ่อค้า", desc: "ร่ำรวยเงินทองตั้งแต่วันเกิด มีกิจการค้าขายหนุนหลัง เงินทองไหลมาเทมา" }
     ];
 
-    const p19Zodiacs = ["ปีมังกรทอง", "ปีพยัคฆ์คำราม", "ปีงูขาว", "ปีม้าศึก", "ปีหงส์เพลิง", "ปีกิเลนสวรรค์"];
-    const p19Seasons = ["🌸 ฤดูใบไม้ผลิ", "☀️ ฤดูร้อน", "🍂 ฤดูใบไม้ร่วง", "❄️ ฤดูหนาว"];
-    const p19BirthOrders = ["ลูกคนเดียวในจวน", "บุตรคนโต (พี่ใหญ่)", "บุตรคนรอง", "บุตรคนเล็ก (น้องนุชสุดท้อง)"];
+    const p25Zodiacs = ["ปีมังกรทอง", "ปีพยัคฆ์คำราม", "ปีงูขาว", "ปีม้าศึก", "ปีหงส์เพลิง", "ปีกิเลนสวรรค์"];
+    const p25Seasons = ["🌸 ฤดูใบไม้ผลิ", "☀️ ฤดูร้อน", "🍂 ฤดูใบไม้ร่วง", "❄️ ฤดูหนาว"];
+    const p25BirthOrders = ["ลูกคนเดียวในจวน", "บุตรคนโต (พี่ใหญ่)", "บุตรคนรอง", "บุตรคนเล็ก (น้องนุชสุดท้อง)"];
 
-    let p19Char = {
+    let p25Char = {
         surname: "มู่หรง",
         firstname: "เฟิ่ง",
         gender: "หญิง",
         dynasty: "ราชวงศ์ต้าเซี่ย (Great Xia)",
-        originObj: p19Origins[0],
+        originObj: p25Origins[0],
         zodiac: "ปีมังกรทอง",
         season: "🌸 ฤดูใบไม้ผลิ",
         birthOrder: "บุตรคนโต (พี่ใหญ่)",
         money: 300,
         stats: { intelligence: 15, combat: 10, charm: 20 },
-        familyMembers: [
-            { role: "บิดา", name: "มู่หรงเทียน", age: 42, career: "ขุนนางราชสำนัก", gender: "ชาย" },
-            { role: "มารดา", name: "ไป๋ฮูหยิน", age: 38, career: "นายหญิงตระกูลใหญ่", gender: "หญิง" }
-        ]
+        familyMembers: []
     };
 
-    // ลิงก์ภาพลายเส้นการ์ตูนจีนโบราณ (Cartoon Vector/Chibi Art Style)
-    function getP19CartoonPortrait(gender, path) {
+    function getP25EmojiPortrait(gender, path) {
         if (gender === "หญิง") {
-            if (path === "วังหลัง") return "https://api.dicebear.com/7.x/adventurer/svg?seed=NoblePrincess&backgroundColor=ffdfbf"; 
-            if (path === "แม่ทัพ") return "https://api.dicebear.com/7.x/adventurer/svg?seed=WarriorWoman&backgroundColor=c0aede"; 
-            return "https://api.dicebear.com/7.x/adventurer/svg?seed=ChineseLady&backgroundColor=b6e3f4"; 
+            if (path === "วังหลัง") return "👸🏻";
+            if (path === "แม่ทัพ") return "🗡️";
+            return "👩🏻‍🦰";
         } else {
-            if (path === "แม่ทัพ") return "https://api.dicebear.com/7.x/adventurer/svg?seed=GeneralHero&backgroundColor=ffd5dc"; 
-            if (path === "ขุนนาง") return "https://api.dicebear.com/7.x/adventurer/svg?seed=ImperialLord&backgroundColor=d1d4f9"; 
-            return "https://api.dicebear.com/7.x/adventurer/svg?seed=ScholarBoy&backgroundColor=ffebad"; 
+            if (path === "แม่ทัพ") return "🪖";
+            if (path === "ขุนนาง") return "📜";
+            return "👨🏻‍🎓";
         }
     }
 
-    function p19RandomizeAll() {
-        p19Char.surname = p19Surnames[Math.floor(Math.random() * p19Surnames.length)];
-        p19Char.firstname = p19FirstNames[Math.floor(Math.random() * p19FirstNames.length)];
-        p19Char.gender = p19Genders[Math.floor(Math.random() * p19Genders.length)];
+    function p25RandomizeAll() {
+        p25Char.surname = p25Surnames[Math.floor(Math.random() * p25Surnames.length)];
+        p25Char.firstname = p25FirstNames[Math.floor(Math.random() * p25FirstNames.length)];
+        p25Char.gender = p25Genders[Math.floor(Math.random() * p25Genders.length)];
         
-        let dyn = p19Dynasties[Math.floor(Math.random() * p19Dynasties.length)];
-        p19Char.dynasty = dyn.name;
-        p19Char.money = dyn.money;
+        let dyn = p25Dynasties[Math.floor(Math.random() * p25Dynasties.length)];
+        p25Char.dynasty = dyn.name;
+        p25Char.money = dyn.money;
 
-        p19Char.originObj = p19Origins[Math.floor(Math.random() * p19Origins.length)];
-        p19Char.zodiac = p19Zodiacs[Math.floor(Math.random() * p19Zodiacs.length)];
-        p19Char.season = p19Seasons[Math.floor(Math.random() * p19Seasons.length)];
-        p19Char.birthOrder = p19BirthOrders[Math.floor(Math.random() * p19BirthOrders.length)];
+        p25Char.originObj = p25Origins[Math.floor(Math.random() * p25Origins.length)];
+        p25Char.zodiac = p25Zodiacs[Math.floor(Math.random() * p25Zodiacs.length)];
+        p25Char.season = p25Seasons[Math.floor(Math.random() * p25Seasons.length)];
+        p25Char.birthOrder = p25BirthOrders[Math.floor(Math.random() * p25BirthOrders.length)];
 
-        p19Char.stats.intelligence = Math.floor(Math.random() * 25) + 10;
-        p19Char.stats.combat = Math.floor(Math.random() * 25) + 5;
-        p19Char.stats.charm = Math.floor(Math.random() * 25) + 10;
+        p25Char.stats.intelligence = Math.floor(Math.random() * 25) + 10;
+        p25Char.stats.combat = Math.floor(Math.random() * 25) + 5;
+        p25Char.stats.charm = Math.floor(Math.random() * 25) + 10;
 
-        let dadName = p19Char.surname + " " + p19FirstNames[Math.floor(Math.random() * p19FirstNames.length)];
+        let dadFirstName = p25DadNames[Math.floor(Math.random() * p25DadNames.length)];
+        let dadFullName = p25Char.surname + " " + dadFirstName;
+        
         let famList = [
-            { role: "บิดา", name: dadName, age: 42, career: p19Char.originObj.path === 'แม่ทัพ' ? 'แม่ทัพค่ายหลวง' : 'ขุนนางผู้ใหญ่', gender: "ชาย" },
-            { role: "มารดา", name: "ฮูหยินตระกูล " + p19Char.surname, age: 38, career: 'นายหญิงตระกูลขุนนาง', gender: "หญิง" }
+            { role: "บิดา", name: dadFullName, age: 42, career: p25Char.originObj.path === 'แม่ทัพ' ? 'แม่ทัพค่ายหลวง' : 'ขุนนางผู้ใหญ่', emoji: "🧓" },
+            { role: "มารดา", name: "ฮูหยินตระกูล " + p25Char.surname, age: 38, career: 'นายหญิงตระกูลขุนนาง', emoji: "👩‍🦳" }
         ];
 
-        if (p19Char.birthOrder !== "ลูกคนเดียวในจวน") {
-            let sibGender = Math.random() > 0.5 ? "ชาย" : "หญิง";
-            famList.push({ role: p19Char.birthOrder.includes("คนโต") ? "น้องรอง" : "พี่ใหญ่", name: p19Char.surname + " ชิง", age: 12, career: "ทายาทในจวน", gender: sibGender });
+        if (p25Char.birthOrder !== "ลูกคนเดียวในจวน") {
+            let sibName = p25Char.surname + " " + p25FirstNames[Math.floor(Math.random() * p25FirstNames.length)];
+            let sibRole = p25Char.birthOrder.includes("คนโต") ? "น้องรอง" : "พี่ใหญ่";
+            let sibEmoji = Math.random() > 0.5 ? "👦🏻" : "👧🏻";
+            famList.push({ role: sibRole, name: sibName, age: 12, career: "ทายาทในจวน", emoji: sibEmoji });
         }
 
-        p19Char.familyMembers = famList;
-        renderP19SetupScreen();
+        p25Char.familyMembers = famList;
+        renderP25SetupScreen();
     }
 
-    function renderP19SetupScreen() {
+    function renderP25SetupScreen() {
         let setupCard = document.querySelector('.setup-card');
         if(!setupCard) return;
 
-        let portraitUrl = getP19CartoonPortrait(p19Char.gender, p19Char.originObj.path);
+        let emojiIcon = getP25EmojiPortrait(p25Char.gender, p25Char.originObj.path);
 
         setupCard.innerHTML = `
             <div class="ui-setup-box">
@@ -1068,89 +1064,86 @@
                 <div class="ui-subtitle">คลิกการ์ดเพื่อปรับแต่งข้อมูล หรือกดสุ่มใหม่ได้ทันที</div>
                 
                 <div class="char-portrait-container">
-                    <img src="${portraitUrl}" alt="Cartoon Character Portrait">
+                    ${emojiIcon}
                 </div>
 
-                <div class="ui-card-item" onclick="p19OpenNameModal()">
+                <div class="ui-card-item" onclick="p25OpenNameModal()">
                     <div>
                         <div class="ui-card-label">ชื่อ - นามสกุล</div>
-                        <div class="ui-card-value">${p19Char.surname} ${p19Char.firstname}</div>
+                        <div class="ui-card-value">${p25Char.surname} ${p25Char.firstname}</div>
                     </div>
                     <div class="ui-card-badge">แก้ไข</div>
                 </div>
 
-                <div class="ui-card-item" onclick="p19OpenGenderModal()">
+                <div class="ui-card-item" onclick="p25OpenGenderModal()">
                     <div>
                         <div class="ui-card-label">เพศตัวละคร</div>
-                        <div class="ui-card-value">${p19Char.gender}</div>
+                        <div class="ui-card-value">${p25Char.gender}</div>
                     </div>
                     <div class="ui-card-badge">แก้ไข</div>
                 </div>
 
-                <div class="ui-card-item" onclick="p19OpenDynastyModal()">
+                <div class="ui-card-item" onclick="p25OpenDynastyModal()">
                     <div>
                         <div class="ui-card-label">ยุคราชวงศ์กำเนิด</div>
-                        <div class="ui-card-value">${p19Char.dynasty}</div>
+                        <div class="ui-card-value">${p25Char.dynasty}</div>
                     </div>
                     <div class="ui-card-badge">แก้ไข</div>
                 </div>
 
-                <div class="ui-card-item" onclick="p19OpenOriginModal()">
+                <div class="ui-card-item" onclick="p25OpenOriginModal()">
                     <div>
                         <div class="ui-card-label">จุดเริ่มต้นชะตากรรม</div>
-                        <div class="ui-card-value" style="font-size:11px;">${p19Char.originObj.title}</div>
+                        <div class="ui-card-value" style="font-size:11px;">${p25Char.originObj.title}</div>
                     </div>
                     <div class="ui-card-badge">แก้ไข</div>
                 </div>
 
-                <div class="ui-card-item" onclick="p19OpenFamilyModal()">
+                <div class="ui-card-item" onclick="p25OpenFamilyModal()">
                     <div>
                         <div class="ui-card-label">สถานะครอบครัว</div>
-                        <div class="ui-card-value" style="font-size:11px;">${p19Char.birthOrder}</div>
+                        <div class="ui-card-value" style="font-size:11px;">${p25Char.birthOrder}</div>
                     </div>
                     <div class="ui-card-badge">แก้ไข</div>
                 </div>
 
                 <div class="ui-bottom-flex">
-                    <button class="ui-btn-secondary" onclick="p19RandomizeAll()">🎲 สุ่มใหม่</button>
-                    <button class="ui-btn-primary" onclick="p19ShowSummary()">📜 สรุปดวงชะตาก่อนเกิด</button>
+                    <button class="ui-btn-secondary" onclick="p25RandomizeAll()">🎲 สุ่มใหม่</button>
+                    <button class="ui-btn-primary" onclick="p25ShowSummary()">📜 สรุปดวงชะตาก่อนเกิด</button>
                 </div>
             </div>
         `;
     }
 
-    function p19ShowSummary() {
+    function p25ShowSummary() {
         let setupCard = document.querySelector('.setup-card');
         if(!setupCard) return;
 
-        let portraitUrl = getP19CartoonPortrait(p19Char.gender, p19Char.originObj.path);
-        let familyHtml = p19Char.familyMembers.map(m => {
-            let famImg = getP19CartoonPortrait(m.gender, 'ขุนนาง');
-            return `
-                <div class="ui-family-pill">
-                    <div style="display:flex; align-items:center; gap:8px;">
-                        <img src="${famImg}" style="width:28px; height:28px; border-radius:50%; border:1px solid var(--gold); object-fit:cover;">
-                        <span><b>${m.name}</b> (${m.role})</span>
-                    </div>
-                    <span>อายุ ${m.age} ปี | ${m.career}</span>
+        let emojiIcon = getP25EmojiPortrait(p25Char.gender, p25Char.originObj.path);
+        let familyHtml = p25Char.familyMembers.map(m => `
+            <div class="ui-family-pill">
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size:18px;">${m.emoji}</span>
+                    <span><b>${m.name}</b> (${m.role})</span>
                 </div>
-            `;
-        }).join('');
+                <span>อายุ ${m.age} ปี | ${m.career}</span>
+            </div>
+        `).join('');
 
         setupCard.innerHTML = `
             <div class="ui-setup-box">
                 <div class="ui-title">📜 สรุปดวงชะตาแรกเกิด</div>
-                <div class="ui-subtitle">${p19Char.surname} ${p19Char.firstname} (${p19Char.gender})</div>
+                <div class="ui-subtitle">${p25Char.surname} ${p25Char.firstname} (${p25Char.gender})</div>
 
-                <div class="char-portrait-container" style="width: 70px; height: 70px; margin-bottom: 8px;">
-                    <img src="${portraitUrl}" alt="Cartoon Character Portrait">
+                <div class="char-portrait-container" style="width: 54px; height: 54px; font-size: 26px; margin-bottom: 8px;">
+                    ${emojiIcon}
                 </div>
 
                 <div class="ui-summary-card">
                     <div class="ui-summary-heading">📍 จุดเริ่มต้นชีวิต</div>
-                    <p style="margin-bottom: 4px;">กำเนิดใน <b>${p19Char.dynasty}</b> (${p19Char.originObj.title})</p>
-                    <p style="color:#555; font-size:11px;">${p19Char.originObj.desc}</p>
-                    <p style="margin-top:4px;"><b>สถานะ:</b> ${p19Char.birthOrder} | <b>ราศี:</b> ${p19Char.zodiac} (${p19Char.season})</p>
+                    <p style="margin-bottom: 4px;">กำเนิดใน <b>${p25Char.dynasty}</b> (${p25Char.originObj.title})</p>
+                    <p style="color:#555; font-size:11px;">${p25Char.originObj.desc}</p>
+                    <p style="margin-top:4px;"><b>สถานะ:</b> ${p25Char.birthOrder} | <b>ราศี:</b> ${p25Char.zodiac} (${p25Char.season})</p>
                 </div>
 
                 <div class="ui-summary-card">
@@ -1160,79 +1153,79 @@
 
                 <div class="ui-summary-card">
                     <div class="ui-summary-heading">⚡ ค่าพลังแรกเกิด</div>
-                    <div>📖 ปัญญา: <b>${p19Char.stats.intelligence}</b> | ⚔️ ยุทธ์: <b>${p19Char.stats.combat}</b> | 🌸 เสน่ห์: <b>${p19Char.stats.charm}</b></div>
+                    <div>📖 ปัญญา: <b>${p25Char.stats.intelligence}</b> | ⚔️ ยุทธ์: <b>${p25Char.stats.combat}</b> | 🌸 เสน่ห์: <b>${p25Char.stats.charm}</b></div>
                 </div>
 
                 <div class="ui-bottom-flex">
-                    <button class="ui-btn-secondary" onclick="renderP19SetupScreen()">⬅️ ย้อนกลับ</button>
-                    <button class="ui-btn-primary" onclick="p19StartGame()">🚀 เริ่มใช้ชีวิต 0 -> 1</button>
+                    <button class="ui-btn-secondary" onclick="renderP25SetupScreen()">⬅️ ย้อนกลับ</button>
+                    <button class="ui-btn-primary" onclick="p25StartGame()">🚀 เริ่มใช้ชีวิต 0 -> 1</button>
                 </div>
             </div>
         `;
     }
 
-    // Modal ป๊อปอัปแก้ไขข้อมูล (ปลอดภัย ไม่ค้าง)
-    function p19OpenNameModal() {
-        let oldBg = document.getElementById('p19-modal-name');
+    // Modal แก้ไขข้อมูล
+    function p25OpenNameModal() {
+        let oldBg = document.getElementById('p25-modal-name');
         if(oldBg) oldBg.remove();
 
         let overlay = document.createElement('div');
-        overlay.id = 'p19-modal-name';
+        overlay.id = 'p25-modal-name';
         overlay.className = 'ui-modal-bg';
         overlay.innerHTML = `
             <div class="ui-modal-pane">
                 <h3 style="color:var(--primary); margin-bottom:10px; font-size:15px;">✍️ แก้ไขชื่อ - นามสกุล</h3>
                 <div style="margin-bottom:8px; text-align:left;">
                     <label style="font-size:11px; font-weight:bold;">นามสกุลตระกูล:</label>
-                    <input type="text" id="input-p19-sur" class="form-control" value="${p19Char.surname}" style="padding:8px; font-size:13px;">
+                    <input type="text" id="input-p25-sur" class="form-control" value="${p25Char.surname}" style="padding:8px; font-size:13px;">
                 </div>
                 <div style="margin-bottom:14px; text-align:left;">
                     <label style="font-size:11px; font-weight:bold;">ชื่อจริง:</label>
-                    <input type="text" id="input-p19-first" class="form-control" value="${p19Char.firstname}" style="padding:8px; font-size:13px;">
+                    <input type="text" id="input-p25-first" class="form-control" value="${p25Char.firstname}" style="padding:8px; font-size:13px;">
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button class="ui-btn-secondary" onclick="document.getElementById('p19-modal-name').remove()">ยกเลิก</button>
-                    <button class="ui-btn-primary" onclick="p19SaveName()">บันทึก</button>
+                    <button class="ui-btn-secondary" onclick="document.getElementById('p25-modal-name').remove()">ยกเลิก</button>
+                    <button class="ui-btn-primary" onclick="p25SaveName()">บันทึก</button>
                 </div>
             </div>
         `;
         document.body.appendChild(overlay);
     }
 
-    function p19SaveName() {
-        let s = document.getElementById('input-p19-sur').value.trim();
-        let f = document.getElementById('input-p19-first').value.trim();
-        if(s) p19Char.surname = s;
-        if(f) p19Char.firstname = f;
-        let modal = document.getElementById('p19-modal-name');
+    function p25SaveName() {
+        let s = document.getElementById('input-p25-sur').value.trim();
+        let f = document.getElementById('input-p25-first').value.trim();
+        if(s) p25Char.surname = s;
+        if(f) p25Char.firstname = f;
+        let modal = document.getElementById('p25-modal-name');
         if(modal) modal.remove();
-        renderP19SetupScreen();
+        renderP25SetupScreen();
     }
 
-    function p19OpenGenderModal() {
+    function p25OpenGenderModal() {
         let overlay = document.createElement('div');
         overlay.className = 'ui-modal-bg';
         overlay.innerHTML = `
             <div class="ui-modal-pane">
                 <h3 style="color:var(--primary); margin-bottom:12px; font-size:15px;">🚻 เลือกเพศตัวละคร</h3>
-                <button class="ui-option-row" onclick="p19SaveGender('ชาย', this)">👨 ชาย</button>
-                <button class="ui-option-row" onclick="p19SaveGender('หญิง', this)">👩 หญิง</button>
+                <button class="ui-option-row" onclick="p25SaveGender('ชาย', this)">👨 ชาย</button>
+                <button class="ui-option-row" onclick="p25SaveGender('หญิง', this)">👩 หญิง</button>
                 <button class="ui-btn-secondary" style="width:100%; margin-top:8px;" onclick="this.closest('.ui-modal-bg').remove()">ยกเลิก</button>
             </div>
         `;
         document.body.appendChild(overlay);
     }
 
-    function p19SaveGender(g, btn) {
-        p19Char.gender = g;
+    function p25SaveGender(g, btn) {
+        p25Char.gender = g;
         btn.closest('.ui-modal-bg').remove();
-        renderP19SetupScreen();
+        renderP25SetupScreen();
     }
 
-    function p19OpenDynastyModal() {
+    function p25OpenDynastyModal() {
         let overlay = document.createElement('div');
         overlay.className = 'ui-modal-bg';
-        let optionsHtml = p19Dynasties.map(d => `<button class="ui-option-row" onclick="p19SaveDynasty('${d.name}', ${d.money}, this)">🏛️ ${d.name}</button>`).join('');
+        let optionsHtml = p25Dynasties.map(d => `<button class="ui-option-row" onclick="p25SaveDynasty('${d.name}', ${d.money}, this)">🏛️ ${d.name}</button>`).join('');
         overlay.innerHTML = `
             <div class="ui-modal-pane">
                 <h3 style="color:var(--primary); margin-bottom:12px; font-size:15px;">🏛️ เลือกยุคราชวงศ์กำเนิด</h3>
@@ -1243,18 +1236,18 @@
         document.body.appendChild(overlay);
     }
 
-    function p19SaveDynasty(name, money, btn) {
-        p19Char.dynasty = name;
-        p19Char.money = money;
+    function p25SaveDynasty(name, money, btn) {
+        p25Char.dynasty = name;
+        p25Char.money = money;
         btn.closest('.ui-modal-bg').remove();
-        renderP19SetupScreen();
+        renderP25SetupScreen();
     }
 
-    function p19OpenOriginModal() {
+    function p25OpenOriginModal() {
         let overlay = document.createElement('div');
         overlay.className = 'ui-modal-bg';
-        let optionsHtml = p19Origins.map((o, idx) => `
-            <button class="ui-option-row" onclick="p19SaveOrigin(${idx}, this)">
+        let optionsHtml = p25Origins.map((o, idx) => `
+            <button class="ui-option-row" onclick="p25SaveOrigin(${idx}, this)">
                 <b>${o.title}</b>
             </button>
         `).join('');
@@ -1268,17 +1261,17 @@
         document.body.appendChild(overlay);
     }
 
-    function p19SaveOrigin(idx, btn) {
-        p19Char.originObj = p19Origins[idx];
+    function p25SaveOrigin(idx, btn) {
+        p25Char.originObj = p25Origins[idx];
         btn.closest('.ui-modal-bg').remove();
-        renderP19SetupScreen();
+        renderP25SetupScreen();
     }
 
-    function p19OpenFamilyModal() {
+    function p25OpenFamilyModal() {
         let overlay = document.createElement('div');
         overlay.className = 'ui-modal-bg';
-        let optionsHtml = p19BirthOrders.map((bo, idx) => `
-            <button class="ui-option-row" onclick="p19SaveFamily(${idx}, this)">
+        let optionsHtml = p25BirthOrders.map((bo, idx) => `
+            <button class="ui-option-row" onclick="p25SaveFamily(${idx}, this)">
                 <b>${bo}</b>
             </button>
         `).join('');
@@ -1292,32 +1285,32 @@
         document.body.appendChild(overlay);
     }
 
-    function p19SaveFamily(idx, btn) {
-        p19Char.birthOrder = p19BirthOrders[idx];
+    function p25SaveFamily(idx, btn) {
+        p25Char.birthOrder = p25BirthOrders[idx];
+        let dadFirstName = p25DadNames[Math.floor(Math.random() * p25DadNames.length)];
         let famList = [
-            { role: "บิดา", name: p19Char.surname + " เทียน", age: 42, career: 'ขุนนางผู้ใหญ่', gender: "ชาย" },
-            { role: "มารดา", name: "ฮูหยินตระกูล " + p19Char.surname, age: 38, career: 'นายหญิงตระกูลขุนนาง', gender: "หญิง" }
+            { role: "บิดา", name: p25Char.surname + " " + dadFirstName, age: 42, career: 'ขุนนางผู้ใหญ่', emoji: "🧓" },
+            { role: "มารดา", name: "ฮูหยินตระกูล " + p25Char.surname, age: 38, career: 'นายหญิงตระกูลขุนนาง', emoji: "👩‍🦳" }
         ];
-        if (p19Char.birthOrder !== "ลูกคนเดียวในจวน") {
-            let sibGender = Math.random() > 0.5 ? "ชาย" : "หญิง";
-            famList.push({ role: p19Char.birthOrder.includes("คนโต") ? "น้องรอง" : "พี่ใหญ่", name: p19Char.surname + " ชิง", age: 12, career: "ทายาทในจวน", gender: sibGender });
+        if (p25Char.birthOrder !== "ลูกคนเดียวในจวน") {
+            famList.push({ role: p25Char.birthOrder.includes("คนโต") ? "น้องรอง" : "พี่ใหญ่", name: p25Char.surname + " ชิง", age: 12, career: "ทายาทในจวน", emoji: "👧🏻" });
         }
-        p19Char.familyMembers = famList;
+        p25Char.familyMembers = famList;
         btn.closest('.ui-modal-bg').remove();
-        renderP19SetupScreen();
+        renderP25SetupScreen();
     }
 
     window.addEventListener('load', function() {
-        setTimeout(() => { p19RandomizeAll(); }, 200);
+        setTimeout(() => { p25RandomizeAll(); }, 200);
     });
 
-    function p19StartGame() {
-        game.surname = p19Char.surname;
-        game.firstname = p19Char.firstname;
-        game.gender = p19Char.gender;
-        game.money = p19Char.money;
-        game.stats = { ...p19Char.stats };
-        game.pathType = p19Char.originObj.path;
+    function p25StartGame() {
+        game.surname = p25Char.surname;
+        game.firstname = p25Char.firstname;
+        game.gender = p25Char.gender;
+        game.money = p25Char.money;
+        game.stats = { ...p25Char.stats };
+        game.pathType = p25Char.originObj.path;
 
         if(game.pathType === 'ทาส') {
             game.career = "ทาสรับใช้ในจวนตระกูลใหญ่";
@@ -1337,15 +1330,21 @@
         game.chronicleLog.push({
             year: 1,
             age: 0,
-            title: `จุติสู่แผ่นดิน ${p19Char.dynasty}`,
-            text: `ฟ้าลิขิตให้กำเนิดในยุค [${p19Char.dynasty}] เส้นทางชะตา [${p19Char.originObj.title}] สถานะ: ${p19Char.birthOrder} (${p19Char.zodiac}) บิดาคือ ${p19Char.familyMembers[0].name} นามว่า ${game.surname} ${game.firstname} (${game.gender}) เริ่มต้นบันทึกมหากาพย์ชีวิตแล้ว!`
+            title: `จุติสู่แผ่นดิน ${p25Char.dynasty}`,
+            text: `ฟ้าลิขิตให้กำเนิดในยุค [${p25Char.dynasty}] เส้นทางชะตา [${p25Char.originObj.title}] สถานะ: ${p25Char.birthOrder} (${p25Char.zodiac}) บิดาคือ ${p25Char.familyMembers[0].name} นามว่า ${game.surname} ${game.firstname} (${game.gender}) เริ่มต้นบันทึกมหากาพย์ชีวิตแล้ว!`
         });
 
         let setupScreen = document.getElementById('setup-screen');
         if(setupScreen) setupScreen.style.display = 'none';
 
         let dynastyHeader = document.getElementById('header-dynasty');
-        if(dynastyHeader) dynastyHeader.innerText = `${p19Char.dynasty.split(' ')[0]} | ${game.career}`;
+        if(dynastyHeader) dynastyHeader.innerText = `${p25Char.dynasty.split(' ')[0]} | ${game.career}`;
+
+        let activeEmoji = getP25EmojiPortrait(p25Char.gender, p25Char.originObj.path);
+        let headerAvatarBox = document.querySelector('.header-avatar-container, header img, div[style*="background"], [id*="header"]');
+        if(headerAvatarBox) {
+            headerAvatarBox.innerHTML = `<div style="font-size:24px; display:flex; align-items:center; justify-content:center; width:100%; height:100%;">${activeEmoji}</div>`;
+        }
 
         saveGame();
         updateScreen();
