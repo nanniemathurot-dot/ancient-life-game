@@ -896,209 +896,406 @@
         };
     </script>
 <!-- ========================================== -->
-<!-- 🛠️ PATCH 1.2: ระบบสุ่มชะตาชีวิต & พรสวรรค์กำเนิด -->
-<!-- นำบล็อกนี้ไปวางทับแพทช์เดิมก่อนปิดแท็ก </body> ของโค้ดหลัก -->
+<!-- 🛠️ PATCH 1.14: แก้ไขจุดผิดพลาดการกดเปลี่ยนชื่อ-นามสกุลแบบเบ็ดเสร็จ -->
+<!-- ให้นำบล็อกนี้ไปวางทับแพทช์เดิมก่อนปิดแท็ก </body> ของโค้ดหลัก -->
 <!-- ========================================== -->
 <style>
-    .patch-destiny-card {
-        background: linear-gradient(145deg, #ffffff, #fdfbf7);
-        border: 2px solid var(--gold);
+    .ui-setup-box {
+        background: #ffffff;
+        border: 1.5px solid var(--gold);
         border-radius: 16px;
-        padding: 18px;
-        text-align: left;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        padding: 16px 14px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        max-width: 400px;
+        width: 100%;
+        margin: auto;
+        max-height: 88vh;
+        overflow-y: auto;
     }
-    .destiny-preview-box {
-        background: #faf8f2;
-        border: 1.5px dashed var(--gold);
+    .ui-title { font-size: 16px; font-weight: bold; color: var(--primary); margin-bottom: 2px; }
+    .ui-subtitle { font-size: 11px; color: #666; margin-bottom: 12px; }
+
+    .ui-card-item {
+        background: #fdfbf7;
+        border: 1px solid var(--border-color);
+        border-left: 4px solid var(--gold);
         border-radius: 10px;
-        padding: 10px;
-        margin-bottom: 12px;
-        font-size: 12px;
-        line-height: 1.6;
-        color: #444;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: background 0.2s;
     }
-    .destiny-preview-box b {
-        color: var(--primary);
-    }
+    .ui-card-item:hover { background: #faf4e6; border-color: var(--gold); }
+    .ui-card-label { font-size: 10px; color: #777; text-transform: uppercase; letter-spacing: 0.5px; }
+    .ui-card-value { font-size: 13px; font-weight: bold; color: var(--text-dark); margin-top: 1px; }
+    .ui-card-badge { font-size: 11px; color: var(--primary); font-weight: bold; background: rgba(123,17,19,0.07); padding: 3px 8px; border-radius: 6px; }
+
+    .ui-bottom-flex { display: flex; gap: 8px; margin-top: 14px; }
+    .ui-btn-secondary { flex: 1; background: #f4f1ea; border: 1px solid var(--border-color); color: var(--text-dark); padding: 11px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; }
+    .ui-btn-primary { flex: 2; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: var(--gold-light); border: none; padding: 11px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(123,17,19,0.25); }
+
+    .ui-summary-card { background: #fdfbf7; border: 1px solid var(--border-color); border-radius: 10px; padding: 12px; text-align: left; margin-bottom: 10px; font-size: 12px; line-height: 1.6; color: #333; }
+    .ui-summary-heading { font-weight: bold; color: var(--primary); border-bottom: 1px dashed var(--border-color); padding-bottom: 4px; margin-bottom: 6px; font-size: 13px; }
+    .ui-family-pill { display: flex; justify-content: space-between; background: #fff; padding: 6px 10px; border-radius: 6px; margin-bottom: 4px; border: 1px solid #eee; font-size: 11px; }
+
+    .ui-modal-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 16px; backdrop-filter: blur(2px); }
+    .ui-modal-pane { background: #fff; width: 100%; max-width: 340px; border-radius: 14px; padding: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); text-align: center; border-top: 5px solid var(--primary); max-height: 80vh; overflow-y: auto; }
+    .ui-option-row { background: #faf8f2; border: 1px solid var(--border-color); width: 100%; padding: 10px 12px; border-radius: 8px; font-weight: bold; font-size: 12px; text-align: left; margin-bottom: 6px; cursor: pointer; color: #333; }
+    .ui-option-row:hover { background: var(--gold-light); color: var(--primary); border-color: var(--gold); }
 </style>
 
 <script>
-    // ฐานข้อมูลสำหรับสุ่มโชคชะตาวาสนาตั้งแต่เกิด
-    const patchDynastiesList = [
-        "ราชวงศ์ต้าเซี่ย (Great Xia)", 
-        "ราชวงศ์ต้าถัง (Great Tang)", 
-        "ยุคสามก๊ก (Three Kingdoms)", 
-        "ราชวงศ์ต้าชิง (Great Qing)"
+    const p14Surnames = ["มู่หรง", "ไป๋", "เซียว", "ลู่", "เย่", "ซู", "เฟิง", "หลี่", "จ้าว", "ฮวา", "ตงฟาง", "หนานกง"];
+    const p14FirstNames = ["เฟิ่ง", "ชิง", "หลาน", "เหมย", "เทียน", "อวี้", "หลง", "เซียน", "หนิง", "จิน", "อิง"];
+    const p14Genders = ["ชาย", "หญิง"];
+    const p14Dynasties = [
+        { name: "ราชวงศ์ต้าเซี่ย (Great Xia)", money: 300 },
+        { name: "ราชวงศ์ต้าถัง (Great Tang)", money: 350 },
+        { name: "ยุคสามก๊ก (Three Kingdoms)", money: 400 },
+        { name: "ราชวงศ์ต้าชิง (Great Qing)", money: 300 }
     ];
-    const patchSurnames = ["มู่หรง", "ไป๋", "เซียว", "ลู่", "เย่", "ซู", "เฟิง", "หลี่", "จ้าว", "ฮวา"];
-    const patchFirstNames = ["เฟิ่ง", "ชิง", "หลาน", "เหมย", "เทียน", "อวี้", "หลง", "เซียน", "หนิง", "จิน"];
-    const patchZodiacs = ["ปีมังกรทอง", "ปีพยัคฆ์คำราม", "ปีงูขาว", "ปีม้าศึก", "ปีหงส์เพลิง", "ปีกิเลนสวรรค์"];
-    const patchSeasonsList = ["🌸 ฤดูใบไม้ผลิ (วาสนาการค้า)", "☀️ ฤดูร้อน (วาสนาการศึก)", "🍂 ฤดูใบไม้ร่วง (วาสนาปัญญา)", "❄️ ฤดูหนาว (วาสนาอดทน)"];
-    const patchOriginPaths = [
-        "👑 บุตรขุนนางตระกูลใหญ่ (สายบุ๋นผู้สูงศักดิ์)",
-        "⚔️ ทายาทตระกูลแม่ทัพ (สายบู๊สงครามชายแดน)",
-        "🌸 โฉมงามตระกูลสูง (สายชิงอำนาจวังหลัง)",
-        "⛓️ ทาสรับใช้ในจวน (สายดราม่าไถ่ตัวจากจุดต่ำสุด)",
-        "⚠️ ทายาทขุนนางถูกใส่ร้าย (สายล้างมลทินกู้ชื่อเสียง)"
+    
+    const p14Origins = [
+        { title: "👑 บุตรขุนนางตระกูลใหญ่ (สายบุ๋น)", path: "ขุนนาง", desc: "เกิดในตระกูลขุนนางทรงอิทธิพล มีเส้นสายในราชสำนัก เริ่มต้นด้วยปัญญาและเงินทุน" },
+        { title: "⚔️ ทายาทค่ายทหารชายแดน (สายบู๊ขุนศึก)", path: "แม่ทัพ", desc: "เติบโตท่ามกลางกลิ่นอายสงครามและคมดาบ พลังยุทธ์สูง พร้อมออกศึกชิงชัย" },
+        { title: "🌸 โฉมงามตระกูลสูง (สายชิงอำนาจวังหลัง)", path: "วังหลัง", desc: "รูปโฉมงดงาม เพียบพร้อมด้วยเสน่ห์และเล่ห์กลวังหลัง เตรียมเข้าสู่การคัดเลือกสนม" },
+        { title: "⛓️ ทาสรับใช้ในจวน (สายไถ่ตัวจากจุดต่ำสุด)", path: "ทาส", desc: "ชีวิตรันทดถูกกดขี่ข่มเหง ต้องอดทนทำงานเก็บเงินเพื่อไถ่ตัวพลิกชีวิต" },
+        { title: "⚠️ ทายาทขุนนางถูกใส่ร้าย (สายล้างมลทิน)", path: "ตกอับ", desc: "วงศ์ตระกูลล่มสลายจากข้อกล่าวหาเท็จ ต้องใช้สติปัญญาสืบหาความจริงกู้ชื่อเสียง" },
+        { title: "💰 ทายาทคหบดีใหญ่ (สายการค้าพาณิชย์)", path: "พ่อค้า", desc: "ร่ำรวยเงินทองตั้งแต่วันเกิด มีกิจการค้าขายหนุนหลัง เงินทองไหลมาเทมา" }
     ];
 
-    // ฟังก์ชันสุ่มโชคชะตาวาสนาเกิดใหม่แบบครบเครื่อง
-    function rollCompleteDestiny() {
-        let sName = patchSurnames[Math.floor(Math.random() * patchSurnames.length)];
-        let fName = patchFirstNames[Math.floor(Math.random() * patchFirstNames.length)];
-        let gender = Math.random() > 0.5 ? "หญิง" : "ชาย";
-        let dynasty = patchDynastiesList[Math.floor(Math.random() * patchDynastiesList.length)];
-        let zodiac = patchZodiacs[Math.floor(Math.random() * patchZodiacs.length)];
-        let season = patchSeasonsList[Math.floor(Math.random() * patchSeasonsList.length)];
-        let origin = patchOriginPaths[Math.floor(Math.random() * patchOriginPaths.length)];
+    const p14Zodiacs = ["ปีมังกรทอง", "ปีพยัคฆ์คำราม", "ปีงูขาว", "ปีม้าศึก", "ปีหงส์เพลิง", "ปีกิเลนสวรรค์"];
+    const p14Seasons = ["🌸 ฤดูใบไม้ผลิ", "☀️ ฤดูร้อน", "🍂 ฤดูใบไม้ร่วง", "❄️ ฤดูหนาว"];
+    const p14BirthOrders = ["ลูกคนเดียวในจวน", "บุตรคนโต (พี่ใหญ่)", "บุตรคนรอง", "บุตรคนเล็ก (น้องนุชสุดท้อง)"];
 
-        // สุ่มค่าสถานะเริ่มต้นแบบลุ้นพลัง (Stats & Skills)
-        let randIntel = Math.floor(Math.random() * 25) + 10;
-        let randCombat = Math.floor(Math.random() * 25) + 5;
-        let randCharm = Math.floor(Math.random() * 25) + 10;
-        let randGuqin = Math.floor(Math.random() * 15) + 5;
-        let randChess = Math.floor(Math.random() * 15) + 5;
+    let p14Char = {
+        surname: "มู่หรง",
+        firstname: "เฟิ่ง",
+        gender: "หญิง",
+        dynasty: "ราชวงศ์ต้าเซี่ย (Great Xia)",
+        originObj: p14Origins[0],
+        zodiac: "ปีมังกรทอง",
+        season: "🌸 ฤดูใบไม้ผลิ",
+        birthOrder: "บุตรคนโต (พี่ใหญ่)",
+        money: 300,
+        stats: { intelligence: 15, combat: 10, charm: 20 },
+        familyMembers: [
+            { role: "บิดา", name: "มู่หรงเทียน", age: 42, career: "ขุนนางราชสำนัก" },
+            { role: "มารดา", name: "ไป๋ฮูหยิน", age: 38, career: "นายหญิงตระกูลใหญ่" }
+        ]
+    };
 
-        // นำค่าที่สุ่มได้ไปหยอดลงฟอร์ม
-        document.getElementById('patch-surname').value = sName;
-        document.getElementById('patch-firstname').value = fName;
-        document.getElementById('patch-gender').value = gender;
-        document.getElementById('patch-dynasty').value = dynasty;
-        document.getElementById('patch-origin').value = origin;
+    function p14RandomizeAll() {
+        p14Char.surname = p14Surnames[Math.floor(Math.random() * p14Surnames.length)];
+        p14Char.firstname = p14FirstNames[Math.floor(Math.random() * p14FirstNames.length)];
+        p14Char.gender = p14Genders[Math.floor(Math.random() * p14Genders.length)];
+        
+        let dyn = p14Dynasties[Math.floor(Math.random() * p14Dynasties.length)];
+        p14Char.dynasty = dyn.name;
+        p14Char.money = dyn.money;
 
-        // บันทึกค่าชะตาที่สุ่มได้เก็บไว้ชั่วคราว
-        window.tempRolledDestiny = {
-            zodiac: zodiac,
-            season: season,
-            intel: randIntel,
-            combat: randCombat,
-            charm: randCharm,
-            guqin: randGuqin,
-            chess: randChess
-        };
+        p14Char.originObj = p14Origins[Math.floor(Math.random() * p14Origins.length)];
+        p14Char.zodiac = p14Zodiacs[Math.floor(Math.random() * p14Zodiacs.length)];
+        p14Char.season = p14Seasons[Math.floor(Math.random() * p14Seasons.length)];
+        p14Char.birthOrder = p14BirthOrders[Math.floor(Math.random() * p14BirthOrders.length)];
 
-        // แสดงพรีวิวสรุปดวงชะตาให้ผู้เล่นเห็นทันทีแบบตื่นเต้น
-        let previewBox = document.getElementById('destiny-preview');
-        if(previewBox) {
-            previewBox.innerHTML = `
-                <b>🔮 ผลคำทำนายวาสนาเกิด:</b><br>
-                • ราชาฤดูกาล: ${season}<br>
-                • นักษัตรกำเนิด: ${zodiac}<br>
-                • พรสวรรค์ติดตัว: ปัญญา(${randIntel}) | ยุทธ์(${randCombat}) | เสน่ห์(${randCharm})<br>
-                <i>(พร้อมจุติลงสู่แผ่นดินแล้ว!)</i>
-            `;
+        p14Char.stats.intelligence = Math.floor(Math.random() * 25) + 10;
+        p14Char.stats.combat = Math.floor(Math.random() * 25) + 5;
+        p14Char.stats.charm = Math.floor(Math.random() * 25) + 10;
+
+        let dadName = p14Char.surname + " " + p14FirstNames[Math.floor(Math.random() * p14FirstNames.length)];
+        let famList = [
+            { role: "บิดา", name: dadName, age: 42, career: p14Char.originObj.path === 'แม่ทัพ' ? 'แม่ทัพค่ายหลวง' : 'ขุนนางผู้ใหญ่' },
+            { role: "มารดา", name: "ฮูหยินตระกูล " + p14Char.surname, age: 38, career: 'นายหญิงตระกูลขุนนาง' }
+        ];
+
+        if (p14Char.birthOrder !== "ลูกคนเดียวในจวน") {
+            let sibName = p14Char.surname + " " + p14FirstNames[Math.floor(Math.random() * p14FirstNames.length)];
+            let sibRole = p14Char.birthOrder.includes("คนโต") ? "น้องรอง" : "พี่ใหญ่";
+            famList.push({ role: sibRole, name: sibName, age: 12, career: "ทายาทในจวน" });
         }
+
+        p14Char.familyMembers = famList;
+        renderP14SetupScreen();
     }
 
-    // แทนที่หน้าจอเริ่มต้นเดิมด้วยหน้าจอ "โรงชะตาชีวิต" โฉมใหม่
+    function renderP14SetupScreen() {
+        let setupCard = document.querySelector('.setup-card');
+        if(!setupCard) return;
+
+        setupCard.innerHTML = `
+            <div class="ui-setup-box">
+                <div class="ui-title">🌱 กำเนิดชีวิตใหม่</div>
+                <div class="ui-subtitle">คลิกการ์ดเพื่อปรับแต่งข้อมูล หรือกดสุ่มใหม่ได้ทันที</div>
+                
+                <div class="ui-card-item" onclick="p14OpenNameModal()">
+                    <div>
+                        <div class="ui-card-label">ชื่อ - นามสกุล</div>
+                        <div class="ui-card-value" id="disp-p14-name">${p14Char.surname} ${p14Char.firstname}</div>
+                    </div>
+                    <div class="ui-card-badge">แก้ไข</div>
+                </div>
+
+                <div class="ui-card-item" onclick="p14OpenGenderModal()">
+                    <div>
+                        <div class="ui-card-label">เพศตัวละคร</div>
+                        <div class="ui-card-value">${p14Char.gender}</div>
+                    </div>
+                    <div class="ui-card-badge">แก้ไข</div>
+                </div>
+
+                <div class="ui-card-item" onclick="p14OpenDynastyModal()">
+                    <div>
+                        <div class="ui-card-label">ยุคราชวงศ์กำเนิด</div>
+                        <div class="ui-card-value">${p14Char.dynasty}</div>
+                    </div>
+                    <div class="ui-card-badge">แก้ไข</div>
+                </div>
+
+                <div class="ui-card-item" onclick="p14OpenOriginModal()">
+                    <div>
+                        <div class="ui-card-label">จุดเริ่มต้นชะตากรรม</div>
+                        <div class="ui-card-value" style="font-size:11px;">${p14Char.originObj.title}</div>
+                    </div>
+                    <div class="ui-card-badge">แก้ไข</div>
+                </div>
+
+                <div class="ui-card-item" onclick="p14OpenFamilyModal()">
+                    <div>
+                        <div class="ui-card-label">สถานะครอบครัว</div>
+                        <div class="ui-card-value" style="font-size:11px;">${p14Char.birthOrder}</div>
+                    </div>
+                    <div class="ui-card-badge">แก้ไข</div>
+                </div>
+
+                <div class="ui-bottom-flex">
+                    <button class="ui-btn-secondary" onclick="p14RandomizeAll()">🎲 สุ่มใหม่</button>
+                    <button class="ui-btn-primary" onclick="p14ShowSummary()">📜 สรุปดวงชะตาก่อนเกิด</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function p14ShowSummary() {
+        let setupCard = document.querySelector('.setup-card');
+        if(!setupCard) return;
+
+        let familyHtml = p14Char.familyMembers.map(m => `
+            <div class="ui-family-pill">
+                <span><b>${m.name}</b> (${m.role})</span>
+                <span>อายุ ${m.age} ปี | ${m.career}</span>
+            </div>
+        `).join('');
+
+        setupCard.innerHTML = `
+            <div class="ui-setup-box">
+                <div class="ui-title">📜 สรุปดวงชะตาแรกเกิด</div>
+                <div class="ui-subtitle">${p14Char.surname} ${p14Char.firstname} (${p14Char.gender})</div>
+
+                <div class="ui-summary-card">
+                    <div class="ui-summary-heading">📍 จุดเริ่มต้นชีวิต</div>
+                    <p style="margin-bottom: 4px;">กำเนิดใน <b>${p14Char.dynasty}</b> (${p14Char.originObj.title})</p>
+                    <p style="color:#555; font-size:11px;">${p14Char.originObj.desc}</p>
+                    <p style="margin-top:4px;"><b>สถานะ:</b> ${p14Char.birthOrder} | <b>ราศี:</b> ${p14Char.zodiac} (${p14Char.season})</p>
+                </div>
+
+                <div class="ui-summary-card">
+                    <div class="ui-summary-heading">👨‍👩‍👧 ครอบครัวในจวน</div>
+                    ${familyHtml}
+                </div>
+
+                <div class="ui-summary-card">
+                    <div class="ui-summary-heading">⚡ ค่าพลังแรกเกิด</div>
+                    <div>📖 ปัญญา: <b>${p14Char.stats.intelligence}</b> | ⚔️ ยุทธ์: <b>${p14Char.stats.combat}</b> | 🌸 เสน่ห์: <b>${p14Char.stats.charm}</b></div>
+                </div>
+
+                <div class="ui-bottom-flex">
+                    <button class="ui-btn-secondary" onclick="renderP14SetupScreen()">⬅️ ย้อนกลับ</button>
+                    <button class="ui-btn-primary" onclick="p14StartGame()">🚀 เริ่มใช้ชีวิต 0 -> 1</button>
+                </div>
+            </div>
+        `;
+    }
+
+    // Modal แก้ไขชื่อ-นามสกุล (สร้างใหม่แยกขาดจากตัวเดิม ป้องกันการชน)
+    function p14OpenNameModal() {
+        let oldBg = document.getElementById('p14-modal-name');
+        if(oldBg) oldBg.remove();
+
+        let overlay = document.createElement('div');
+        overlay.id = 'p14-modal-name';
+        overlay.className = 'ui-modal-bg';
+        overlay.innerHTML = `
+            <div class="ui-modal-pane">
+                <h3 style="color:var(--primary); margin-bottom:10px; font-size:15px;">✍️ แก้ไขชื่อ - นามสกุล</h3>
+                <div style="margin-bottom:8px; text-align:left;">
+                    <label style="font-size:11px; font-weight:bold;">นามสกุลตระกูล:</label>
+                    <input type="text" id="input-p14-sur" class="form-control" value="${p14Char.surname}" style="padding:8px; font-size:13px;">
+                </div>
+                <div style="margin-bottom:14px; text-align:left;">
+                    <label style="font-size:11px; font-weight:bold;">ชื่อจริง:</label>
+                    <input type="text" id="input-p14-first" class="form-control" value="${p14Char.firstname}" style="padding:8px; font-size:13px;">
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button class="ui-btn-secondary" onclick="document.getElementById('p14-modal-name').remove()">ยกเลิก</button>
+                    <button class="ui-btn-primary" onclick="p14SaveName()">บันทึก</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    function p14SaveName() {
+        let s = document.getElementById('input-p14-sur').value.trim();
+        let f = document.getElementById('input-p14-first').value.trim();
+        if(s) p14Char.surname = s;
+        if(f) p14Char.firstname = f;
+        let modal = document.getElementById('p14-modal-name');
+        if(modal) modal.remove();
+        renderP14SetupScreen();
+    }
+
+    function p14OpenGenderModal() {
+        let overlay = document.createElement('div');
+        overlay.className = 'ui-modal-bg';
+        overlay.innerHTML = `
+            <div class="ui-modal-pane">
+                <h3 style="color:var(--primary); margin-bottom:12px; font-size:15px;">🚻 เลือกเพศตัวละคร</h3>
+                <button class="ui-option-row" onclick="p14SaveGender('ชาย', this)">👨 ชาย</button>
+                <button class="ui-option-row" onclick="p14SaveGender('หญิง', this)">👩 หญิง</button>
+                <button class="ui-btn-secondary" style="width:100%; margin-top:8px;" onclick="this.closest('.ui-modal-bg').remove()">ยกเลิก</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    function p14SaveGender(g, btn) {
+        p14Char.gender = g;
+        btn.closest('.ui-modal-bg').remove();
+        renderP14SetupScreen();
+    }
+
+    function p14OpenDynastyModal() {
+        let overlay = document.createElement('div');
+        overlay.className = 'ui-modal-bg';
+        let optionsHtml = p14Dynasties.map(d => `<button class="ui-option-row" onclick="p14SaveDynasty('${d.name}', ${d.money}, this)">🏛️ ${d.name}</button>`).join('');
+        overlay.innerHTML = `
+            <div class="ui-modal-pane">
+                <h3 style="color:var(--primary); margin-bottom:12px; font-size:15px;">🏛️ เลือกยุคราชวงศ์กำเนิด</h3>
+                ${optionsHtml}
+                <button class="ui-btn-secondary" style="width:100%; margin-top:8px;" onclick="this.closest('.ui-modal-bg').remove()">ยกเลิก</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    function p14SaveDynasty(name, money, btn) {
+        p14Char.dynasty = name;
+        p14Char.money = money;
+        btn.closest('.ui-modal-bg').remove();
+        renderP14SetupScreen();
+    }
+
+    function p14OpenOriginModal() {
+        let overlay = document.createElement('div');
+        overlay.className = 'ui-modal-bg';
+        let optionsHtml = p14Origins.map((o, idx) => `
+            <button class="ui-option-row" onclick="p14SaveOrigin(${idx}, this)">
+                <b>${o.title}</b>
+            </button>
+        `).join('');
+        overlay.innerHTML = `
+            <div class="ui-modal-pane">
+                <h3 style="color:var(--primary); margin-bottom:12px; font-size:15px;">📜 เลือกจุดเริ่มต้นชะตากรรม</h3>
+                ${optionsHtml}
+                <button class="ui-btn-secondary" style="width:100%; margin-top:8px;" onclick="this.closest('.ui-modal-bg').remove()">ยกเลิก</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    function p14SaveOrigin(idx, btn) {
+        p14Char.originObj = p14Origins[idx];
+        btn.closest('.ui-modal-bg').remove();
+        renderP14SetupScreen();
+    }
+
+    function p14OpenFamilyModal() {
+        let overlay = document.createElement('div');
+        overlay.className = 'ui-modal-bg';
+        let optionsHtml = p14BirthOrders.map((bo, idx) => `
+            <button class="ui-option-row" onclick="p14SaveFamily(${idx}, this)">
+                <b>${bo}</b>
+            </button>
+        `).join('');
+        overlay.innerHTML = `
+            <div class="ui-modal-pane">
+                <h3 style="color:var(--primary); margin-bottom:12px; font-size:15px;">👨‍👩‍👧 เลือกสถานะครอบครัว</h3>
+                ${optionsHtml}
+                <button class="ui-btn-secondary" style="width:100%; margin-top:8px;" onclick="this.closest('.ui-modal-bg').remove()">ยกเลิก</button>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    function p14SaveFamily(idx, btn) {
+        p14Char.birthOrder = p14BirthOrders[idx];
+        let famList = [
+            { role: "บิดา", name: p14Char.surname + " เทียน", age: 42, career: 'ขุนนางผู้ใหญ่' },
+            { role: "มารดา", name: "ฮูหยินตระกูล " + p14Char.surname, age: 38, career: 'นายหญิงตระกูลขุนนาง' }
+        ];
+        if (p14Char.birthOrder !== "ลูกคนเดียวในจวน") {
+            famList.push({ role: p14Char.birthOrder.includes("คนโต") ? "น้องรอง" : "พี่ใหญ่", name: p14Char.surname + " ชิง", age: 12, career: "ทายาทในจวน" });
+        }
+        p14Char.familyMembers = famList;
+        btn.closest('.ui-modal-bg').remove();
+        renderP14SetupScreen();
+    }
+
     window.addEventListener('load', function() {
-        setTimeout(() => {
-            let setupCard = document.querySelector('.setup-card');
-            if(setupCard) {
-                setupCard.innerHTML = `
-                    <h2>🔮 โรงชะตาวาสนาสวรรค์</h2>
-                    <p style="font-size: 12px; color: #666; margin-bottom: 12px;">สุ่มหรือกำหนดโชคชะตาฟ้าลิขิตของคุณก่อนลืมตาดูโลก</p>
-                    
-                    <div id="destiny-preview" class="destiny-preview-box">
-                        <b>🔮 ยังไม่ได้สุ่มโชคชะตา</b><br>กดปุ่ม "🎲 สุ่มโชคชะตาวาสนา" ด้านล่างเพื่อเสี่ยงทายดวงชะตาเกิดของคุณ!
-                    </div>
-
-                    <div class="form-group">
-                        <label>นามสกุลตระกูล:</label>
-                        <input type="text" id="patch-surname" class="form-control" value="มู่หรง">
-                    </div>
-                    <div class="form-group">
-                        <label>ชื่อจริง:</label>
-                        <input type="text" id="patch-firstname" class="form-control" value="เฟิ่ง">
-                    </div>
-                    <div class="form-group">
-                        <label>เพศตัวละคร:</label>
-                        <select id="patch-gender" class="form-control">
-                            <option value="ชาย">ชาย</option>
-                            <option value="หญิง" selected>หญิง</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>ยุคราชวงศ์กำเนิด:</label>
-                        <input type="text" id="patch-dynasty" class="form-control" value="ราชวงศ์ต้าเซี่ย (Great Xia)">
-                    </div>
-                    <div class="form-group">
-                        <label>พล็อตจุดเริ่มต้นชะตากรรม:</label>
-                        <select id="patch-origin" class="form-control">
-                            <option value="👑 บุตรขุนนางตระกูลใหญ่ (สายบุ๋นผู้สูงศักดิ์)">👑 บุตรขุนนางตระกูลใหญ่ (สายบุ๋นผู้สูงศักดิ์)</option>
-                            <option value="⚔️ ทายาทตระกูลแม่ทัพ (สายบู๊สงครามชายแดน)">⚔️ ทายาทตระกูลแม่ทัพ (สายบู๊สงครามชายแดน)</option>
-                            <option value="🌸 โฉมงามตระกูลสูง (สายชิงอำนาจวังหลัง)">🌸 โฉมงามตระกูลสูง (สายชิงอำนาจวังหลัง)</option>
-                            <option value="⛓️ ทาสรับใช้ในจวน (สายดราม่าไถ่ตัวจากจุดต่ำสุด)">⛓️ ทาสรับใช้ในจวน (สายดราม่าไถ่ตัวจากจุดต่ำสุด)</option>
-                            <option value="⚠️ ทายาทขุนนางถูกใส่ร้าย (สายล้างมลทินกู้ชื่อเสียง)">⚠️ ทายาทขุนนางถูกใส่ร้าย (สายล้างมลทินกู้ชื่อเสียง)</option>
-                        </select>
-                    </div>
-
-                    <button class="btn-action" onclick="rollCompleteDestiny()" style="background:var(--gold-light); border-color:var(--gold); text-align:center; justify-content:center; margin-bottom:8px;">
-                        <span>🎲 สุ่มโชคชะตาวาสนาสวรรค์ (สุ่มชื่อ ราศี และพลังชีวิต)</span>
-                    </button>
-
-                    <button class="btn-start" onclick="initGameSessionPatch12()">🚀 จุติลงสู่แผ่นดิน (เริ่มเกมอายุ 0 ปี)</button>
-                `;
-            }
-        }, 200);
+        setTimeout(() => { p14RandomizeAll(); }, 200);
     });
 
-    // ฟังก์ชันเริ่มเกมที่นำค่าที่สุ่มมาประกอบร่างเข้า Object หลักของเกม
-    function initGameSessionPatch12() {
-        let sInput = document.getElementById('patch-surname');
-        let fInput = document.getElementById('patch-firstname');
-        let gInput = document.getElementById('patch-gender');
-        let dInput = document.getElementById('patch-dynasty');
-        let oInput = document.getElementById('patch-origin');
-
-        if(sInput && sInput.value.trim()) game.surname = sInput.value.trim();
-        if(fInput && fInput.value.trim()) game.firstname = fInput.value.trim();
-        if(gInput) game.gender = gInput.value;
-        
-        let dynastyName = dInput ? dInput.value : 'ราชวงศ์ต้าเซี่ย';
-        let originText = oInput ? oInput.value : 'ขุนนาง';
-
-        game.pathType = originText.includes('ทาส') ? 'ทาส' : (originText.includes('แม่ทัพ') ? 'แม่ทัพ' : (originText.includes('ใส่ร้าย') ? 'ตกอับ' : 'ขุนนาง'));
-
-        // ถ้ามีค่าที่สุ่มมาจากปุ่มสุ่ม ให้ดึงมาใช้ นอกนั้นใช้ค่าเริ่มต้น
-        if(window.tempRolledDestiny) {
-            game.stats.intelligence = window.tempRolledDestiny.intel;
-            game.stats.combat = window.tempRolledDestiny.combat;
-            game.stats.charm = window.tempRolledDestiny.charm;
-            game.skills.guqin = window.tempRolledDestiny.guqin;
-            game.skills.chess = window.tempRolledDestiny.chess;
-        }
+    function p14StartGame() {
+        game.surname = p14Char.surname;
+        game.firstname = p14Char.firstname;
+        game.gender = p14Char.gender;
+        game.money = p14Char.money;
+        game.stats = { ...p14Char.stats };
+        game.pathType = p14Char.originObj.path;
 
         if(game.pathType === 'ทาส') {
-            game.money = 30;
             game.career = "ทาสรับใช้ในจวนตระกูลใหญ่";
         } else if(game.pathType === 'แม่ทัพ') {
-            game.money = 400;
             game.career = "ทายาทค่ายทหารชายแดน";
         } else if(game.pathType === 'ตกอับ') {
             game.isFramed = true;
-            game.money = 50;
             game.career = "อดีตทายาทขุนนางถูกใส่ร้าย";
+        } else if(game.pathType === 'วังหลัง') {
+            game.career = "โฉมงามตระกูลสูง";
+        } else if(game.pathType === 'พ่อค้า') {
+            game.career = "ทายาทคหบดีใหญ่";
         } else {
-            game.money = 300;
             game.career = "บุตรขุนนางสำนักหลวง";
         }
 
-        // บันทึกพงศาวดารปีแรก
-        let zodiacInfo = window.tempRolledDestiny ? `ราศีเกิด: ${window.tempRolledDestiny.zodiac} (${window.tempRolledDestiny.season})` : 'กำเนิดในฤดูมงคล';
         game.chronicleLog.push({
             year: 1,
             age: 0,
-            title: `จุติสู่แผ่นดิน ${dynastyName}`,
-            text: `ฟ้าลิขิตให้กำเนิดในยุค [${dynastyName}] ชะตากรรม [${originText}] สกุล ${game.surname} นามว่า ${game.firstname} (${zodiacInfo}) พรสวรรค์ตั้งต้นถูกปลุกขึ้นแล้ว!`
+            title: `จุติสู่แผ่นดิน ${p14Char.dynasty}`,
+            text: `ฟ้าลิขิตให้กำเนิดในยุค [${p14Char.dynasty}] เส้นทางชะตา [${p14Char.originObj.title}] สถานะ: ${p14Char.birthOrder} (${p14Char.zodiac}) บิดาคือ ${p14Char.familyMembers[0].name} นามว่า ${game.surname} ${game.firstname} (${game.gender}) เริ่มต้นบันทึกมหากาพย์ชีวิตแล้ว!`
         });
 
         let setupScreen = document.getElementById('setup-screen');
         if(setupScreen) setupScreen.style.display = 'none';
 
         let dynastyHeader = document.getElementById('header-dynasty');
-        if(dynastyHeader) dynastyHeader.innerText = `${dynastyName.split(' ')[0]} | ${game.career}`;
+        if(dynastyHeader) dynastyHeader.innerText = `${p14Char.dynasty.split(' ')[0]} | ${game.career}`;
 
         saveGame();
         updateScreen();
